@@ -25,6 +25,11 @@ const userSchema = new Schema(
       trim: true,
       index: true,
     },
+    role: {
+      type: String,
+      enum: ["student", "faculty", "cell"],
+      required: true,
+    },
     avatar: {
       //cloudanary
       type: String,
@@ -34,12 +39,13 @@ const userSchema = new Schema(
       //cloudanary
       type: String,
     },
-    watchHistory: [
-      {
-        type: Schema.Types.ObjectId,
-        ref: "Video",
-      },
-    ],
+
+    bio: { type: String, required: true },
+
+    followers: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
+
+    following: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
+
     password: {
       type: String,
       required: [true, "password is required"],
