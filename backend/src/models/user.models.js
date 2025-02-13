@@ -42,6 +42,13 @@ const userSchema = new Schema(
 
     bio: { type: String, required: true },
 
+    bookmarks: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "Bookmark",
+      },
+    ],
+
     password: {
       type: String,
       required: [true, "password is required"],

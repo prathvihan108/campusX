@@ -2,6 +2,7 @@ import { AsyncHandler } from "../utils/AsyncHandler.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { User } from "../models/user.models.js";
+import mongoose, { Schema } from "mongoose";
 import {
   updateAvatar,
   updateCoverImage,
@@ -411,58 +412,73 @@ const getUserChannelProfile = AsyncHandler(async (req, res) => {
     .json(new ApiResponse(200, channel[0], "User channel feteched"));
 });
 
-const getWatchHistory = AsyncHandler(async (req, res) => {
+const getBookmarks = AsyncHandler(async (req, res) => {
   const user = await User.aggregate([
     {
-      $match: {
-        _id: new mongoose.Types.ObjectId(user._id),
-      },
+      $match: { _id: new mongoose.Types.ObjectId(req.user._id) },
     },
     {
       $lookup: {
-        from: "videos",
-        localField: "watchHistory",
+        from: "bookmarks",
+        localField: "bookmarks",
         foreignField: "_id",
-        as: "watchHistory",
+        as: "bookmarkedPosts",
         pipeline: [
-          //this pipeline is for the watch history.
           {
             $lookup: {
-              from: "users",
-              localField: "owner",
+              from: "posts", // Fetch the actual post
+              localField: "post",
               foreignField: "_id",
-              as: "owner",
-              pipeline: [
-                //this is applied on owner field
-                {
-                  $project: {
-                    fullName: 1,
-                    userName: 1,
-                    avatar: 1,
-                  },
-                },
-              ],
+              as: "postDetails",
             },
           },
           {
-            $addFields: {
+            $unwind: "$postDetails", // Ensure postDetails is an object, not an array
+          },
+          {
+            $lookup: {
+              from: "users", // Fetch post author details
+              localField: "postDetails.author",
+              foreignField: "_id",
+              as: "postOwner",
+            },
+          },
+          {
+            $unwind: "$postOwner", // Ensure postOwner is an object, not an array
+          },
+          {
+            $project: {
+              _id: 1,
+              post: "$postDetails", // Include full post data
               owner: {
-                $first: "$owner",
+                _id: "$postOwner._id",
+                fullName: "$postOwner.fullName",
+                userName: "$postOwner.userName",
+                avatar: "$postOwner.avatar",
               },
             },
           },
         ],
       },
     },
+    {
+      $project: {
+        _id: 1,
+        fullName: 1,
+        userName: 1,
+        bookmarks: "$bookmarkedPosts", // Rename the field
+      },
+    },
   ]);
+  console.log("user", user);
 
   return res
     .status(200)
     .json(
       new ApiResponse(
         200,
-        user[0].watchHistory,
-        "watch history fetched successfully"
+        user[0].bookmarks,
+        "Bookmarked posts fetched successfully"
       )
     );
 });
@@ -478,5 +494,5 @@ export {
   updateUserAvatar,
   updateUserCoverImage,
   getUserChannelProfile,
-  getWatchHistory,
+  getBookmarks,
 };
