@@ -2,7 +2,11 @@ import { AsyncHandler } from "../utils/AsyncHandler.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { User } from "../models/user.models.js";
-import { updateAvatar, uploadOnCloudnary } from "../utils/cloudnary.js";
+import {
+  updateAvatar,
+  updateCoverImage,
+  uploadOnCloudnary,
+} from "../utils/cloudnary.js";
 import jwt from "jsonwebtoken";
 const generateAccessAndRefreshTokens = async (userId) => {
   try {
@@ -329,7 +333,7 @@ const updateUserCoverImage = AsyncHandler(async (req, res) => {
 
   return res
     .status(200)
-    .json(new ApiResponse(200, {}, "avatar updated successfully"));
+    .json(new ApiResponse(200, {}, "coverImage updated successfully"));
 });
 
 const getUserChannelProfile = AsyncHandler(async (req, res) => {
