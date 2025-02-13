@@ -11,7 +11,7 @@ export const varifyJWT = AsyncHandler(async (req, res, next) => {
 
     if (!token) {
       throw new ApiError(401, "Unautorised request");
-    }
+    } //this allowes the fron end to request for new access token using his refresh token.
 
     const decodedToken = await jwt.verify(
       token,

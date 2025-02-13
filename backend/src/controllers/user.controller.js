@@ -31,13 +31,21 @@ const registerUser = AsyncHandler(async (req, res) => {
   if (!req.files || Object.keys(req.files).length === 0) {
     throw new ApiError(400, "No files uploaded");
   }
-  const { fullName, email, userName, password } = req.body;
+  const { fullName, email, userName, password, role, bio } = req.body;
   console.log(email);
 
   if (
-    [fullName, email, userName, password].some((field) => field?.trim() === "")
+    [fullName, email, userName, password, role, bio].some(
+      (field) => (field?.trim?.() ?? "") === ""
+    )
   ) {
-    throw new ApiError(400, "All fields are required");
+    throw new ApiError(400, "All required fields must be filled");
+  }
+
+  // Ensure role is valid
+  const validRoles = ["student", "faculty", "cell"];
+  if (!validRoles.includes(role)) {
+    throw new ApiError(400, "Invalid role");
   }
 
   const existingUser = await User.findOne({ $or: [{ email }, { userName }] });
@@ -65,12 +73,14 @@ const registerUser = AsyncHandler(async (req, res) => {
   }
 
   const user = await User.create({
-    fullName,
-    avatar: avatar.url,
+    fullName: fullName.trim(),
+    avatar: avatar?.url || "",
     coverImage: coverImage?.url || "",
-    email,
+    email: email.toLowerCase().trim(),
     password,
-    userName: userName.toLowerCase(),
+    userName: userName.toLowerCase().trim(),
+    role,
+    bio: bio?.trim() || "",
   });
 
   const createdUser = await User.findById(user._id).select(
@@ -83,7 +93,7 @@ const registerUser = AsyncHandler(async (req, res) => {
 
   return res
     .status(201)
-    .json(new ApiResponse(201, "User created successfully"));
+    .json(new ApiResponse(201, { createdUser }, "User created successfully"));
 });
 
 const loginUser = AsyncHandler(async (req, res) => {
@@ -167,7 +177,7 @@ const refreshAccessToken = AsyncHandler(async (req, res) => {
   const incomingRefreshToken =
     req.cookies.refreshToken || req.body.refreshToken;
   if (!incomingRefreshToken) {
-    throw new ApiError(401, "unauthorised request");
+    throw new ApiError(401, "unauthorised request:refresh token not found");
   }
   try {
     const decodedToken = jwt.verify(
@@ -213,11 +223,16 @@ const refreshAccessToken = AsyncHandler(async (req, res) => {
 
 const changeCurrentPassword = AsyncHandler(async (req, res) => {
   const { oldPassword, newPassword, confPassword } = req.body;
+  console.log(" body:", req.body);
   if (!(newPassword === confPassword)) {
     throw new ApiError(401, "Passwords do not match");
   }
-  const user = await User.findById(user?._id);
+  const user = await User.findById(req.user?._id);
+  console.log("user ", user);
+  console.log("User password:", user.password);
+  console.log("old password:", oldPassword);
   const isPasswordCorrect = await user.isPasswordCorrect(oldPassword);
+  console.log("isPasswordCorrect :", isPasswordCorrect);
   if (!isPasswordCorrect) {
     throw new ApiError(400, "password is wrong");
   }
