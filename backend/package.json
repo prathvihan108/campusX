@@ -1,7 +1,7 @@
 {
 	"name": "backend",
 	"version": "1.0.0",
-	"description": "a backend for chai and code",
+	"description": "a backend for campusX",
 	"main": "index.js",
 	"type": "module",
 	"scripts": {
@@ -12,7 +12,7 @@
 		"javascript",
 		"backend"
 	],
-	"author": "prathvi",
+	"author": "Prathviraj H",
 	"license": "ISC",
 	"devDependencies": {
 		"nodemon": "^3.1.9",
