@@ -342,7 +342,7 @@ const getUserChannelProfile = AsyncHandler(async (req, res) => {
   if (!user) {
     throw new ApiError(401, "User name is missing");
   }
-
+  console.log("userName: ", user);
   //channel will be an array
   const channel = await User.aggregate([
     {
@@ -400,6 +400,7 @@ const getUserChannelProfile = AsyncHandler(async (req, res) => {
       },
     },
   ]);
+  console.log("channel: ", channel);
 
   if (!channel?.length) {
     throw new ApiError(401, "channel does not exits");
