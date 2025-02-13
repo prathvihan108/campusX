@@ -14,7 +14,6 @@ import {
 } from "../controllers/user.controller.js";
 import { upload } from "../middlewares/multer.middleware.js";
 import { varifyJWT } from "../middlewares/auth.middleware.js";
-import { updateAvatar } from "../utils/cloudnary.js";
 
 const router = Router();
 
