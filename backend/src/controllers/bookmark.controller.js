@@ -6,7 +6,7 @@ import { AsyncHandler } from "../utils/AsyncHandler.js";
 
 // ✅ Add a Post to Bookmarks
 const bookmarkPost = AsyncHandler(async (req, res) => {
-  const { postId } = req.body;
+  const { postId } = req.params;
 
   const post = await Post.findById(postId);
   if (!post) throw new ApiError(404, "Post not found");

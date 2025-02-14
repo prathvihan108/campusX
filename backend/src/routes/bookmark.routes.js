@@ -9,8 +9,8 @@ import {
 } from "../controllers/bookmark.controller.js";
 const router = Router();
 
-router.post("/", varifyJWT, upload.none(), bookmarkPost); // POST /api/v1/bookmarks
-router.delete("/:bookmarkId", varifyJWT, removeBookmark); // DELETE /api/v1/bookmarks/:bookmarkId
-router.get("/", varifyJWT, getUserBookmarks); // GET /api/v1/bookmarks
+router.post("/:postId", varifyJWT, upload.none(), bookmarkPost);
+router.delete("/:bookmarkId", varifyJWT, removeBookmark);
+router.get("/", varifyJWT, getUserBookmarks);
 
 export default router;
