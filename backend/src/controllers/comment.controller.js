@@ -36,7 +36,7 @@ const getComments = AsyncHandler(async (req, res) => {
   const { postId } = req.params;
 
   const comments = await Comment.find({ post: postId })
-    .populate("user", "fullName userName avatar")
+    .populate("author", "fullName userName avatar")
     .sort({ createdAt: -1 });
 
   res.status(200).json(new ApiResponse(200, comments, "Comments fetched"));
@@ -44,6 +44,7 @@ const getComments = AsyncHandler(async (req, res) => {
 
 // ✅ Delete a Comment (Only Author or Post Owner Can Delete)
 const deleteComment = AsyncHandler(async (req, res) => {
+  console.log(req.params);
   const { commentId } = req.params;
 
   const comment = await Comment.findById(commentId);
@@ -53,7 +54,7 @@ const deleteComment = AsyncHandler(async (req, res) => {
   if (!post) throw new ApiError(404, "Post not found");
 
   if (
-    comment.user.toString() !== req.user._id.toString() &&
+    comment.author.toString() !== req.user._id.toString() &&
     post.author.toString() !== req.user._id.toString()
   ) {
     throw new ApiError(403, "Unauthorized");
