@@ -1,23 +1,32 @@
-import { Comment } from "../models/commentModel.js";
-import { Post } from "../models/postModel.js";
-import { ApiResponse, ApiError } from "../utils/ApiResponse.js";
-import AsyncHandler from "../utils/AsyncHandler.js";
+import { Comment } from "../models/comment.model.js";
+import { Post } from "../models/post.model.js";
+import { ApiError } from "../utils/ApiError.js";
+import { ApiResponse } from "../utils/ApiResponse.js";
+import { AsyncHandler } from "../utils/AsyncHandler.js";
 
 // ✅ Add a Comment
 const addComment = AsyncHandler(async (req, res) => {
-  const { postId, text } = req.body;
+  const { postId } = req.params; // Extract postId from URL
+  const { text } = req.body; // Extract text from body
 
   const post = await Post.findById(postId);
   if (!post) throw new ApiError(404, "Post not found");
+  if (!text) {
+    throw new ApiError(400, "comment message not found");
+  }
 
   const comment = await Comment.create({
     post: postId,
-    user: req.user._id,
-    text,
+    author: req.user._id,
+    content: text,
+  });
+  await comment.populate({
+    path: "author",
+    select: "fullName email avatar", // Select fields you need
   });
 
   post.comments.push(comment._id);
-  await post.save();
+  await post.save({ validateBeforeSave: false });
 
   res.status(201).json(new ApiResponse(201, comment, "Comment added"));
 });

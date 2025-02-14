@@ -1,7 +1,8 @@
-import { Bookmark } from "../models/bookmarkModel.js";
-import { Post } from "../models/postModel.js";
-import { ApiResponse, ApiError } from "../utils/ApiResponse.js";
-import AsyncHandler from "../utils/AsyncHandler.js";
+import { Bookmark } from "../models/bookmark.model.js";
+import { Post } from "../models/post.model.js";
+import { ApiError } from "../utils/ApiError.js";
+import { ApiResponse } from "../utils/ApiResponse.js";
+import { AsyncHandler } from "../utils/AsyncHandler.js";
 
 // ✅ Add a Post to Bookmarks
 const bookmarkPost = AsyncHandler(async (req, res) => {

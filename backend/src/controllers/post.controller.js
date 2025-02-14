@@ -1,16 +1,33 @@
-import { Post } from "../models/postModel.js";
-import { ApiResponse, ApiError } from "../utils/ApiResponse.js";
-import AsyncHandler from "../utils/AsyncHandler.js";
+import { Post } from "../models/post.model.js";
+import { ApiError } from "../utils/ApiError.js";
+import { ApiResponse } from "../utils/ApiResponse.js";
+import { AsyncHandler } from "../utils/AsyncHandler.js";
+import {
+  updateAvatar,
+  updateCoverImage,
+  uploadOnCloudnary,
+} from "../utils/cloudnary.js";
 
 // ✅ Create a Post
 const createPost = AsyncHandler(async (req, res) => {
-  const { content, category, image } = req.body;
+  console.log(req.file);
+  const imageLocalPath = req.file?.path;
+  console.log("image local path", imageLocalPath);
+
+  const image = imageLocalPath ? await uploadOnCloudnary(imageLocalPath) : null;
+  const { content, category } = req.body; //category will be enum
 
   const post = await Post.create({
     author: req.user._id, // Authenticated user
     content,
     category,
-    image,
+    image: image?.url || "",
+  });
+
+  // Populate the author with selected fields
+  await post.populate({
+    path: "author",
+    select: "fullName email avatar",
   });
 
   res.status(201).json(new ApiResponse(201, post, "Post created successfully"));
