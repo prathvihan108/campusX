@@ -8,6 +8,8 @@ import Placements from "./pages/Placements/Placements.jsx";
 import Hackathons from "./pages/Hackathons/Hackathons.jsx";
 import Exams from "./pages/Exams/Exams.jsx";
 import LostFound from "./pages/LostFound/LostFound.jsx";
+import Login from "./components/Auth/Login/Login.jsx";
+import SignUp from "./components/Auth/SignUp/SignUp.jsx";
 import User from "./components/User/UserProfile/UserProfile.jsx";
 
 import {
@@ -27,6 +29,8 @@ const router = createBrowserRouter(
 			<Route path="exams" element={<Exams />} />
 			<Route path="hackathons" element={<Hackathons />} />
 			<Route path="lostandfound" element={<LostFound />} />
+			<Route path="login" element={<Login />} />
+			<Route path="signup" element={<SignUp />} />
 		</Route>
 	)
 );

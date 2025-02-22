@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 
 const Header = () => {
 	const [isDarkMode, setIsDarkMode] = useState(false);
+	const [isLoggedIn, setIsLoggedIn] = useState(false);
 
 	useEffect(() => {
 		if (isDarkMode) {
@@ -17,15 +18,25 @@ const Header = () => {
 	};
 
 	return (
-		<header className="bg-gradient-to-r from-blue-400 to-grey-400 shadow-md p-4 flex items-center relative">
+		<header className="fixed top-0 left-0 w-full bg-gradient-to-r from-blue-500 to-blue-600 shadow-md p-4 flex items-center z-50">
 			{/* Profile Picture on the Left */}
-			<div className="flex items-center space-x-4">
-				<img
-					src="https://images.pexels.com/photos/5234256/pexels-photo-5234256.jpeg?auto=compress&cs=tinysrgb&w=600"
-					alt="Profile"
-					className="h-17 w-17 rounded-full border-2 border-white shadow-md"
-				/>
-			</div>
+			{isLoggedIn && (
+				<div className="flex items-center space-x-4">
+					<img
+						src="https://images.pexels.com/photos/5234256/pexels-photo-5234256.jpeg?auto=compress&cs=tinysrgb&w=600"
+						alt="Profile"
+						className="h-12 w-12 rounded-full border-2 border-white shadow-md"
+					/>
+
+					{/* Create Post Button */}
+					<Link
+						to="/create-post"
+						className="bg-green-500 text-white font-bold py-2 px-4 rounded-lg shadow-md hover:bg-green-600 transition-all duration-200"
+					>
+						+ Create Post
+					</Link>
+				</div>
+			)}
 
 			{/* Centered Logo and App Name */}
 			<Link
@@ -33,9 +44,9 @@ const Header = () => {
 				className="absolute left-1/2 transform -translate-x-1/2 flex items-center space-x-2"
 			>
 				<img
-					src="https://images.pexels.com/photos/30818652/pexels-photo-30818652/free-photo-of-colorful-coal-tit-perched-on-branch-in-nature.jpeg?auto=compress&cs=tinysrgb&w=600"
+					src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTN37NaJKmAZha5MdD5fZcYbT4Jf9Mvg22T0cC_i_bX70PJwJ8Ojo25jjL-GB-QJDsJ&usqp=CAU"
 					alt="App Logo"
-					className="h-17 w-17 rounded-full border-2 border-white shadow-md"
+					className="h-12 w-12 rounded-full border-2 border-white shadow-md"
 				/>
 				<span className="font-bold text-2xl text-white drop-shadow-md">
 					CampusX
@@ -84,18 +95,33 @@ const Header = () => {
 
 				{/* Login & Signup Buttons */}
 				<div className="space-x-2">
-					<Link
+					{/* Login Button */}
+					<NavLink
 						to="/login"
-						className="bg-white text-blue-600 font-bold py-2 px-4 rounded-lg shadow-md hover:bg-gray-100 transition-all duration-200"
+						className={({ isActive }) =>
+							`font-bold py-2 px-4 rounded-lg shadow-md transition-all duration-200 ${
+								isActive
+									? "bg-blue-700 text-white"
+									: "bg-white text-blue-600 hover:bg-gray-100"
+							}`
+						}
 					>
 						Login
-					</Link>
-					<Link
+					</NavLink>
+
+					{/* Signup Button */}
+					<NavLink
 						to="/signup"
-						className="bg-blue-700 text-white font-bold py-2 px-4 rounded-lg shadow-md hover:bg-blue-800 transition-all duration-200"
+						className={({ isActive }) =>
+							`font-bold py-2 px-4 rounded-lg shadow-md transition-all duration-200 ${
+								isActive
+									? "bg-blue-700 text-white"
+									: "bg-white text-blue-600 hover:bg-gray-100"
+							}`
+						}
 					>
 						Signup
-					</Link>
+					</NavLink>
 				</div>
 			</div>
 		</header>
