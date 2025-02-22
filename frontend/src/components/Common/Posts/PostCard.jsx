@@ -19,71 +19,67 @@ const PostCard = ({ post, currentUser, handleFollow, handleUnfollow }) => {
 	};
 
 	return (
-		<div className="bg-white dark:bg-gray-800 shadow-lg rounded-lg overflow-hidden p-4 w-full h-full flex flex-col">
+		<div className="bg-white dark:bg-gray-800 rounded-2xl shadow-md overflow-hidden p-6 transition-shadow duration-300 hover:shadow-lg h-fit">
 			{/* Author Info */}
-			<div className="flex items-center justify-between">
-				<div className="flex items-center space-x-3">
-					<img
-						src={post.authorDetails.avatar}
-						alt={post.authorDetails.fullName}
-						className="h-12 w-12 rounded-full border-2 border-gray-300"
-					/>
-					<div>
-						<h3 className="text-lg font-semibold text-gray-800 dark:text-white">
-							{post.authorDetails.fullName}
-						</h3>
-						<p className="text-md text-gray-500">
-							@{post.authorDetails.userName}
-						</p>
-						<p className="text-md font-semibold text-green-700 dark:text-green-300 uppercase">
-							{post.authorDetails.role}
-						</p>
-					</div>
+			<div className="flex items-center mb-4">
+				<img
+					src={post.authorDetails.avatar}
+					alt={post.authorDetails.fullName}
+					className="h-12 w-12 rounded-full border-2 border-gray-200 mr-4"
+				/>
+				<div>
+					<h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+						{post.authorDetails.fullName}
+					</h3>
+					<p className="text-sm text-gray-500">
+						@{post.authorDetails.userName} • {post.authorDetails.role}
+					</p>
 				</div>
-				{/* Follow Button */}
-				<button
-					onClick={toggleFollow}
-					className={`px-4 py-2 text-md font-semibold rounded-lg ${
-						isFollowing ? "bg-green-500 text-white" : "bg-blue-500 text-white"
-					}`}
-				>
-					{isFollowing ? "Following" : "Follow"}
-				</button>
+				<div className="ml-auto">
+					<button
+						onClick={toggleFollow}
+						className={`px-4 py-2 text-sm font-semibold rounded-full ${
+							isFollowing ? "bg-green-500 text-white" : "bg-blue-500 text-white"
+						} transition-colors duration-200 hover:opacity-80`}
+					>
+						{isFollowing ? "Following" : "Follow"}
+					</button>
+				</div>
 			</div>
 
-			<div className="border-t border-gray-300 my-4"></div>
-
 			{/* Post Content */}
-			<p className="mt-3 text-lg text-gray-700 dark:text-gray-300 flex-grow">
+			<p className="text-gray-800 dark:text-gray-300 mb-4 leading-relaxed">
 				{post.content}
 			</p>
 
 			{/* Post Image */}
 			{post.image && (
-				<img src={post.image} alt="Post" className="w-full mt-3 rounded-lg" />
+				<img src={post.image} alt="Post" className="w-full rounded-xl mb-4" />
 			)}
 
 			{/* Post Category */}
-			<span className="mt-3 inline-block bg-blue-100 text-blue-600 text-sm font-semibold px-4 py-2 rounded-full">
+			<span className="inline-block bg-blue-100 text-blue-600 text-xs font-semibold px-3 py-1 rounded-full mb-4">
 				#{post.category}
 			</span>
 
-			{/* Likes, Comments & Followers */}
-			<div className="flex justify-between items-center mt-4 text-lg">
-				<button className="flex items-center text-gray-600 dark:text-gray-400 hover:text-red-500">
-					<Heart className="w-6 h-6 mr-1" /> {post.likeCount}
-				</button>
-				<button className="flex items-center text-gray-600 dark:text-gray-400 hover:text-blue-500">
-					<MessageCircle className="w-6 h-6 mr-1" /> {post.commentCount}
-				</button>
-				<span className="text-md text-gray-600 dark:text-gray-400">
+			{/* Actions */}
+			<div className="flex justify-between items-center mb-4">
+				<div className="flex items-center space-x-4">
+					<button className="flex items-center text-gray-600 dark:text-gray-400 hover:text-red-500 transition-colors duration-200">
+						<Heart className="w-5 h-5 mr-2" /> {post.likeCount}
+					</button>
+					<button className="flex items-center text-gray-600 dark:text-gray-400 hover:text-blue-500 transition-colors duration-200">
+						<MessageCircle className="w-5 h-5 mr-2" /> {post.commentCount}
+					</button>
+				</div>
+				<span className="text-sm text-gray-500">
 					Followers: {followerCount}
 				</span>
 			</div>
 
 			{/* DM Button */}
-			<button className="flex items-center justify-center mt-3 px-4 py-2 bg-purple-500 text-white rounded-lg hover:bg-purple-600">
-				<Send className="w-5 h-5 mr-2" /> DM
+			<button className="w-full py-2 bg-purple-500 hover:bg-purple-600 text-white rounded-full flex items-center justify-center transition-colors duration-200">
+				<Send className="w-4 h-4 mr-2" /> DM
 			</button>
 		</div>
 	);
