@@ -1,5 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { fetchAllPosts } from "../../services/homeService.jsx";
+import {
+	currentUser,
+	handleFollow,
+	handleUnfollow,
+} from "../../services/followersService.jsx";
 import PostCard from "../../components/Common/Posts/PostCard.jsx";
 
 const Home = () => {
@@ -30,7 +35,13 @@ const Home = () => {
 			) : posts.length > 0 ? (
 				<div className="grid grid-cols-1 md:grid-cols-3 gap-10 h-full">
 					{posts.map((post) => (
-						<PostCard key={post._id} post={post} />
+						<PostCard
+							key={post._id}
+							post={post}
+							currentUser={currentUser}
+							handleFollow={handleFollow}
+							handleUnfollow={handleUnfollow}
+						/>
 					))}
 				</div>
 			) : (
