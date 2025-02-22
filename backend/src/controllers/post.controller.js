@@ -33,27 +33,93 @@ const createPost = AsyncHandler(async (req, res) => {
   res.status(201).json(new ApiResponse(201, post, "Post created successfully"));
 });
 
-// ✅ Get All Posts
+// ✅ Get All Posts with Aggregation
 const getAllPosts = AsyncHandler(async (req, res) => {
-  const posts = await Post.find()
-    .populate("author", "fullName userName avatar")
-    .sort({ createdAt: -1 });
+  const posts = await Post.aggregate([
+    {
+      $lookup: {
+        from: "users",
+        localField: "author",
+        foreignField: "_id",
+        as: "authorDetails",
+      },
+    },
+    { $unwind: "$authorDetails" },
+    {
+      $lookup: {
+        from: "comments",
+        localField: "_id",
+        foreignField: "post",
+        as: "comments",
+      },
+    },
+    {
+      $lookup: {
+        from: "subscriptions",
+        localField: "author",
+        foreignField: "channel",
+        as: "followers",
+      },
+    },
+    {
+      $addFields: {
+        likeCount: { $size: "$likes" },
+        commentCount: { $size: "$comments" },
+        followerCount: { $size: "$followers" },
+      },
+    },
+    { $sort: { createdAt: -1 } },
+  ]);
 
   res
     .status(200)
     .json(new ApiResponse(200, posts, "Posts fetched successfully"));
 });
 
-// ✅ Get Single Post by ID
+// ✅ Get Single Post by ID with Aggregation
 const getPostById = AsyncHandler(async (req, res) => {
-  const post = await Post.findById(req.params.id).populate(
-    "author",
-    "fullName userName avatar"
-  );
+  const postId = req.params.id;
+  const post = await Post.aggregate([
+    { $match: { _id: new mongoose.Types.ObjectId(postId) } },
+    {
+      $lookup: {
+        from: "users",
+        localField: "author",
+        foreignField: "_id",
+        as: "authorDetails",
+      },
+    },
+    { $unwind: "$authorDetails" },
+    {
+      $lookup: {
+        from: "comments",
+        localField: "_id",
+        foreignField: "post",
+        as: "comments",
+      },
+    },
+    {
+      $lookup: {
+        from: "subscriptions",
+        localField: "author",
+        foreignField: "channel",
+        as: "followers",
+      },
+    },
+    {
+      $addFields: {
+        likeCount: { $size: "$likes" },
+        commentCount: { $size: "$comments" },
+        followerCount: { $size: "$followers" },
+      },
+    },
+  ]);
 
-  if (!post) throw new ApiError(404, "Post not found");
+  if (!post.length) throw new ApiError(404, "Post not found");
 
-  res.status(200).json(new ApiResponse(200, post, "Post fetched successfully"));
+  res
+    .status(200)
+    .json(new ApiResponse(200, post[0], "Post fetched successfully"));
 });
 
 // ✅ Delete Post (Only Author Can Delete)

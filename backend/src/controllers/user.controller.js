@@ -2,6 +2,7 @@ import { AsyncHandler } from "../utils/AsyncHandler.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { User } from "../models/user.models.js";
+import { Subscription } from "../models/subscription.model.js";
 import mongoose, { Schema } from "mongoose";
 import {
   updateAvatar,
@@ -483,6 +484,51 @@ const getBookmarks = AsyncHandler(async (req, res) => {
     );
 });
 
+const followUser = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const subscriberId = req.user._id;
+
+    if (userId === subscriberId.toString()) {
+      return res
+        .status(400)
+        .json(new ApiResponse(400, null, "You cannot follow yourself"));
+    }
+
+    const subscription = await Subscription.create({
+      subscriber: subscriberId,
+      channel: userId,
+    });
+
+    res
+      .status(201)
+      .json(new ApiResponse(201, subscription, "Followed successfully"));
+  } catch (error) {
+    res.status(500).json(new ApiResponse(500, null, error.message));
+  }
+};
+const unfollowUser = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const subscriberId = req.user._id;
+
+    const subscription = await Subscription.findOneAndDelete({
+      subscriber: subscriberId,
+      channel: userId,
+    });
+
+    if (!subscription) {
+      return res
+        .status(404)
+        .json(new ApiResponse(404, null, "Subscription not found"));
+    }
+
+    res.status(200).json(new ApiResponse(200, null, "Unfollowed successfully"));
+  } catch (error) {
+    res.status(500).json(new ApiResponse(500, null, error.message));
+  }
+};
+
 export {
   registerUser,
   loginUser,
@@ -495,4 +541,6 @@ export {
   updateUserCoverImage,
   getUserChannelProfile,
   getBookmarks,
+  followUser,
+  unfollowUser,
 };
