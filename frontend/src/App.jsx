@@ -9,30 +9,14 @@ import Profile from "./pages/Profile";
 import { Provider } from "react-redux";
 import store from "./redux/store";
 import axios from "axios";
+import User from "./components/User/User";
+import UserContextProvider from "./context/UserContext";
 
 function App() {
-	const [posts, setPosts] = useState([]);
-
-	useEffect(() => {
-		axios
-			.get("http://localhost:5000/posts")
-			.then((response) => setPosts(response.data))
-			.catch((error) => console.error("Error fetching posts:", error));
-	}, []);
-
 	return (
-		<Provider store={store}>
-			<Router>
-				<Navbar />
-				<Routes>
-					<Route path="/" element={<Home posts={posts} />} />
-					<Route path="/category/:category" element={<Category />} />
-					<Route path="/post/:id" element={<PostDetail />} />
-					<Route path="/create" element={<CreatePost />} />
-					<Route path="/profile/:userId" element={<Profile />} />
-				</Routes>
-			</Router>
-		</Provider>
+		<UserContextProvider>
+			<h1></h1>
+		</UserContextProvider>
 	);
 }
 
