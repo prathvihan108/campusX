@@ -18,7 +18,7 @@ const Header = () => {
 	};
 
 	return (
-		<header className="fixed top-0 left-0 w-full bg-gradient-to-r from-blue-500 to-blue-600 shadow-md p-4 flex items-center z-50">
+		<header className="fixed top-0 left-0 w-full bg-gradient-to-r from-blue-500 to-blue-600 shadow-md p-4 flex items-center z-50 mb-0.5">
 			{/* Profile Picture on the Left */}
 			{isLoggedIn && (
 				<div className="flex items-center space-x-4">

@@ -11,7 +11,7 @@ const Footer = () => {
 	];
 
 	return (
-		<footer className="fixed bottom-0 left-0 w-full  dark:bg-gray-800 shadow-md p-4">
+		<footer className="fixed bottom-0 left-0 w-full  dark:bg-gray-800 shadow-md p-4 ">
 			<nav className="flex justify-around">
 				{tabs.map((tab) => (
 					<NavLink
