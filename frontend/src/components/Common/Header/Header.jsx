@@ -17,25 +17,37 @@ const Header = () => {
 	};
 
 	return (
-		<header className="bg-white dark:bg-gray-800 shadow-md p-4 flex items-center justify-between">
-			{/* Logo and App Name */}
-			<Link to="/" className="flex items-center space-x-2">
+		<header className="bg-gradient-to-r from-blue-400 to-grey-400 shadow-md p-4 flex items-center relative">
+			{/* Profile Picture on the Left */}
+			<div className="flex items-center space-x-4">
+				<img
+					src="https://images.pexels.com/photos/5234256/pexels-photo-5234256.jpeg?auto=compress&cs=tinysrgb&w=600"
+					alt="Profile"
+					className="h-17 w-17 rounded-full border-2 border-white shadow-md"
+				/>
+			</div>
+
+			{/* Centered Logo and App Name */}
+			<Link
+				to="/"
+				className="absolute left-1/2 transform -translate-x-1/2 flex items-center space-x-2"
+			>
 				<img
 					src="https://images.pexels.com/photos/30818652/pexels-photo-30818652/free-photo-of-colorful-coal-tit-perched-on-branch-in-nature.jpeg?auto=compress&cs=tinysrgb&w=600"
 					alt="App Logo"
-					className="h-8 w-8"
+					className="h-17 w-17 rounded-full border-2 border-white shadow-md"
 				/>
-				<span className="font-semibold text-xl text-blue-600 dark:text-gray-100">
-					College Connect
+				<span className="font-bold text-2xl text-white drop-shadow-md">
+					CampusX
 				</span>
 			</Link>
 
-			{/* Profile Picture (Placeholder) and Theme Toggler */}
-			<div className="flex items-center space-x-4">
+			{/* Login & Signup Buttons on the Right */}
+			<div className="ml-auto flex items-center space-x-4">
 				{/* Theme Toggler */}
 				<button
 					onClick={toggleTheme}
-					className="text-gray-600 dark:text-gray-300"
+					className="text-white hover:text-gray-200 transition-all duration-200"
 				>
 					{isDarkMode ? (
 						<svg
@@ -70,24 +82,17 @@ const Header = () => {
 					)}
 				</button>
 
-				{/* Profile Picture (Placeholder) */}
-				<img
-					src="https://images.pexels.com/photos/5234256/pexels-photo-5234256.jpeg?auto=compress&cs=tinysrgb&w=600"
-					alt="Profile"
-					className="h-10 w-10 rounded-full"
-				/>
-
-				{/* Login and Signup Buttons */}
+				{/* Login & Signup Buttons */}
 				<div className="space-x-2">
 					<Link
 						to="/login"
-						className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+						className="bg-white text-blue-600 font-bold py-2 px-4 rounded-lg shadow-md hover:bg-gray-100 transition-all duration-200"
 					>
 						Login
 					</Link>
 					<Link
 						to="/signup"
-						className="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded"
+						className="bg-blue-700 text-white font-bold py-2 px-4 rounded-lg shadow-md hover:bg-blue-800 transition-all duration-200"
 					>
 						Signup
 					</Link>

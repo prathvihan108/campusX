@@ -11,25 +11,27 @@ const Footer = () => {
 	];
 
 	return (
-		<footer className="fixed bottom-0 left-0 w-full bg-white shadow-md p-4">
+		<footer className="fixed bottom-0 left-0 w-full  dark:bg-gray-800 shadow-md p-4">
 			<nav className="flex justify-around">
 				{tabs.map((tab) => (
 					<NavLink
 						key={tab.id}
 						to={tab.path}
 						className={({ isActive }) =>
-							`flex flex-col items-center space-y-1 ${
-								isActive ? "text-blue-600" : "text-gray-500"
+							`relative flex flex-col items-center space-y-1 font-semibold text-xl w-full ${
+								isActive ? "text-blue-600" : "text-gray-400"
 							}`
 						}
 						end={tab.path === "/"}
 					>
-						<span className="text-sm">{tab.label}</span>
-						{({ isActive }) =>
-							isActive && (
-								<div className="h-1 w-full bg-blue-600 rounded-full"></div>
-							)
-						}
+						{({ isActive }) => (
+							<>
+								<span className="text-sm w-full text-center">{tab.label}</span>
+								{isActive && (
+									<div className="absolute bottom-0 left-0 w-full h-1 bg-blue-600 rounded-full"></div>
+								)}
+							</>
+						)}
 					</NavLink>
 				))}
 			</nav>
