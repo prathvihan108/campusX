@@ -1,24 +1,13 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Link, NavLink } from "react-router-dom";
+import useTheme from "../../../context/Theme.jsx";
 
 const Header = () => {
-	const [isDarkMode, setIsDarkMode] = useState(false);
 	const [isLoggedIn, setIsLoggedIn] = useState(false);
-
-	useEffect(() => {
-		if (isDarkMode) {
-			document.documentElement.classList.add("dark");
-		} else {
-			document.documentElement.classList.remove("dark");
-		}
-	}, [isDarkMode]);
-
-	const toggleTheme = () => {
-		setIsDarkMode(!isDarkMode);
-	};
+	const { themeMode, toggleTheme } = useTheme();
 
 	return (
-		<header className="fixed top-0 left-0 w-full bg-gradient-to-r from-blue-500 to-blue-600 shadow-md p-4 flex flex-wrap justify-between items-center z-50">
+		<header className="fixed top-0 left-0 w-full bg-white dark:bg-gray-800 shadow-md p-4 flex flex-wrap justify-between items-center z-50">
 			{/* Profile Picture on the Left */}
 			{isLoggedIn && (
 				<div className="flex items-center space-x-4">
@@ -60,7 +49,7 @@ const Header = () => {
 					onClick={toggleTheme}
 					className="text-white hover:text-gray-200 transition-all duration-200"
 				>
-					{isDarkMode ? (
+					{themeMode === "dark" ? (
 						<svg
 							xmlns="http://www.w3.org/2000/svg"
 							className="h-6 w-6"

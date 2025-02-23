@@ -1,16 +1,14 @@
-import React from "react";
+import { ThemeProvider } from "./context/Theme.jsx";
+import { Outlet } from "react-router-dom";
 import Header from "./components/Common/Header/Header.jsx";
 import Footer from "./components/Common/Footer/Footer.jsx";
-import { Outlet } from "react-router-dom";
 
-function Layout() {
+export default function Layout() {
 	return (
-		<>
+		<ThemeProvider>
 			<Header />
 			<Outlet />
 			<Footer />
-		</>
+		</ThemeProvider>
 	);
 }
-
-export default Layout;

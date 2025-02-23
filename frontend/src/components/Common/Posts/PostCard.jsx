@@ -19,19 +19,19 @@ const PostCard = ({ post, currentUser, handleFollow, handleUnfollow }) => {
 	};
 
 	return (
-		<div className="bg-white dark:bg-gray-800 rounded-2xl shadow-md overflow-hidden p-6 transition-shadow duration-300 hover:shadow-lg h-fit">
+		<div className="bg-white dark:bg-gray-900 rounded-2xl shadow-md overflow-hidden p-6 transition-shadow duration-300 hover:shadow-lg h-fit">
 			{/* Author Info */}
 			<div className="flex items-center mb-4">
 				<img
 					src={post.authorDetails.avatar}
 					alt={post.authorDetails.fullName}
-					className="h-12 w-12 rounded-full border-2 border-gray-200 mr-4"
+					className="h-12 w-12 rounded-full border-2 border-gray-300 dark:border-gray-700 mr-4"
 				/>
 				<div>
 					<h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
 						{post.authorDetails.fullName}
 					</h3>
-					<p className="text-sm text-gray-500">
+					<p className="text-sm text-gray-600 dark:text-gray-400">
 						@{post.authorDetails.userName} • {post.authorDetails.role}
 					</p>
 				</div>
@@ -39,8 +39,10 @@ const PostCard = ({ post, currentUser, handleFollow, handleUnfollow }) => {
 					<button
 						onClick={toggleFollow}
 						className={`px-4 py-2 text-sm font-semibold rounded-full ${
-							isFollowing ? "bg-green-500 text-white" : "bg-blue-500 text-white"
-						} transition-colors duration-200 hover:opacity-80`}
+							isFollowing
+								? "bg-green-500 hover:bg-green-600 text-white"
+								: "bg-blue-500 hover:bg-blue-600 text-white"
+						} transition-colors duration-200`}
 					>
 						{isFollowing ? "Following" : "Follow"}
 					</button>
@@ -54,11 +56,15 @@ const PostCard = ({ post, currentUser, handleFollow, handleUnfollow }) => {
 
 			{/* Post Image */}
 			{post.image && (
-				<img src={post.image} alt="Post" className="w-full rounded-xl mb-4" />
+				<img
+					src={post.image}
+					alt="Post"
+					className="w-full rounded-xl mb-4 border border-gray-200 dark:border-gray-700"
+				/>
 			)}
 
 			{/* Post Category */}
-			<span className="inline-block bg-blue-100 text-blue-600 text-xs font-semibold px-3 py-1 rounded-full mb-4">
+			<span className="inline-block bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-300 text-xs font-semibold px-3 py-1 rounded-full mb-4">
 				#{post.category}
 			</span>
 
@@ -72,7 +78,7 @@ const PostCard = ({ post, currentUser, handleFollow, handleUnfollow }) => {
 						<MessageCircle className="w-5 h-5 mr-2" /> {post.commentCount}
 					</button>
 				</div>
-				<span className="text-sm text-gray-500">
+				<span className="text-sm text-gray-600 dark:text-gray-400">
 					Followers: {followerCount}
 				</span>
 			</div>
