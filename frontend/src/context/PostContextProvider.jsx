@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import PostContext from "./PostContext";
-import { createContext, useContext } from "react";
 
 const apiUrl = import.meta.env.VITE_API_URL;
 
