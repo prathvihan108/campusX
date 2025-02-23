@@ -7,7 +7,7 @@ const Header = () => {
 	const { themeMode, toggleTheme } = useTheme();
 
 	return (
-		<header className="fixed top-0 left-0 w-full bg-white dark:bg-gray-800 shadow-md p-4 flex flex-wrap justify-between items-center z-50">
+		<header className="fixed top-0 left-0 w-full bg-white dark:bg-gray-800 shadow-md p-4 flex flex-wrap justify-between items-center z-50 ">
 			{/* Profile Picture on the Left */}
 			{isLoggedIn && (
 				<div className="flex items-center space-x-4">
@@ -28,10 +28,7 @@ const Header = () => {
 			)}
 
 			{/* Centered Logo and App Name */}
-			<Link
-				to="/"
-				className="absolute left-1/2 transform -translate-x-1/2 flex items-center space-x-2"
-			>
+			<Link to="/" className="">
 				<img
 					src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTN37NaJKmAZha5MdD5fZcYbT4Jf9Mvg22T0cC_i_bX70PJwJ8Ojo25jjL-GB-QJDsJ&usqp=CAU"
 					alt="App Logo"
