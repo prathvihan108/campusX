@@ -1,10 +1,9 @@
 import axios from "axios";
 
-const API_URL = "http://localhost:8007/api/v1/posts/";
-
+const apiUrl = import.meta.env.VITE_API_URL;
 export const fetchAllPosts = async () => {
 	try {
-		const response = await axios.get(API_URL);
+		const response = await axios.get(apiUrl + "posts/");
 		return response.data;
 	} catch (error) {
 		console.error("Error fetching posts:", error);
