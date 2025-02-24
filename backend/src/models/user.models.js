@@ -27,7 +27,17 @@ const userSchema = new Schema(
     },
     role: {
       type: String,
-      enum: ["student", "faculty", "cell"],
+      enum: ["Student", "Faculty", "Cell"],
+      required: true,
+    },
+    year: {
+      type: String,
+      enum: ["First-Year", "Second-Year", "PreFinal-Year", "Final-Year"],
+      required: true,
+    },
+    department: {
+      type: String,
+      enum: ["CSE", "ISE", "ECE", "EEE", "MBA", "AIML", "AIDS", "CIVIL"],
       required: true,
     },
     avatar: {

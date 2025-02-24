@@ -37,11 +37,12 @@ const registerUser = AsyncHandler(async (req, res) => {
   if (!req.files || Object.keys(req.files).length === 0) {
     throw new ApiError(400, "No files uploaded");
   }
-  const { fullName, email, userName, password, role, bio } = req.body;
+  const { fullName, email, userName, password, role, year, department, bio } =
+    req.body;
   console.log(email);
 
   if (
-    [fullName, email, userName, password, role, bio].some(
+    [fullName, email, userName, password, role, year, department, bio].some(
       (field) => (field?.trim?.() ?? "") === ""
     )
   ) {
@@ -49,9 +50,33 @@ const registerUser = AsyncHandler(async (req, res) => {
   }
 
   // Ensure role is valid
-  const validRoles = ["student", "faculty", "cell"];
+  const validRoles = ["Student", "Faculty", "Cell"];
   if (!validRoles.includes(role)) {
     throw new ApiError(400, "Invalid role");
+  }
+
+  const validYears = [
+    "First-Year",
+    "Second-Year",
+    "PreFinal-Year",
+    "Final-Year",
+  ];
+  if (!validYears.includes(year)) {
+    throw new ApiError(400, "Invalid Year");
+  }
+
+  const validDepartments = [
+    "CSE",
+    "ISE",
+    "ECE",
+    "EEE",
+    "MBA",
+    "AIML",
+    "AIDS",
+    "CIVIL",
+  ];
+  if (!validDepartments.includes(department)) {
+    throw new ApiError(400, "Invalid department");
   }
 
   const existingUser = await User.findOne({ $or: [{ email }, { userName }] });
@@ -77,6 +102,7 @@ const registerUser = AsyncHandler(async (req, res) => {
   if (!avatar) {
     throw new ApiError(400, "Avatar upload to Cloudinary failed");
   }
+  console.log("Role:", role, "Year:", year);
 
   const user = await User.create({
     fullName: fullName.trim(),
@@ -86,6 +112,8 @@ const registerUser = AsyncHandler(async (req, res) => {
     password,
     userName: userName.toLowerCase().trim(),
     role,
+    year,
+    department,
     bio: bio?.trim() || "",
   });
 
