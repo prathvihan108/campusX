@@ -12,12 +12,12 @@ export default function HashtagSelector() {
 	const [selectedTag, setSelectedTag] = useState("General");
 
 	return (
-		<div className="flex flex-col items-center p-4 space-y-4">
-			<div className="flex space-x-2">
+		<div className="flex flex-col items-center p-3 sm:p-4 space-y-3 sm:space-y-4 w-full max-w-xs sm:max-w-md lg:max-w-lg mx-auto">
+			<div className="flex flex-wrap justify-center gap-2 sm:gap-3">
 				{tags.map((tag) => (
 					<button
 						key={tag}
-						className={`px-4 py-2 rounded-lg border ${
+						className={`px-3 py-1 sm:px-4 sm:py-2 rounded-lg border text-sm sm:text-base ${
 							selectedTag === tag ? "bg-blue-500 text-white" : "bg-gray-200"
 						}`}
 						onClick={() => setSelectedTag(tag)}
@@ -25,9 +25,6 @@ export default function HashtagSelector() {
 						#{tag}
 					</button>
 				))}
-			</div>
-			<div className="p-4 border rounded-lg w-64 text-center text-lg font-semibold bg-gray-100">
-				{selectedTag}
 			</div>
 		</div>
 	);

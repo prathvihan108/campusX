@@ -9,7 +9,7 @@ import Noties from "./pages/Noties/Noties.jsx";
 import Bookmarks from "./pages/Bookmarks/Bookmarks.jsx";
 
 import Login from "./components/Auth/Login/Login.jsx";
-import SignUp from "./components/Auth/SignUp/SignUp.jsx";
+
 import User from "./components/User/UserProfile/UserProfile.jsx";
 
 import {
@@ -30,7 +30,7 @@ const router = createBrowserRouter(
 			<Route path="notifications" element={<Noties />} />
 
 			<Route path="login" element={<Login />} />
-			<Route path="signup" element={<SignUp />} />
+			{/* <Route path="signup" element={<Signup />} /> */}
 		</Route>
 	)
 );

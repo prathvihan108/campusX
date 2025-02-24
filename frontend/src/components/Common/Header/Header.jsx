@@ -2,8 +2,8 @@ import React, { useState } from "react";
 import { Link, NavLink } from "react-router-dom";
 
 // import { LogIn } from "lucide-react";
-import SignUp from "../Button/SignUp.jsx";
-import LogIn from "../Button/LogIn.jsx";
+import SignupButton from "../Button/SignupButton.jsx";
+import LoginButton from "../Button/LoginButton.jsx";
 import ThemeToggler from "../Button/ThemeToggler.jsx";
 
 const Header = () => {
@@ -49,9 +49,9 @@ const Header = () => {
 
 				{/* Login & Signup Buttons */}
 
-				<LogIn />
+				<LoginButton />
 
-				<SignUp />
+				<SignupButton />
 			</div>
 		</header>
 	);
