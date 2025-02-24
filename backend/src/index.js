@@ -5,13 +5,13 @@ import os from "os";
 dotenv.config({ path: "../.env" });
 
 console.log(`PORT from env: ${process.env.PORT}`);
-const port = process.env.PORT || 8003;
+const port = 8003;
 console.log(`Using port: ${port}`);
 
 connectDB()
   .then(() => {
     const server = app.listen(port, "0.0.0.0", () => {
-      console.log(`🚀 Server running on http://${getLocalIP()}:${port}`);
+      console.log(`🚀 Server running on http://localhost:${port}`);
     });
 
     function getLocalIP() {

@@ -1,5 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import PostContext from "../../context/PostContext.js";
+import HashtagSelector from "../../components/Common/HashTags/HashtagSelector.jsx";
 import {
 	currentUser,
 	handleFollow,
@@ -22,9 +23,7 @@ const Home = () => {
 
 	return (
 		<div className="p-4 my-[6.5rem]">
-			<div className="flex justify-center">
-				<h1 className="text-2xl font-bold">Latest Posts</h1>
-			</div>
+			<HashtagSelector />
 
 			{loading ? (
 				<p>Loading...</p>

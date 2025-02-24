@@ -4,10 +4,9 @@ import { NavLink } from "react-router-dom";
 const Footer = () => {
 	const tabs = [
 		{ id: "home", label: "Home", path: "/" },
-		{ id: "placements", label: "Placements", path: "/placements" },
-		{ id: "exams", label: "Exams", path: "/exams" },
-		{ id: "hackathons", label: "Hackathons", path: "/hackathons" },
-		{ id: "lostandfound", label: "Lost & Found", path: "/lostandfound" },
+		{ id: "chatbot", label: "ChatBot", path: "/chatbot" },
+		{ id: "bookmarks", label: "Bookmarks", path: "/bookmarks" },
+		{ id: "notifications", label: "Notifications", path: "/notifications" },
 	];
 
 	return (
