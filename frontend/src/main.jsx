@@ -29,7 +29,6 @@ const router = createBrowserRouter(
 			<Route path="bookmarks" element={<Bookmarks />} />
 			<Route path="notifications" element={<Noties />} />
 
-			<Route path="login" element={<Login />} />
 			{/* <Route path="signup" element={<Signup />} /> */}
 		</Route>
 	)

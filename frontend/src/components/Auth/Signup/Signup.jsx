@@ -1,8 +1,10 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Eye, EyeOff } from "lucide-react";
+import { handleSignUp } from "../../../services/authServices.jsx";
 
 const Signup = ({ onClose }) => {
+	const navigate = useNavigate();
 	const [formData, setFormData] = useState({
 		userName: "",
 		email: "",
@@ -13,12 +15,17 @@ const Signup = ({ onClose }) => {
 		bio: "",
 		password: "",
 		confirmPassword: "",
+		avatar: null, // Avatar file
 	});
 	const [showPassword, setShowPassword] = useState(false);
 	const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
 	const handleChange = (e) => {
-		setFormData({ ...formData, [e.target.name]: e.target.value });
+		if (e.target.name === "avatar") {
+			setFormData({ ...formData, avatar: e.target.files[0] });
+		} else {
+			setFormData({ ...formData, [e.target.name]: e.target.value });
+		}
 	};
 
 	const handleSubmit = (e) => {
@@ -27,7 +34,20 @@ const Signup = ({ onClose }) => {
 			alert("Passwords do not match!");
 			return;
 		}
-		console.log(formData);
+
+		// Create FormData object
+		const data = new FormData();
+		Object.entries(formData).forEach(([key, value]) => {
+			data.append(key, value);
+		});
+
+		// Debugging: Check FormData contents
+		for (let pair of data.entries()) {
+			console.log(pair[0], pair[1]);
+		}
+
+		// Call API function
+		handleSignUp(data, navigate, onClose);
 	};
 
 	return (
@@ -122,6 +142,15 @@ const Signup = ({ onClose }) => {
 						onChange={handleChange}
 						className="input col-span-2"
 					></textarea>
+
+					{/* Avatar Upload */}
+					<input
+						type="file"
+						name="avatar"
+						accept="image/*"
+						onChange={handleChange}
+						className="input col-span-2"
+					/>
 
 					<div className="relative">
 						<input

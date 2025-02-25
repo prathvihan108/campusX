@@ -1,11 +1,12 @@
 import React, { useState } from "react";
-import { Heart, MessageCircle, Send } from "lucide-react";
+import { Heart, MessageCircle, Send, Bookmark } from "lucide-react";
 
 const PostCard = ({ post, currentUser, handleFollow, handleUnfollow }) => {
 	const [isFollowing, setIsFollowing] = useState(
 		post.followers.some((follower) => follower === currentUser._id)
 	);
 	const [followerCount, setFollowerCount] = useState(post.followerCount);
+	const [isBookmarked, setIsBookmarked] = useState(false);
 
 	const toggleFollow = async () => {
 		if (isFollowing) {
@@ -16,6 +17,10 @@ const PostCard = ({ post, currentUser, handleFollow, handleUnfollow }) => {
 			setFollowerCount((prev) => prev + 1);
 		}
 		setIsFollowing(!isFollowing);
+	};
+
+	const toggleBookmark = () => {
+		setIsBookmarked(!isBookmarked);
 	};
 
 	return (
@@ -76,6 +81,17 @@ const PostCard = ({ post, currentUser, handleFollow, handleUnfollow }) => {
 					</button>
 					<button className="flex items-center text-gray-600 dark:text-gray-400 hover:text-blue-500 transition-colors duration-200">
 						<MessageCircle className="w-5 h-5 mr-2" /> {post.commentCount}
+					</button>
+					<button
+						className={`flex items-center transition-colors duration-200 ${
+							isBookmarked
+								? "text-yellow-500"
+								: "text-gray-600 dark:text-gray-400 hover:text-yellow-500"
+						}`}
+						onClick={toggleBookmark}
+					>
+						<Bookmark className="w-5 h-5 mr-2" />{" "}
+						{isBookmarked ? "Saved" : "Save"}
 					</button>
 				</div>
 				<span className="text-sm text-gray-600 dark:text-gray-400">
