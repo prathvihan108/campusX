@@ -13,16 +13,17 @@ export const handleSignUp = async (formData, navigate, onClose) => {
 		});
 
 		// Debugging: Log the response
-		console.log("Signup Response:", response.data);
+		console.log("Signup Response received:", response.data);
+		console.log("Created user", response?.data?.data?.createdUser);
 
 		if (response?.data?.data?.createdUser) {
 			toast.success("Signup successful! Please log in.", { autoClose: 3000 });
+			console.log("Signup successful! Please log in.");
 
 			// Close the Signup Modal if onClose is provided
 			if (onClose) onClose();
 
-			// Navigate to login page
-			navigate("/login");
+			toast.success("Signup successful! Please log in.", { autoClose: false });
 		}
 	} catch (error) {
 		console.error("Signup Error:", error.response?.data);
