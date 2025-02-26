@@ -15,7 +15,6 @@ const AuthProvider = ({ children }) => {
 	const [showSignup, setShowSignup] = useState(false);
 
 	useEffect(() => {
-		console.log("signup model state initil", showSignup);
 		const storedUser = JSON.parse(localStorage.getItem("user"));
 		if (storedUser) setUser(storedUser);
 	}, []);
@@ -40,13 +39,6 @@ const AuthProvider = ({ children }) => {
 				toast.success("Signup successful! Please log in.", { autoClose: 3000 });
 				console.log("Signup successful! Please log in.");
 
-				// // Store user in localStorage
-				// localStorage.setItem("user", JSON.stringify(userData));
-
-				// Update user state in AuthContext
-				// setUser(userData);
-
-				// Close the Signup modal and show Login modal
 				setShowSignup(false);
 				setShowLogin(true);
 			}
@@ -64,21 +56,87 @@ const AuthProvider = ({ children }) => {
 		}
 	};
 
+	const handleLogin = async (formData, navigate) => {
+		try {
+			const response = await axios.post(`${apiUrl}/users/login/`, formData, {
+				headers: { "Content-Type": "multipart/form-data" },
+				withCredentials: true, // 🔹 Ensures cookies are sent & received
+			});
+
+			// Debugging: Log the response
+			console.log("login Response received:", response.data);
+			console.log("Created user", response?.data?.data?.user);
+
+			if (response?.data?.data?.user) {
+				const userData = response?.data.data?.user;
+				console.log("userData", userData);
+
+				// Show success toast
+				toast.success("Login successful! Redirecting.", { autoClose: 3000 });
+				console.log("Login successful.");
+
+				// // Store user in localStorage
+				localStorage.setItem("user", JSON.stringify(userData));
+
+				// Update user state in AuthContext
+				setUser(userData);
+
+				// Close the Signup modal and show Login modal
+
+				setShowLogin(false);
+			}
+		} catch (error) {
+			console.error("Login Error:", error.response?.data);
+			// Check for status code 409 (User already exists)
+			console.log("Error response message:", error.response?.data);
+			if (error.response?.status === 404) {
+				toast.error(error.response?.data?.message, { autoClose: 3000 });
+			} else if (error.response?.status === 401) {
+				toast.error(error.response?.data?.message, { autoClose: 3000 });
+			} else {
+				toast.error(error.response?.data?.message || "Login failed!", {
+					autoClose: 3000,
+				});
+			}
+		}
+	};
+
+	// const handleLogout = () => {
+	// 	// Step 1: Remove user data from localStorage
+	// 	localStorage.removeItem("user");
+
+	// 	// Step 2: Reset authentication state
+	// 	setUser(null);
+
+	// 	// Step 3: Redirect to login/signup page (if using React Router)
+	// 	navigate("/login");
+
+	// 	// Optional: Show a success message
+	// 	toast.success("Logged out successfully!", { autoClose: 2000 });
+
+	// 	console.log("User logged out.");
+	// };
+
 	return (
 		<AuthContext.Provider
 			value={{
 				user,
+				setUser,
 				handleSignUp,
+				handleLogin,
+				handleLogout,
 				showLogin,
 				setShowLogin,
 				showSignup,
-
 				setShowSignup,
+				showLogout,
+				setShowLogout,
 			}}
 		>
 			{children}
 		</AuthContext.Provider>
 	);
 };
+
 export default AuthProvider;
 export const useAuth = () => useContext(AuthContext);
