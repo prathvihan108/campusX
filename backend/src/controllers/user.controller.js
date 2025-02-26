@@ -213,7 +213,11 @@ const logoutUser = AsyncHandler(async (req, res) => {
 
   console.log("Refresh token after logout", console.log(user.refreshToken));
 
-  const options = { httpOnly: false, secure: false };
+  const options = {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",
+  };
   return res
     .status(200)
     .clearCookie("accessToken", options)

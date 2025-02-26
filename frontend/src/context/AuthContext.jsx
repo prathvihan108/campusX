@@ -105,36 +105,49 @@ const AuthProvider = ({ children }) => {
 	const handleLogout = async () => {
 		// Step 1: Remove user data from localStorage
 
-		// try {
-		console.log("user before removal", localStorage.getItem("user"));
-		localStorage.removeItem("user");
-		console.log("user after removal", localStorage.getItem("user"));
-		// const response = await axios.post(`${apiUrl}/users/logout/`, {
-		// 	headers: { "Content-Type": "multipart/form-data" },
-		// 	withCredentials: true,
-		// });
-		// console.log(response.status);
-		// if (response?.status == 200) {
-		// console.log("response", response);
-		setUser(null);
+		// localStorage.removeItem("user");
+		// console.log("user after removal", localStorage.getItem("user"));
+		// setUser(null);
 
-		toast.success("Logged out successfully!", { autoClose: 2000 });
+		// toast.success("Logged out successfully!", { autoClose: 2000 });
 
-		console.log("User logged out.");
-		// }
-		// } catch (error) {
-		// 	console.log("error", error);
-		// 	console.log("error code", error.statusCode);
-		// 	if (error.statusCode === 401) {
-		// 		toast.error(error.message, {
-		// 			autoClose: 3000,
-		// 		});
-		// 	}
-		// 	console.log("Error logging out:", error.message);
-		// 	toast.error(error.response?.data?.message || "Logout failed!", {
-		// 		autoClose: 3000,
-		// 	});
-		// }
+		// console.log("User logged out.");
+
+		try {
+			console.log("user before removal", localStorage.getItem("user"));
+			localStorage.removeItem("user");
+			console.log("user after removal", localStorage.getItem("user"));
+			const response = await axios.post(
+				`${apiUrl}/users/logout/`,
+				{}, // ✅ Empty object as data
+				{
+					headers: { "Content-Type": "multipart/form-data" }, //
+					withCredentials: true,
+				}
+			);
+
+			console.log(response.status);
+			if (response?.status == 200) {
+				console.log("response", response);
+				setUser(null);
+
+				toast.success("Logged out successfully!", { autoClose: 2000 });
+
+				console.log("User logged out.");
+			}
+		} catch (error) {
+			console.log("error", error);
+			console.log("error code", error.statusCode);
+			if (error.statusCode === 401) {
+				toast.error(error.message, {
+					autoClose: 3000,
+				});
+			}
+			console.log("Error logging out:", error.message);
+			toast.error(error.response?.data?.message || "Logout failed!", {
+				autoClose: 3000,
+			});
+		}
 	};
 
 	return (
