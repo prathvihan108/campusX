@@ -1,9 +1,10 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Eye, EyeOff } from "lucide-react";
-import { handleSignUp } from "../../../services/authServices.jsx";
+import { useAuth } from "../../../context/AuthContext.jsx";
 
-const Signup = ({ onClose }) => {
+const Signup = () => {
+	const { handleSignUp, setShowSignup } = useAuth();
 	const navigate = useNavigate();
 	const [formData, setFormData] = useState({
 		userName: "",
@@ -47,18 +48,19 @@ const Signup = ({ onClose }) => {
 		}
 
 		// Call API function
-		handleSignUp(data, navigate, onClose);
+		handleSignUp(data, navigate);
 	};
 
 	return (
 		<div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-30 backdrop-blur-md z-50">
 			<div className="bg-white p-8 shadow-lg rounded-lg w-[50rem] max-w-full relative">
 				<button
-					onClick={onClose}
+					onClick={() => setShowSignup(false)}
 					className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
 				>
 					✖
 				</button>
+
 				<h2 className="text-2xl font-semibold text-center text-gray-700 mb-6">
 					Create an Account
 				</h2>

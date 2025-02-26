@@ -9,7 +9,7 @@ export const handleSignUp = async (formData, navigate, onClose) => {
 	try {
 		// FormData already constructed in Signup.jsx
 		const response = await axios.post(`${apiUrl}/users/register/`, formData, {
-			headers: { "Content-Type": "multipart/form-data" }, // Required for file uploads
+			headers: { "Content-Type": "multipart/form-data" },
 		});
 
 		// Debugging: Log the response
@@ -21,9 +21,9 @@ export const handleSignUp = async (formData, navigate, onClose) => {
 			console.log("Signup successful! Please log in.");
 
 			// Close the Signup Modal if onClose is provided
-			if (onClose) onClose();
-
-			toast.success("Signup successful! Please log in.", { autoClose: false });
+			// if (onClose) onClose();
+			setShowSignup(false);
+			setShowLogin(true);
 		}
 	} catch (error) {
 		console.error("Signup Error:", error.response?.data);

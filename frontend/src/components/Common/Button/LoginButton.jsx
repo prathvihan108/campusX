@@ -2,9 +2,11 @@ import React from "react";
 
 import { useState } from "react";
 import Login from "../../Auth/Login/Login.jsx";
+import { useAuth } from "../../../context/AuthContext.jsx";
 
 function LoginButton() {
-	const [showLogin, setShowLogin] = useState(false);
+	// const [showLogin, setShowLogin] = useState(false);
+	const { showLogin, setShowLogin } = useAuth();
 	return (
 		<div>
 			<div className="relative">
@@ -16,7 +18,7 @@ function LoginButton() {
 				</button>
 
 				{/* Check if this logs when the button is clicked */}
-				{showLogin && <Login onClose={() => setShowLogin(false)} />}
+				{showLogin && <Login />}
 			</div>
 		</div>
 	);

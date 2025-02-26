@@ -1,18 +1,20 @@
 import React, { useState } from "react";
 import { Link, NavLink } from "react-router-dom";
 
-// import { LogIn } from "lucide-react";
+import { useAuth } from "../../../context/AuthContext.jsx";
+
 import SignupButton from "../Button/SignupButton.jsx";
 import LoginButton from "../Button/LoginButton.jsx";
+import LogoutButton from "../Button/LogoutButton.jsx";
 import ThemeToggler from "../Button/ThemeToggler.jsx";
 
 const Header = () => {
 	const [isLoggedIn, setIsLoggedIn] = useState(false);
-
+	const { user } = useAuth();
 	return (
 		<header className="fixed top-0 left-0 w-full bg-white dark:bg-gray-800 shadow-md p-4 flex flex-row flex-wrap justify-between items-center z-50 ">
 			{/* Profile Picture on the Left */}
-			{isLoggedIn && (
+			{user && (
 				<div className="flex items-center space-x-4">
 					<img
 						src="https://images.pexels.com/photos/5234256/pexels-photo-5234256.jpeg?auto=compress&cs=tinysrgb&w=600"
@@ -41,18 +43,37 @@ const Header = () => {
 					CampusX
 				</span>
 			</Link>
+			{
+				<div className="flex items-center gap-4">
+					<ThemeToggler />
 
-			{/* Login & Signup Buttons on the Right */}
-			<div className="ml-auto flex items-center space-x-4">
-				{/* Theme Toggler */}
-				<ThemeToggler />
+					{user ? (
+						// If user is logged in, show Logout button
+						<LogoutButton />
+					) : (
+						// If user is not logged in, show Login & Signup buttons
+						<>
+							<LoginButton />
+							<SignupButton />
+						</>
+					)}
+				</div>
+			}
 
-				{/* Login & Signup Buttons */}
-
-				<LoginButton />
-
-				<SignupButton />
-			</div>
+			{/* {!user ? (
+				<>
+					<SignupButton />
+				</>
+			) : (
+				<>
+					<button
+						onClick={logout}
+						className="px-4 py-2 bg-red-500 text-white rounded"
+					>
+						Logout
+					</button>
+				</>
+			)} */}
 		</header>
 	);
 };

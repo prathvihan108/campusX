@@ -1,11 +1,13 @@
 import React from "react";
 
-import { useState } from "react";
+// import { useState } from "react";
 import Signup from "../../Auth/Signup/Signup.jsx";
+import { useAuth } from "../../../context/AuthContext.jsx";
 function SignupButton() {
-	const [showSignup, setShowSignup] = useState(false);
+	// const [showSignup, setShowSignup] = useState(false);
+	const { showSignup, setShowSignup } = useAuth();
 
-	console.log("Signup Modal State:", showSignup); // Debugging log
+	console.log("Signup Modal State:", showSignup);
 
 	return (
 		<div>
@@ -17,8 +19,7 @@ function SignupButton() {
 					Signup
 				</button>
 
-				{/* Check if this logs when the button is clicked */}
-				{showSignup && <Signup onClose={() => setShowSignup(false)} />}
+				{showSignup && <Signup />}
 			</div>
 		</div>
 	);
