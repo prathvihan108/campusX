@@ -175,7 +175,11 @@ const loginUser = AsyncHandler(async (req, res) => {
     "-password -refreshToken"
   );
   // syntax:res.cookie(name, value, options);
-  const options = { httpOnly: true, secure: true };
+  const options = {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",
+  };
   return res
     .status(200)
     .cookie("accessToken", accessToken, options)
@@ -195,6 +199,8 @@ const loginUser = AsyncHandler(async (req, res) => {
 
 const logoutUser = AsyncHandler(async (req, res) => {
   // req.user._id;
+  // console.log("Refresh token before logout", console.log(user.refreshToken));
+  console.log("user id is", req.user._id);
   const user = await User.findByIdAndUpdate(
     req.user._id,
     {
@@ -207,12 +213,12 @@ const logoutUser = AsyncHandler(async (req, res) => {
 
   console.log("Refresh token after logout", console.log(user.refreshToken));
 
-  const options = { httpOnly: true, secure: true };
+  const options = { httpOnly: false, secure: false };
   return res
     .status(200)
     .clearCookie("accessToken", options)
     .clearCookie("refreshToken", options)
-    .json(new ApiResponse(200, {}, "user logged out"));
+    .json(new ApiResponse(200, user, "user logged out"));
 });
 
 const refreshAccessToken = AsyncHandler(async (req, res) => {

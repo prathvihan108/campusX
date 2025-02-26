@@ -5,13 +5,16 @@ import { User } from "../models/user.models.js";
 
 export const varifyJWT = AsyncHandler(async (req, res, next) => {
   try {
+    console.log("access token", req.cookies?.accessToken);
     const token =
       req.cookies?.accessToken ||
       req.header("Authorisation")?.replace("Bearer ", "");
 
+    console.log("Token:", token);
+
     if (!token) {
       throw new ApiError(401, "Unautorised request");
-    } //this allowes the fron end to request for new access token using his refresh token.
+    }
 
     const decodedToken = await jwt.verify(
       token,
