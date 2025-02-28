@@ -150,30 +150,35 @@ const AuthProvider = ({ children }) => {
 		}
 	};
 
-	// const axiosInstance = axios.create({
-	// 	baseURL: `${apiUrl}`,
-	// 	withCredentials: true,
-	// });
+	const axiosInstance = axios.create({
+		baseURL: `${apiUrl}`,
+		withCredentials: true,
+	});
 
-	// const fetchUser = async () => {
-	// 	try {
-	// 		const res = await axiosInstance.get("/users/current-user");
-	// 		console.log("fetchUser response", res.data?.data?.user);
-	// 		setUser(res.data?.data?.user);
-	// 	} catch (err) {
-	// 		if (err.response?.status === 403) {
-	// 			console.log("Access Token Expired, Trying to refresh...");
-	// 			try {
-	// 				await axiosInstance.post("/auth/refresh-token"); // 🔥 Refresh token request
-	// 				return fetchUser(); // 🔥 Retry original request
-	// 			} catch (refreshErr) {
-	// 				toast.error("Session expired, Please login again!");
-	// 				window.location.href = "/login"; // Redirect to login
-	// 			}
-	// 		}
-	// 		throw err;
-	// 	}
-	// };
+	const fetchUser = async () => {
+		try {
+			const res = await axiosInstance.get("/users/current-user");
+			console.log("fetchUser response", res.data?.data?.user);
+			setUser(res.data?.data?.user);
+		} catch (err) {
+			if (err.response?.status === 401) {
+				console.log("User not logged in");
+				setUser(null);
+			}
+			if (err.response?.status === 403) {
+				console.log("Access Token Expired, Trying to refresh...");
+				try {
+					await axiosInstance.post("/users/refresh-token"); // 🔥 Refresh token request
+					return fetchUser(); // 🔥 Retry original request
+				} catch (refreshErr) {
+					toast.error("Session expired, Please login again!");
+
+					// window.location.href = "/login"; // Redirect to login
+				}
+			}
+			throw err;
+		}
+	};
 
 	return (
 		<AuthContext.Provider
@@ -189,6 +194,7 @@ const AuthProvider = ({ children }) => {
 				setShowSignup,
 				showLogout,
 				setShowLogout,
+				fetchUser,
 			}}
 		>
 			{children}

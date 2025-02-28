@@ -8,18 +8,16 @@ export const varifyJWT = AsyncHandler(async (req, res, next) => {
     console.log("access token", req.cookies?.accessToken);
     const token =
       req.cookies?.accessToken ||
-      req.header("Authorisation")?.replace("Bearer ", "");
+      req.header("Authorization")?.replace("Bearer ", "");
 
     console.log("Token:", token);
 
     if (!token) {
-      throw new ApiError(401, "Unautorised request");
+      console.log("No token found");
+      throw new ApiError(401, "Unauthorised request");
     }
 
-    const decodedToken = await jwt.verify(
-      token,
-      process.env.ACCESS_TOKEN_SECRET
-    );
+    const decodedToken = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
 
     const user = await User.findById(decodedToken._id).select(
       "-password -refreshToken"
@@ -32,7 +30,7 @@ export const varifyJWT = AsyncHandler(async (req, res, next) => {
     req.user = user;
     next();
   } catch (error) {
-    console.log("error,may be token expired", error);
-    return res.status(410).json(new ApiResponse(410, null, "token expired"));
+    // console.log("error,may be token expired", error);
+    throw new ApiError(401, "Token expired");
   }
 });

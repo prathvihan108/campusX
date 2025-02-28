@@ -7,14 +7,17 @@ import {
 	handleUnfollow,
 } from "../../services/followersService.jsx";
 import PostCard from "../../components/Common/Posts/PostCard.jsx";
+import { useAuth } from "../../context/AuthContext.jsx";
 
 const Home = () => {
 	const { posts } = useContext(PostContext); // Get posts
 	console.log("Posts from home:", posts);
 	const [loading, setLoading] = useState(true);
+	const { fetchUser } = useAuth();
 
 	useEffect(() => {
 		console.log("Use effect running");
+		fetchUser(); //auth checker
 		if (posts.length > 0) {
 			console.log("Posts length:", posts.length);
 			setLoading(false); // Stop loading when posts are available
