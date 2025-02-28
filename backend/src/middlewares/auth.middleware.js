@@ -20,6 +20,7 @@ export const varifyJWT = AsyncHandler(async (req, res, next) => {
       token,
       process.env.ACCESS_TOKEN_SECRET
     );
+
     const user = await User.findById(decodedToken._id).select(
       "-password -refreshToken"
     );
@@ -31,6 +32,6 @@ export const varifyJWT = AsyncHandler(async (req, res, next) => {
     req.user = user;
     next();
   } catch (error) {
-    throw new ApiError(401, error?.message || "invlaid access token");
+    throw new ApiError(403, error?.message || "token expired");
   }
 });
