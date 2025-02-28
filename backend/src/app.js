@@ -6,6 +6,7 @@ import postRouter from "./routes/post.routes.js";
 
 import likeRouter from "./routes/like.routes.js";
 import bookmarkRouter from "./routes/bookmark.routes.js";
+import errorMiddleware from "./middlewares/error.middleware.js";
 
 const app = express();
 
@@ -27,5 +28,7 @@ app.use("/api/v1/bookmarks", bookmarkRouter);
 app.get("/", (req, res) => {
   res.send("hello");
 });
+
+app.use(errorMiddleware); //should be last
 
 export { app };

@@ -32,6 +32,7 @@ export const varifyJWT = AsyncHandler(async (req, res, next) => {
     req.user = user;
     next();
   } catch (error) {
-    throw new ApiError(403, error?.message || "token expired");
+    console.log("error,may be token expired", error);
+    return res.status(410).json(new ApiResponse(410, null, "token expired"));
   }
 });

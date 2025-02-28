@@ -161,9 +161,10 @@ const loginUser = AsyncHandler(async (req, res) => {
   console.log("isPasswordValid", isPasswordValid);
 
   if (!isPasswordValid) {
-    return res
-      .status(401)
-      .json(new ApiResponse(401, null, "password not valid"));
+    // return res
+    //   .status(401)
+    //   .json(new ApiResponse(401, null, "password not valid"));
+    throw new ApiError(401, "password not valid");
   }
 
   const { accessToken, refreshToken } = await generateAccessAndRefreshTokens(
@@ -298,7 +299,13 @@ const changeCurrentPassword = AsyncHandler(async (req, res) => {
 const getCurrentUser = AsyncHandler(async (req, res) => {
   return res
     .status(200)
-    .json(new ApiResponse(200, req.user, "Curent user feteched successfully"));
+    .json(
+      new ApiResponse(
+        200,
+        { user: req.user },
+        "Curent user feteched successfully"
+      )
+    );
 });
 
 const updateAccountDetails = AsyncHandler(async (req, res) => {

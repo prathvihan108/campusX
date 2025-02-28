@@ -15,10 +15,10 @@ const AuthProvider = ({ children }) => {
 	const [showSignup, setShowSignup] = useState(false);
 	const [showLogout, setShowLogout] = useState(false);
 
-	useEffect(() => {
-		const storedUser = JSON.parse(localStorage.getItem("user"));
-		if (storedUser) setUser(storedUser);
-	}, []);
+	// useEffect(() => {
+	// 	const storedUser = JSON.parse(localStorage.getItem("user"));
+	// 	if (storedUser) setUser(storedUser);
+	// }, []);
 	console.log("signup model state initil", showSignup);
 
 	// Handle User Signup with Avatar Upload
@@ -77,7 +77,7 @@ const AuthProvider = ({ children }) => {
 				console.log("Login successful.");
 
 				// // Store user in localStorage
-				localStorage.setItem("user", JSON.stringify(userData));
+				// localStorage.setItem("user", JSON.stringify(userData));
 
 				// Update user state in AuthContext
 				setUser(userData);
@@ -87,12 +87,12 @@ const AuthProvider = ({ children }) => {
 				setShowLogin(false);
 			}
 		} catch (error) {
-			console.error("Login Error:", error.response?.data);
+			console.error("status code:", error.response.status);
 			// Check for status code 409 (User already exists)
-			console.log("Error response message:", error.response?.data);
-			if (error.response?.status === 404) {
+			console.log("Error response message:", error.response.data.message);
+			if (error.response.status === 404) {
 				toast.error(error.response?.data?.message, { autoClose: 3000 });
-			} else if (error.response?.status === 401) {
+			} else if (error.response.status === 401) {
 				toast.error(error.response?.data?.message, { autoClose: 3000 });
 			} else {
 				toast.error(error.response?.data?.message || "Login failed!", {
@@ -149,6 +149,31 @@ const AuthProvider = ({ children }) => {
 			});
 		}
 	};
+
+	// const axiosInstance = axios.create({
+	// 	baseURL: `${apiUrl}`,
+	// 	withCredentials: true,
+	// });
+
+	// const fetchUser = async () => {
+	// 	try {
+	// 		const res = await axiosInstance.get("/users/current-user");
+	// 		console.log("fetchUser response", res.data?.data?.user);
+	// 		setUser(res.data?.data?.user);
+	// 	} catch (err) {
+	// 		if (err.response?.status === 403) {
+	// 			console.log("Access Token Expired, Trying to refresh...");
+	// 			try {
+	// 				await axiosInstance.post("/auth/refresh-token"); // 🔥 Refresh token request
+	// 				return fetchUser(); // 🔥 Retry original request
+	// 			} catch (refreshErr) {
+	// 				toast.error("Session expired, Please login again!");
+	// 				window.location.href = "/login"; // Redirect to login
+	// 			}
+	// 		}
+	// 		throw err;
+	// 	}
+	// };
 
 	return (
 		<AuthContext.Provider
