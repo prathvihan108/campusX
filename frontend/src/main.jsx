@@ -7,6 +7,7 @@ import Home from "./pages/Home/Home.jsx";
 import ChatBot from "./pages/ChatBot/ChatBot.jsx";
 import Noties from "./pages/Noties/Noties.jsx";
 import Bookmarks from "./pages/Bookmarks/Bookmarks.jsx";
+import CreatePost from "./pages/CreatePost/CreatePost.jsx";
 
 import Login from "./components/Auth/Login/Login.jsx";
 
@@ -25,7 +26,9 @@ const router = createBrowserRouter(
 	createRoutesFromElements(
 		<Route path="/" element={<Layout />}>
 			<Route path="" element={<Home />} />
+			<Route path="create-post" element={<CreatePost />} />
 			<Route path="chatbot" element={<ChatBot />} />
+
 			<Route path="bookmarks" element={<Bookmarks />} />
 			<Route path="notifications" element={<Noties />} />
 

@@ -6,6 +6,7 @@ import { useAuth } from "../../../context/AuthContext.jsx";
 import SignupButton from "../Button/SignupButton.jsx";
 import LoginButton from "../Button/LoginButton.jsx";
 import LogoutButton from "../Button/LogoutButton.jsx";
+import CreatePostButton from "../Button/CreatePostButton.jsx";
 import ThemeToggler from "../Button/ThemeToggler.jsx";
 
 const Header = () => {
@@ -32,12 +33,7 @@ const Header = () => {
 					</div>
 
 					{/* Create Post Button */}
-					<Link
-						to="/create-post"
-						className="bg-green-500 text-white font-bold py-2 px-4 rounded-lg shadow-md hover:bg-green-600 transition-all duration-200"
-					>
-						+ Create Post
-					</Link>
+					<CreatePostButton />
 				</div>
 			)}
 

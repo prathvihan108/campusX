@@ -52,7 +52,7 @@ const Signup = () => {
 	};
 
 	return (
-		<div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-30 backdrop-blur-md z-50">
+		<div className="fixed inset-0 flex items-center justify-center backdrop-blur-md z-50">
 			<div className="bg-white p-8 shadow-lg rounded-lg w-[50rem] max-w-full relative">
 				<button
 					onClick={() => setShowSignup(false)}

@@ -14,6 +14,7 @@ const AuthProvider = ({ children }) => {
 	const [showLogin, setShowLogin] = useState(false);
 	const [showSignup, setShowSignup] = useState(false);
 	const [showLogout, setShowLogout] = useState(false);
+	const [showCreatePost, setShowCreatePost] = useState(false);
 
 	// useEffect(() => {
 	// 	const storedUser = JSON.parse(localStorage.getItem("user"));
@@ -182,6 +183,23 @@ const AuthProvider = ({ children }) => {
 		}
 	};
 
+	const handleCreatePost = async (postData) => {
+		try {
+			const res = await axiosInstance.post("/posts/", postData);
+			setShowCreatePost(false);
+
+			console.log("Post created", res.data?.data);
+			toast.success("Post created successfully");
+		} catch (err) {
+			if (err.response?.status === 401) {
+				console.log("User not logged in");
+				toast.error("Please login to create post");
+				setUser(null);
+			}
+			throw err;
+		}
+	};
+
 	return (
 		<AuthContext.Provider
 			value={{
@@ -196,6 +214,9 @@ const AuthProvider = ({ children }) => {
 				setShowSignup,
 				showLogout,
 				setShowLogout,
+				showCreatePost,
+				setShowCreatePost,
+				handleCreatePost,
 				fetchUser,
 			}}
 		>
