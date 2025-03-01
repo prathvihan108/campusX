@@ -11,7 +11,7 @@ console.log(`Using port: ${port}`);
 connectDB()
   .then(() => {
     const server = app.listen(port, "0.0.0.0", () => {
-      console.log(`🚀 Server running on http://localhost:${port}`);
+      console.log(`🚀 Server running on http://10.101.7.74:${port}`);
     });
 
     function getLocalIP() {

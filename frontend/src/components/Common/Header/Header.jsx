@@ -24,12 +24,12 @@ const Header = () => {
 							alt="Profile"
 							className="h-8 w-8 rounded-full border border-gray-700 dark:border-gray-600"
 						/>
-						<div className="flex flex-col text-left">
+						{/* <div className="flex flex-col text-left">
 							<h3 className="text-amber-200 dark:text-amber-300 text-sm font-semibold">
 								{user.userName}
 							</h3>
 							<p className="text-blue-400 text-xs">{user.email}</p>
-						</div>
+						</div> */}
 					</div>
 
 					{/* Create Post Button */}
@@ -38,15 +38,18 @@ const Header = () => {
 			)}
 
 			{/* Centered Logo and App Name */}
-			<Link to="/" className="">
-				<img
-					src="https://drive.google.com/drive/folders/1e8rIluNzPiOlHDG71416RLhI7XpA2Hg8?usp=drive_link"
-					className="h-12 w-12 rounded-full border-2 border-white shadow-md"
-				/>
-				<span className="font-bold text-2xl text-white drop-shadow-md">
-					CampusX
-				</span>
-			</Link>
+			{!user && (
+				<Link to="/" className="">
+					<img
+						src="https://upload.wikimedia.org/wikipedia/commons/3/32/Cmrit.png"
+						className="h-12 w-12 rounded-full border-2 border-white shadow-md"
+					/>
+					<span className="font-bold text-2xl text-white drop-shadow-md">
+						CampusX
+					</span>
+				</Link>
+			)}
+
 			{
 				<div className="flex items-center gap-4">
 					<ThemeToggler />

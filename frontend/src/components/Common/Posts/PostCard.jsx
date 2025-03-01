@@ -24,7 +24,7 @@ const PostCard = ({ post, currentUser, handleFollow, handleUnfollow }) => {
 	};
 
 	return (
-		<div className="bg-white dark:bg-gray-900 rounded-2xl shadow-md overflow-hidden p-6 transition-shadow duration-300 hover:shadow-lg h-fit">
+		<div className=" w-[90vw] bg-white dark:bg-gray-900 rounded-2xl shadow-md overflow-hidden p-6 transition-shadow duration-300 hover:shadow-lg  lg:w-[500px] h-[fit]">
 			{/* Author Info */}
 			<div className="flex items-center mb-4">
 				<img

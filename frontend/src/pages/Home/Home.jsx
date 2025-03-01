@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import PostContext from "../../context/PostContext.js";
-import HashtagSelector from "../../components/Common/HashTags/HashtagSelector.jsx";
+import FilterComponent from "../../components/Common/FilterComponent/FilterComponent.jsx";
 import {
 	currentUser,
 	handleFollow,
@@ -25,13 +25,13 @@ const Home = () => {
 	}, [posts]);
 
 	return (
-		<div className="p-4 my-[6.5rem]">
-			<HashtagSelector />
+		<div className=" flex flex-col p-4 justify-center my-[6.5rem] relative">
+			<FilterComponent />
 
 			{loading ? (
 				<p>Loading...</p>
 			) : posts.length > 0 ? (
-				<div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-10 h-fit">
+				<div className="flex flex-col items-center justify-center  gap-10 h-fit">
 					{Array.isArray(posts) && posts.length > 0 ? (
 						posts.map((post) =>
 							post ? (
