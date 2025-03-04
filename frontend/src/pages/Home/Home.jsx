@@ -1,12 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import PostContext from "../../context/PostContext.js";
 import FilterComponent from "../../components/Common/FilterComponent/FilterComponent.jsx";
-import {
-	currentUser,
-	handleFollow,
-	handleUnfollow,
-	isFollowing,
-} from "../../services/followersService.jsx";
+import { toggleLike } from "../../services/likesServices.jsx";
 import PostCard from "../../components/Common/Posts/PostCard.jsx";
 import { useAuth } from "../../context/AuthContext.jsx";
 
@@ -43,9 +38,7 @@ const Home = () => {
 										key={post._id}
 										post={post}
 										currentUserId={currentUserId}
-										handleFollow={handleFollow}
-										handleUnfollow={handleUnfollow}
-										isFollowing={isFollowing}
+										toggleLike={toggleLike}
 									/>
 								) : null
 							)

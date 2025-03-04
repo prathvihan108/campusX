@@ -1,26 +1,26 @@
 import React, { useState } from "react";
 import { Heart, MessageCircle, Send, Bookmark } from "lucide-react";
 
-const PostCard = ({ post, currentUserId, handleFollow, handleUnfollow }) => {
-	const [isFollowing, setIsFollowing] = useState(
-		post.followers.some((follower) => follower.subscriber === currentUserId)
+const PostCard = ({ post, currentUserId, toggleLike }) => {
+	const [isLiked, setIsLiked] = useState(
+		post.likes.some((likeId) => likeId === currentUserId)
 	);
-	console.log("Current user id from postscard ", currentUserId);
-	console.log("Is following:", isFollowing);
-
-	const [followerCount, setFollowerCount] = useState(post.followerCount);
+	console.log("post id", post._id);
+	console.log("post likes: ", post.likes);
+	console.log("Is Liked:", isLiked);
+	const [LikesCount, setLikesCount] = useState(post.likesCount);
 	const [isBookmarked, setIsBookmarked] = useState(false);
 
-	// const toggleFollow = async () => {
-	// 	if (isFollowing) {
-	// 		await handleUnfollow(post.authorDetails._id);
-	// 		setFollowerCount((prev) => prev - 1);
-	// 	} else {
-	// 		await handleFollow(post.authorDetails._id);
-	// 		setFollowerCount((prev) => prev + 1);
-	// 	}
-	// 	setIsFollowing(!isFollowing);
-	// };
+	const handleToggleLike = async () => {
+		if (isLiked) {
+			await toggleLike(post._id);
+			setLikesCount((prev) => prev - 1);
+		} else {
+			await toggleLike(post._id);
+			setLikesCount((prev) => prev + 1);
+		}
+		setIsLiked(!isLiked);
+	};
 
 	const toggleBookmark = () => {
 		setIsBookmarked(!isBookmarked);
@@ -79,8 +79,17 @@ const PostCard = ({ post, currentUserId, handleFollow, handleUnfollow }) => {
 			{/* Actions */}
 			<div className="flex justify-between items-center mb-4">
 				<div className="flex items-center space-x-4">
-					<button className="flex items-center text-gray-600 dark:text-gray-400 hover:text-red-500 transition-colors duration-200">
-						<Heart className="w-5 h-5 mr-2" /> {post.likeCount}
+					<button
+						onClick={handleToggleLike}
+						className="flex items-center text-gray-600 dark:text-gray-400 hover:text-red-500 transition-colors duration-200"
+					>
+						{isLiked ? (
+							<Heart className="w-5 h-5 mr-2 text-red-500 fill-red-500" />
+						) : (
+							<Heart className="w-5 h-5 mr-2 text-red-500 fill-none" />
+						)}
+
+						<p className="text-red-500">{LikesCount}</p>
 					</button>
 					<button className="flex items-center text-gray-600 dark:text-gray-400 hover:text-blue-500 transition-colors duration-200">
 						<MessageCircle className="w-5 h-5 mr-2" /> {post.commentCount}
@@ -98,7 +107,7 @@ const PostCard = ({ post, currentUserId, handleFollow, handleUnfollow }) => {
 					</button>
 				</div>
 				<span className="text-sm text-gray-600 dark:text-gray-400">
-					Followers: {followerCount}
+					Followers: {post.followerCount}
 				</span>
 			</div>
 

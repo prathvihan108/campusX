@@ -75,6 +75,12 @@ const AuthProvider = ({ children }) => {
 
 				// Show success toast
 				toast.success("Login successful! Redirecting.", { autoClose: 3000 });
+
+				// Refresh Page
+				setTimeout(() => {
+					window.location.reload();
+				}, 1000); // Refresh after 2 seconds
+
 				console.log("Login successful.");
 
 				// // Store user in localStorage
@@ -137,6 +143,10 @@ const AuthProvider = ({ children }) => {
 				toast.success("Logged out successfully!", { autoClose: 2000 });
 
 				console.log("User logged out.");
+				// Refresh Page
+				setTimeout(() => {
+					window.location.reload();
+				}, 1000); // Refresh after 2 seconds
 			}
 		} catch (error) {
 			console.log("error", error);
