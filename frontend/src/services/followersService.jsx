@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_BASE_URL = "/api/v1/users";
+const apiUrl = import.meta.env.VITE_API_URL;
 
 export const currentUser = async () => {
 	try {
@@ -17,10 +17,14 @@ export const currentUser = async () => {
 export const handleFollow = async (userId) => {
 	try {
 		const response = await axios.post(
-			`${API_BASE_URL}/follow/${userId}`,
+			`${apiUrl}/users/${userId}/follow/`,
 			{},
 			{ withCredentials: true }
 		);
+		if (response.status == 400) {
+			console.log("you can not folllo your self");
+		}
+		console.log(response?.data?.message);
 		return response.data;
 	} catch (error) {
 		console.error("Error following user:", error);
@@ -31,10 +35,12 @@ export const handleFollow = async (userId) => {
 export const handleUnfollow = async (userId) => {
 	try {
 		const response = await axios.post(
-			`${API_BASE_URL}/unfollow/${userId}`,
+			`${apiUrl}/users/${userId}/unfollow/`,
 			{},
 			{ withCredentials: true }
 		);
+		console.log(response?.data?.message);
+
 		return response.data;
 	} catch (error) {
 		console.error("Error unfollowing user:", error);
