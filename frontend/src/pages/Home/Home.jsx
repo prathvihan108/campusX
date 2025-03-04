@@ -5,6 +5,7 @@ import {
 	currentUser,
 	handleFollow,
 	handleUnfollow,
+	isFollowing,
 } from "../../services/followersService.jsx";
 import PostCard from "../../components/Common/Posts/PostCard.jsx";
 import { useAuth } from "../../context/AuthContext.jsx";
@@ -13,7 +14,9 @@ const Home = () => {
 	const { posts } = useContext(PostContext); // Get posts
 	console.log("Posts from home:", posts);
 	const [loading, setLoading] = useState(true);
-	const { fetchUser } = useAuth();
+	const { fetchUser, user } = useAuth();
+
+	const currentUserId = user?._id;
 
 	useEffect(() => {
 		console.log("Use effect running");
@@ -39,9 +42,10 @@ const Home = () => {
 									<PostCard
 										key={post._id}
 										post={post}
-										currentUser={currentUser}
+										currentUserId={currentUserId}
 										handleFollow={handleFollow}
 										handleUnfollow={handleUnfollow}
+										isFollowing={isFollowing}
 									/>
 								) : null
 							)

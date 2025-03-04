@@ -1,23 +1,26 @@
 import React, { useState } from "react";
 import { Heart, MessageCircle, Send, Bookmark } from "lucide-react";
 
-const PostCard = ({ post, currentUser, handleFollow, handleUnfollow }) => {
+const PostCard = ({ post, currentUserId, handleFollow, handleUnfollow }) => {
 	const [isFollowing, setIsFollowing] = useState(
-		post.followers.some((follower) => follower === currentUser._id)
+		post.followers.some((follower) => follower.subscriber === currentUserId)
 	);
+	console.log("Current user id from postscard ", currentUserId);
+	console.log("Is following:", isFollowing);
+
 	const [followerCount, setFollowerCount] = useState(post.followerCount);
 	const [isBookmarked, setIsBookmarked] = useState(false);
 
-	const toggleFollow = async () => {
-		if (isFollowing) {
-			await handleUnfollow(post.authorDetails._id);
-			setFollowerCount((prev) => prev - 1);
-		} else {
-			await handleFollow(post.authorDetails._id);
-			setFollowerCount((prev) => prev + 1);
-		}
-		setIsFollowing(!isFollowing);
-	};
+	// const toggleFollow = async () => {
+	// 	if (isFollowing) {
+	// 		await handleUnfollow(post.authorDetails._id);
+	// 		setFollowerCount((prev) => prev - 1);
+	// 	} else {
+	// 		await handleFollow(post.authorDetails._id);
+	// 		setFollowerCount((prev) => prev + 1);
+	// 	}
+	// 	setIsFollowing(!isFollowing);
+	// };
 
 	const toggleBookmark = () => {
 		setIsBookmarked(!isBookmarked);
@@ -40,7 +43,7 @@ const PostCard = ({ post, currentUser, handleFollow, handleUnfollow }) => {
 						@{post.authorDetails.userName} • {post.authorDetails.role}
 					</p>
 				</div>
-				<div className="ml-auto">
+				{/* <div className="ml-auto">
 					<button
 						onClick={toggleFollow}
 						className={`px-4 py-2 text-sm font-semibold rounded-full ${
@@ -51,7 +54,7 @@ const PostCard = ({ post, currentUser, handleFollow, handleUnfollow }) => {
 					>
 						{isFollowing ? "Following" : "Follow"}
 					</button>
-				</div>
+				</div> */}
 			</div>
 
 			{/* Post Content */}
