@@ -4,7 +4,7 @@ import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { AsyncHandler } from "../utils/AsyncHandler.js";
 
-// ✅ Add a Post to Bookmarks
+// Add a Post to Bookmarks
 const bookmarkPost = AsyncHandler(async (req, res) => {
   const { postId } = req.params;
 
@@ -31,7 +31,7 @@ const bookmarkPost = AsyncHandler(async (req, res) => {
     .json(new ApiResponse(201, bookmark, "Post bookmarked successfully"));
 });
 
-// ✅ Remove Bookmark
+//  Remove Bookmark
 const removeBookmark = AsyncHandler(async (req, res) => {
   const { bookmarkId } = req.params;
 
@@ -50,7 +50,7 @@ const removeBookmark = AsyncHandler(async (req, res) => {
     .json(new ApiResponse(200, {}, "Bookmark removed successfully"));
 });
 
-// ✅ Get User's Bookmarked Posts
+//  Get User's Bookmarked Posts
 const getUserBookmarks = AsyncHandler(async (req, res) => {
   const bookmarks = await Bookmark.find({ post_owner: req.user._id })
     .populate("post", "content image category likesCount")

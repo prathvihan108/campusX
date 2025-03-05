@@ -2,7 +2,7 @@ import { Post } from "../models/post.model.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { AsyncHandler } from "../utils/AsyncHandler.js";
-// ✅ Like or Unlike a Post
+// Like or Unlike a Post
 const toggleLike = AsyncHandler(async (req, res) => {
   const { postId } = req.params; // Extract postId from URL
 

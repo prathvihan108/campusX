@@ -4,7 +4,7 @@ import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { AsyncHandler } from "../utils/AsyncHandler.js";
 
-// ✅ Add a Comment
+//  Add a Comment
 const addComment = AsyncHandler(async (req, res) => {
   const { postId } = req.params; // Extract postId from URL
   const { text } = req.body; // Extract text from body
@@ -31,7 +31,7 @@ const addComment = AsyncHandler(async (req, res) => {
   res.status(201).json(new ApiResponse(201, comment, "Comment added"));
 });
 
-// ✅ Get Comments for a Post
+//Get Comments for a Post
 const getComments = AsyncHandler(async (req, res) => {
   const { postId } = req.params;
 
@@ -42,7 +42,7 @@ const getComments = AsyncHandler(async (req, res) => {
   res.status(200).json(new ApiResponse(200, comments, "Comments fetched"));
 });
 
-// ✅ Delete a Comment (Only Author or Post Owner Can Delete)
+//  Delete a Comment (Only Author or Post Owner Can Delete)
 const deleteComment = AsyncHandler(async (req, res) => {
   console.log(req.params);
   const { commentId } = req.params;

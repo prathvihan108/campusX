@@ -8,7 +8,7 @@ import {
   uploadOnCloudnary,
 } from "../utils/cloudnary.js";
 
-// ✅ Create a Post
+//  Create a Post
 const createPost = AsyncHandler(async (req, res) => {
   console.log(req.file);
   const imageLocalPath = req.file?.path;
@@ -76,7 +76,7 @@ const getAllPosts = AsyncHandler(async (req, res) => {
     .json(new ApiResponse(200, posts, "Posts fetched successfully"));
 });
 
-// ✅ Get Single Post by ID with Aggregation
+//  Get Single Post by ID with Aggregation
 const getPostById = AsyncHandler(async (req, res) => {
   const postId = req.params.id;
   const post = await Post.aggregate([
@@ -122,7 +122,7 @@ const getPostById = AsyncHandler(async (req, res) => {
     .json(new ApiResponse(200, post[0], "Post fetched successfully"));
 });
 
-// ✅ Delete Post (Only Author Can Delete)
+//  Delete Post (Only Author Can Delete)
 const deletePost = AsyncHandler(async (req, res) => {
   const post = await Post.findById(req.params.id);
 

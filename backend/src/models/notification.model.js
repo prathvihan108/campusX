@@ -9,7 +9,7 @@ const notificationSchema = new mongoose.Schema(
       required: true,
     }, // Who triggered it
     type: { type: String, enum: ["like", "comment", "follow"], required: true },
-    post: { type: mongoose.Schema.Types.ObjectId, ref: "Post" }, // Optional (for likes/comments)
+    post: { type: mongoose.Schema.Types.ObjectId, ref: "Post" }, //
     isRead: { type: Boolean, default: false },
   },
   { timestamps: true }

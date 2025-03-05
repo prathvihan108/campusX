@@ -488,7 +488,7 @@ const getBookmarks = AsyncHandler(async (req, res) => {
             },
           },
           {
-            $unwind: "$postDetails", // Ensure postDetails is an object, not an array
+            $unwind: "$postDetails", //flatens array into separate documents
           },
           {
             $lookup: {
@@ -499,7 +499,7 @@ const getBookmarks = AsyncHandler(async (req, res) => {
             },
           },
           {
-            $unwind: "$postOwner", // Ensure postOwner is an object, not an array
+            $unwind: "$postOwner",
           },
           {
             $project: {
@@ -521,7 +521,7 @@ const getBookmarks = AsyncHandler(async (req, res) => {
         _id: 1,
         fullName: 1,
         userName: 1,
-        bookmarks: "$bookmarkedPosts", // Rename the field
+        bookmarks: "$bookmarkedPosts", // Renames the field
       },
     },
   ]);
@@ -561,6 +561,7 @@ const followUser = async (req, res) => {
     res.status(500).json(new ApiResponse(500, null, error.message));
   }
 };
+
 const unfollowUser = async (req, res) => {
   try {
     const { userId } = req.params;
