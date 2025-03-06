@@ -27,7 +27,7 @@ const PostCard = ({ post, currentUserId, toggleLike }) => {
 	};
 
 	return (
-		<div className="bg-white dark:bg-gray-900 rounded-2xl shadow-md overflow-hidden p-6 transition-shadow duration-300 hover:shadow-lg   h-[fit]">
+		<div className="bg-white dark:bg-gray-900 rounded-2xl shadow-md overflow-hidden p-6 transition-shadow duration-300 hover:shadow-lg h-fit border border-blue-900 dark:border-blue-500 !border-opacity-100">
 			{/* Author Info */}
 			<div className="flex items-center mb-4">
 				<img
@@ -64,11 +64,13 @@ const PostCard = ({ post, currentUserId, toggleLike }) => {
 
 			{/* Post Image */}
 			{post.image && (
-				<img
-					src={post.image}
-					alt="Post"
-					className="w-full rounded-xl mb-4 border border-gray-200 dark:border-gray-700"
-				/>
+				<div className=" h-[250px] overflow-hidden rounded-xl border border-gray-200 dark:border-gray-700">
+					<img
+						src={post.image}
+						alt="Post"
+						className="w-full h-full object-contain"
+					/>
+				</div>
 			)}
 
 			{/* Post Category */}

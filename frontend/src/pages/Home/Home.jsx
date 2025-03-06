@@ -29,7 +29,7 @@ const Home = () => {
 			{loading ? (
 				<p>Loading...</p>
 			) : posts.length > 0 ? (
-				<div className="h-[70vh] w-full  overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100 rounded-lg border border-gray-300 shadow-md">
+				<div className="h-[70vh] w-full  overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100 rounded-lg border border-black-900 shadow-md">
 					<div className=" flex flex-col lg:grid lg:grid-cols-2 items-center justify-center gap-10 h-fit p-4">
 						{Array.isArray(posts) && posts.length > 0 ? (
 							posts.map((post) =>
