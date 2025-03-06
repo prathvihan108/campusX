@@ -25,6 +25,4 @@ export const sendOtp = async (email, otp) => {
   } catch (error) {
     console.log("Email Error:", error);
   }
-
-  console.log("OTP sent successfully send otp file");
 };

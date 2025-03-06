@@ -16,7 +16,7 @@ import {
 const router = Router();
 
 // POST ROUTES
-router.post("/", varifyJWT, upload.single("image"), createPost); // Create
+router.post("/", varifyJWT, upload.single("image"), createPost);
 router.get("/", getAllPosts); // Get all posts
 router.get("/:id", getPostById); // Get a single post by ID
 router.delete("/:id", varifyJWT, deletePost); // Delete a post by ID

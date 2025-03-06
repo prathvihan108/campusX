@@ -30,6 +30,7 @@ router.post(
 
 // router.post("/login", loginUser);
 router.route("/login").post(upload.none(), loginUser);
+router.route("/channel/:user").get(getUserChannelProfile);
 
 //secure routes
 router.route("/logout").post(varifyJWT, logoutUser);
@@ -52,7 +53,6 @@ router
   .route("/update-coverimage")
   .patch(varifyJWT, upload.single("coverImage"), updateUserCoverImage);
 
-router.route("/channel/:user").get(getUserChannelProfile);
 router.route("/get-bookmarks").get(varifyJWT, getBookmarks);
 
 router.route("/:userId/follow").post(varifyJWT, followUser);

@@ -20,6 +20,7 @@ const addComment = AsyncHandler(async (req, res) => {
     author: req.user._id,
     content: text,
   });
+
   await comment.populate({
     path: "author",
     select: "fullName email avatar", // Select fields you need
