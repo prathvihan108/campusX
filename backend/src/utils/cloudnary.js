@@ -93,4 +93,54 @@ const updateCoverImage = async (oldCloudinaryUrl, localFilePath) => {
   }
 };
 
-export { uploadOnCloudnary, updateAvatar, updateCoverImage };
+const deleteAvatar = async (oldCloudinaryUrl) => {
+  try {
+    if (!oldCloudinaryUrl) {
+      return null;
+    }
+
+    // Extract public_id
+    const publicId =
+      oldCloudinaryUrl?.split("/")?.pop()?.split(".")?.[0] || null;
+
+    if (publicId) {
+      await cloudinary.uploader.destroy(`home/learnDummy/${publicId}`);
+      console.info("Avatar deleted:", publicId);
+    }
+
+    return true;
+  } catch (error) {
+    console.error("Error deleting avatar:", error);
+    return null;
+  }
+};
+
+const deleteCoverImage = async (oldCloudinaryUrl) => {
+  try {
+    if (!oldCloudinaryUrl) {
+      return null;
+    }
+
+    // Extract public_id
+    const publicId =
+      oldCloudinaryUrl?.split("/")?.pop()?.split(".")?.[0] || null;
+
+    if (publicId) {
+      await cloudinary.uploader.destroy(`home/learnDummy/${publicId}`);
+      console.info("Cover Image deleted:", publicId);
+    }
+
+    return true;
+  } catch (error) {
+    console.error("Error deleting cover image:", error);
+    return null;
+  }
+};
+
+export {
+  uploadOnCloudnary,
+  updateAvatar,
+  updateCoverImage,
+  deleteCoverImage,
+  deleteAvatar,
+};

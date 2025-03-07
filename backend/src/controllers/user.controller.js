@@ -7,6 +7,8 @@ import { Post } from "../models/post.model.js";
 import { Subscription } from "../models/subscription.model.js";
 import mongoose, { Schema } from "mongoose";
 import {
+  deleteAvatar,
+  deleteCoverImage,
   updateAvatar,
   updateCoverImage,
   uploadOnCloudnary,
@@ -592,6 +594,13 @@ const deleteAccount = AsyncHandler(async (req, res) => {
   if (!user) {
     return res.status(404).json(new ApiResponse(404, null, "User not found"));
   }
+  const coverImageCloudinaryUrl = user.coverImage;
+  const avatarCloudinaryUrl = user.avatar;
+  console.log("Cover Image Cloudinary URL:", coverImageCloudinaryUrl);
+  console.log("Avatar Image Cloudinary URL:", avatarCloudinaryUrl);
+
+  await deleteCoverImage(coverImageCloudinaryUrl);
+  await deleteAvatar(avatarCloudinaryUrl);
 
   console.info("User ID:", user._id);
 
