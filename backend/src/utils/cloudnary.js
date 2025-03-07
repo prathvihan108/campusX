@@ -137,10 +137,33 @@ const deleteCoverImage = async (oldCloudinaryUrl) => {
   }
 };
 
+const deleteImage = async (oldCloudinaryUrl) => {
+  try {
+    if (!oldCloudinaryUrl) {
+      return null;
+    }
+
+    // Extract public_id
+    const publicId =
+      oldCloudinaryUrl?.split("/")?.pop()?.split(".")?.[0] || null;
+
+    if (publicId) {
+      await cloudinary.uploader.destroy(`home/learnDummy/${publicId}`);
+      console.info("Image deleted:", publicId);
+    }
+
+    return true;
+  } catch (error) {
+    console.error("Error deleting image:", error);
+    return null;
+  }
+};
+
 export {
   uploadOnCloudnary,
   updateAvatar,
   updateCoverImage,
   deleteCoverImage,
   deleteAvatar,
+  deleteImage, //post image
 };

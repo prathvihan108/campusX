@@ -607,7 +607,7 @@ const deleteAccount = AsyncHandler(async (req, res) => {
   const postsBefore = await Post.find({ author: user._id });
   console.log("Posts Before Deletion:", postsBefore.length);
 
-  await Post.deleteMany({ author: user._id });
+  await Post.deleteMany({ author: user._id }); //pre hooks automatically will handle the deletion of thepost images and comments
 
   const postsAfter = await Post.find({ author: user._id });
   console.log("Posts After Deletion:", postsAfter.length);
