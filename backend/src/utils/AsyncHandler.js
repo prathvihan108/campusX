@@ -1,3 +1,4 @@
+//wrapper method for handling async errors
 const AsyncHandler = (requestHandler) => {
   return async (req, res, next) => {
     try {

@@ -23,7 +23,7 @@ connectDB()
           }
         }
       }
-      return "127.0.0.1"; // Fallback to localhost
+      return "127.0.0.1";
     }
   })
   .catch((err) => {

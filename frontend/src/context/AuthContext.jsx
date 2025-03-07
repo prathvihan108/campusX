@@ -48,6 +48,9 @@ const AuthProvider = ({ children }) => {
 			console.error("Signup Error:", error.response?.data);
 			// Check for status code 409 (User already exists)
 			console.log("Error response message:", error.response?.data);
+			if (error.response?.status === 400) {
+				toast.error(error.response?.data?.message, { autoClose: 3000 });
+			}
 			if (error.response?.status === 409) {
 				toast.error(error.response?.data?.message, { autoClose: 3000 });
 			} else {

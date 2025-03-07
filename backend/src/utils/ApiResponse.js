@@ -1,3 +1,4 @@
+//custom Api Response class
 class ApiResponse {
   constructor(statusCode, data, message = "success") {
     this.statusCode = statusCode;

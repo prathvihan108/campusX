@@ -2,7 +2,6 @@ import { AsyncHandler } from "../utils/AsyncHandler.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { User } from "../models/user.models.js";
-
 import { Post } from "../models/post.model.js";
 import { Subscription } from "../models/subscription.model.js";
 import mongoose, { Schema } from "mongoose";
@@ -14,6 +13,7 @@ import {
   uploadOnCloudnary,
 } from "../utils/cloudnary.js";
 import jwt from "jsonwebtoken";
+
 const generateAccessAndRefreshTokens = async (userId) => {
   try {
     const user = await User.findById(userId);
@@ -84,6 +84,7 @@ const registerUser = AsyncHandler(async (req, res) => {
   }
 
   const existingUser = await User.findOne({ $or: [{ email }, { userName }] });
+  console.log("Existing User:", existingUser);
 
   if (existingUser) {
     return res
@@ -102,6 +103,7 @@ const registerUser = AsyncHandler(async (req, res) => {
   }
 
   const avatar = await uploadOnCloudnary(avatarLocalPath);
+  console.log * ("Avatar:", avatar);
   const coverImage = coverImageLocalPath
     ? await uploadOnCloudnary(coverImageLocalPath)
     : null;
@@ -127,6 +129,7 @@ const registerUser = AsyncHandler(async (req, res) => {
   const createdUser = await User.findById(user._id).select(
     "-password -refreshToken"
   );
+  console.log("created user", createdUser);
 
   if (!createdUser) {
     throw new ApiError(401, "Error while registering user!!");
