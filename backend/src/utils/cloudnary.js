@@ -22,7 +22,7 @@ const uploadOnCloudnary = async (localfilepath) => {
     });
 
     //file uploads successfully
-    console.log("File uploaded :", response.url);
+    console.info("File uploaded :", response.url);
     return response;
   } catch (error) {
     console.log("error while uplading on cloudnary");
@@ -44,7 +44,7 @@ const updateAvatar = async (oldCloudinaryUrl, localFilePath) => {
     // Delete the old avatar
     if (publicId) {
       await cloudinary.uploader.destroy(`home/learnDummy/${publicId}`);
-      console.log("Old avatar deleted:", publicId);
+      console.info("Old avatar deleted:", publicId);
     }
 
     // Upload the new avatar
@@ -53,7 +53,7 @@ const updateAvatar = async (oldCloudinaryUrl, localFilePath) => {
       folder: "home/learnDummy",
     });
 
-    console.log("New avatar uploaded:", response.url);
+    console.info("New avatar uploaded:", response.url);
     return response;
   } catch (error) {
     console.error("Error updating avatar:", error);
@@ -75,7 +75,7 @@ const updateCoverImage = async (oldCloudinaryUrl, localFilePath) => {
     // Delete the old avatar
     if (publicId) {
       await cloudinary.uploader.destroy(`home/learnDummy/${publicId}`);
-      console.log("Old coverImage deleted:", publicId);
+      console.info("Old coverImage deleted:", publicId);
     }
 
     // Upload the new avatar

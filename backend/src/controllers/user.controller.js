@@ -2,6 +2,8 @@ import { AsyncHandler } from "../utils/AsyncHandler.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { User } from "../models/user.models.js";
+
+import { Post } from "../models/post.model.js";
 import { Subscription } from "../models/subscription.model.js";
 import mongoose, { Schema } from "mongoose";
 import {
@@ -140,7 +142,7 @@ const loginUser = AsyncHandler(async (req, res) => {
   //password check
   //access and refres token
   //send cookie
-  const { email, userName, password } = req.body;
+  const { email, password } = req.body;
   console.log("Request Body:", req.body);
   console.log(email);
   if (!email) {
@@ -361,6 +363,7 @@ const updateUserAvatar = AsyncHandler(async (req, res) => {
 
 const updateUserCoverImage = AsyncHandler(async (req, res) => {
   const coverImageLocalPath = req.file?.path;
+  console.log("Cover image path", coverImageLocalPath);
   if (!coverImageLocalPath) {
     throw new ApiError(400, "coverImage file not found");
   }
@@ -406,7 +409,7 @@ const getUserChannelProfile = AsyncHandler(async (req, res) => {
     }, //filter
     {
       $lookup: {
-        from: "subscriptions", //since the models names are convertd to lowercase for collection name
+        from: "subscriptions",
         localField: "_id",
         foreignField: "channel",
 
@@ -417,7 +420,6 @@ const getUserChannelProfile = AsyncHandler(async (req, res) => {
     {
       $lookup: {
         from: "subscriptions",
-
         localField: "_id",
 
         foreignField: "subscriber",
@@ -584,6 +586,30 @@ const unfollowUser = async (req, res) => {
   }
 };
 
+const deleteAccount = AsyncHandler(async (req, res) => {
+  const user = await User.findById(req.user._id);
+
+  if (!user) {
+    return res.status(404).json(new ApiResponse(404, null, "User not found"));
+  }
+
+  console.info("User ID:", user._id);
+
+  const postsBefore = await Post.find({ author: user._id });
+  console.log("Posts Before Deletion:", postsBefore.length);
+
+  await Post.deleteMany({ author: user._id });
+
+  const postsAfter = await Post.find({ author: user._id });
+  console.log("Posts After Deletion:", postsAfter.length);
+
+  await User.findByIdAndDelete(user._id);
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, null, "Account deleted successfully"));
+});
+
 export {
   registerUser,
   loginUser,
@@ -598,4 +624,5 @@ export {
   getBookmarks,
   followUser,
   unfollowUser,
+  deleteAccount,
 };

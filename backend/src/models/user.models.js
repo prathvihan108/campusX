@@ -1,6 +1,7 @@
 import mongoose, { Schema } from "mongoose";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import { Bookmark } from "./bookmark.model.js";
 
 const userSchema = new Schema(
   {
@@ -73,6 +74,12 @@ const userSchema = new Schema(
 userSchema.pre("save", async function (next) {
   if (!this.isModified("password")) return next();
   this.password = await bcrypt.hash(this.password, 10);
+  next();
+});
+
+userSchema.pre("findOneAndDelete", async function (next) {
+  console.log("Cascade Delete Triggered");
+  await Bookmark.deleteMany({ _id: { $in: this.bookmarks } });
   next();
 });
 
