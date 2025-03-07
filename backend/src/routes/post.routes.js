@@ -16,13 +16,22 @@ import {
 const router = Router();
 
 // POST ROUTES
-router.post("/", varifyJWT, upload.single("image"), createPost);
-router.get("/", getAllPosts); // Get all posts
-router.get("/:id", getPostById); // Get a single post by ID
-router.delete("/:id", varifyJWT, deletePost); // Delete a post by ID
 
-router.post("/:postId/comments", varifyJWT, upload.none(), addComment);
-router.get("/:postId/comments", getComments);
-router.delete("/:postId/comments/:commentId", varifyJWT, deleteComment);
+router
+  .route("/")
+  .post(varifyJWT, upload.single("image"), createPost) // Create Post
+  .get(getAllPosts); // Get All Posts
+
+router
+  .route("/:id")
+  .get(getPostById) // Get Post by ID
+  .delete(varifyJWT, deletePost); // Delete Post by ID
+
+router
+  .route("/:postId/comments")
+  .post(varifyJWT, upload.none(), addComment) // Add Comment
+  .get(getComments); // Get Comments
+
+router.route("/:postId/comments/:commentId").delete(varifyJWT, deleteComment); // Delete Comment
 
 export default router;

@@ -2,11 +2,7 @@ import { Post } from "../models/post.model.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { AsyncHandler } from "../utils/AsyncHandler.js";
-import {
-  updateAvatar,
-  updateCoverImage,
-  uploadOnCloudnary,
-} from "../utils/cloudnary.js";
+import { uploadOnCloudnary } from "../utils/cloudnary.js";
 
 //  Create a Post
 const createPost = AsyncHandler(async (req, res) => {
@@ -33,7 +29,7 @@ const createPost = AsyncHandler(async (req, res) => {
   res.status(201).json(new ApiResponse(201, post, "Post created successfully"));
 });
 
-// ✅ Get All Posts with Aggregation
+// Get All Posts with Aggregation
 const getAllPosts = AsyncHandler(async (req, res) => {
   const posts = await Post.aggregate([
     {

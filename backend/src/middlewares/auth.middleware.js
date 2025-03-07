@@ -3,6 +3,8 @@ import { AsyncHandler } from "../utils/AsyncHandler.js";
 import jwt from "jsonwebtoken";
 import { User } from "../models/user.models.js";
 
+// Middleware to verify the JWT token
+// This middleware will be used to protect the routes that require authentication.
 export const varifyJWT = AsyncHandler(async (req, res, next) => {
   try {
     console.log("access token", req.cookies?.accessToken);

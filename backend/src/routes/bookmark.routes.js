@@ -9,8 +9,10 @@ import {
 } from "../controllers/bookmark.controller.js";
 const router = Router();
 
-router.post("/:postId", varifyJWT, upload.none(), bookmarkPost);
-router.delete("/:bookmarkId", varifyJWT, removeBookmark);
-router.get("/", varifyJWT, getUserBookmarks);
+router.route("/:postId").post(varifyJWT, upload.none(), bookmarkPost); // Bookmark Post
+
+router.route("/:bookmarkId").delete(varifyJWT, removeBookmark); // Remove Bookmark
+
+router.route("/").get(varifyJWT, getUserBookmarks); // Get User Bookmarks
 
 export default router;

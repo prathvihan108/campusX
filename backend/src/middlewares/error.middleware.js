@@ -1,9 +1,9 @@
+//Error middleware to handle all errors in the application
 import { ApiError } from "../utils/ApiError.js";
 
 const errorMiddleware = (err, req, res, next) => {
   console.error("Middleware Error:", err.message);
 
-  // If error is instance of ApiError class
   if (err instanceof ApiError) {
     return res.status(err.statusCode).json({
       success: false,

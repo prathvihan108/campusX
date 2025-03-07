@@ -9,7 +9,7 @@ const commentSchema = new mongoose.Schema(
     },
     content: { type: String, required: true },
     likes: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
-    likesCount: { type: Number, default: 0 }, // Optimized like count for comments
+    likesCount: { type: Number, default: 0 },
   },
   { timestamps: true }
 );

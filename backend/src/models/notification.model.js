@@ -1,3 +1,4 @@
+//No routes or controllers for the notifcation is yet created.
 import mongoose, { Schema } from "mongoose";
 
 const notificationSchema = new mongoose.Schema(
