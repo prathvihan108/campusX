@@ -37,10 +37,23 @@ CampusX is powered by a modern web technology stack:
 
 
 ## **Future Plans**
+### 🔥 Trending & Personalized Recommendations  
+See what’s popular on campus and get AI-powered post recommendations tailored to your interests.  
 
-🔥 Trending & Personalized Recommendations
-See what’s popular on campus and get AI-powered post recommendations tailored to your interests.
-🔔 Real-Time Notifications
-Get instant updates on replies, mentions, and important announcements. 
-🤖 AI chatbot integration for quick queries (powered by Generative AI)"
-📊 Advanced analytics for post engagement  
+### 🔔 Real-Time Notifications  
+Get instant updates on replies, mentions, and important announcements.  
+
+### 🤖 AI Chatbot Integration (Powered by Generative AI)  
+Quickly get answers to campus-related queries with AI-powered chat.  
+
+### 💬 Real-Time Chat Box  
+A live text-based chat feature where anyone can share information instantly.  
+
+🚫 **Rate Limiting with Redis** to prevent spam in chat and posts  
+
+🔥 **Trending Posts Optimization** using Redis for faster retrieval  
+
+ 
+
+
+
