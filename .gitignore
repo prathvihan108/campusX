@@ -7,3 +7,5 @@ frontend/node_modules/
 # Common node_modules ignore (if backend or frontend folder names change)
 **/node_modules/
 
+frontend/.env
+backend/.env

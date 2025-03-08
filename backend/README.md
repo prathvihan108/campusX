@@ -1,12 +1,10 @@
-# **CampusX Backend - Powering the Social Hub of CMRIT** 🚀
+# \*_CampusX - Backend 🚀 _(Building in Progress)\*
 
-This is the backend for **CampusX**, a social platform for the **CMRIT community**. It handles **user authentication, posts, comments, notifications, AI-powered recommendations, and real-time chat**.
+**CampusX** is a dynamic and interactive platform designed exclusively for the **CMRIT community**. Whether you're a **student, faculty member, or part of a campus organization**, CampusX brings everyone together to **share updates, discuss topics, and stay informed** about everything happening on campus.
 
 ---
 
 ## **🚀 Tech Stack**
-
-CampusX backend is built with:
 
 - **Node.js** - Runtime environment
 - **Express.js** - Web framework
@@ -14,80 +12,128 @@ CampusX backend is built with:
 - **JWT Authentication** - Secure login system
 - **Cloudinary** - Image storage
 - **Multer** - File handling middleware
-- **Redis** - Caching, rate limiting, and session management
-- **WebSockets (Socket.io)** - Real-time chat and notifications
+- **Redis** _(Upcoming)_ - Caching, rate limiting, and session management
+- **WebSockets (Socket.io)** _(Upcoming)_ - Real-time chat and notifications
+
+## **🛠️ API Endpoints** _(Tested via Postman)_
+
+### **Base URL:** `http://localhost:$port`
+
+### 🔑 **OTP Authentication**
+
+#### **POST /auth/send-otp** - Send OTP to user
+
+| Key   | Type   | Description  |
+| ----- | ------ | ------------ |
+| email | String | User's email |
+
+#### **POST /auth/verify-otp** - Verify OTP
+
+| Key   | Type   | Description            |
+| ----- | ------ | ---------------------- |
+| email | String | User's email           |
+| otp   | String | OTP received via email |
 
 ---
 
-## **🛠️ API Endpoints**
+## **📝 User Routes**
 
-### 🔑 **Authentication**
+### **POST /users/register** - Register a new user
 
-- `POST /auth/register` - Register a new user
+| Key        | Type   | Description                                                       |
+| ---------- | ------ | ----------------------------------------------------------------- |
+| fullName   | String | Full name of the user                                             |
+| email      | String | Email address                                                     |
+| userName   | String | Username                                                          |
+| password   | String | Password                                                          |
+| role       | String | `Student`, `Faculty`, `Cell` (enum)                               |
+| year       | String | `First-Year`, `Second-Year`, `PreFinal-Year`, `Final-Year` (enum) |
+| department | String | `CSE`, `ISE`, `EEE`, `ECE`, `MBA`, `AIML`, `AIDS`, `CIVIL` (enum) |
+| avatar     | File   | Profile picture                                                   |
+| coverImage | File   | Cover image _(Optional)_                                          |
 
-  - **Body (JSON or Form-Data):**  
-    | Key | Type | Description |
-    |----------|---------|----------------------|
-    | name | String | User's full name |
-    | email | String | User's email address |
-    | password | String | User's password |
+#### **POST /users/login** - Login
 
-- `POST /auth/login` - Login with email & password
-  - **Body (JSON or Form-Data):**  
-    | Key | Type | Description |
-    |---------|-------|--------------------|
-    | email | String | Registered email |
-    | password | String | User's password |
+| Key      | Type   | Description      |
+| -------- | ------ | ---------------- |
+| email    | String | Registered email |
+| password | String | User password    |
 
-### 📝 **Posts**
+#### **GET /users/channel/:user** - Get a user's channel profile
 
-- `POST /posts` - Create a new post
+#### **Secure Routes (JWT Required)** 🔒
 
-  - **Body (multipart/form-data):**  
-    | Key | Type | Description |
-    |----------|--------|--------------------------|
-    | title | String | Title of the post |
-    | content | String | Post content |
-    | tags | String | Comma-separated tags (optional) |
-    | image | File | (Optional) Post image |
+- **POST /users/logout** - Logout
+- **POST /users/refresh-token** - Refresh access token
 
-  **Example in Postman:**
+- **POST /users/change-password** - Change password
+  | Key | Type | Description |
+  | -------- | ------ | ---------------- |
+  | oldPassword | String | old password |
+  | newPassword | String | new password |
+  | confPassword | String | confirm new password |
 
-  - Select **Body** → **form-data**
-  - Add keys: `title`, `content`, `tags`, `image`
-  - Set `image` type to **File** and upload an image
+- **GET /users/current-user** - Get logged-in user details
+- **PATCH /users/update-account** - Update account details
+  | Key | Type | Description |
+  | -------- | ------ | ---------------- |
+  | email | String | new email |
+  | fullName | String | new full name |
 
-- `PUT /posts/:id` - Update a post
-  - **Body (multipart/form-data):**  
-    | Key | Type | Description |
-    |---------|-------|-----------------------|
-    | title | String | (Optional) New title |
-    | content | String | (Optional) New content |
-    | image | File | (Optional) New image |
+- **PATCH /users/update-avatar** - Update profile picture
+  | Key | Type | Description |
+  | -------- | ------ | ---------------- |
+  | avatar | File | Selected image |
 
-This makes it clear for API users how to send **multipart/form-data** in Postman. 🚀
+- **PATCH /users/update-coverimage** - Update cover image
+  | Key | Type | Description |
+  | -------- | ------ | ---------------- |
+  | coverImage | File | Selected image |
 
-### 💬 **Comments**
+- **GET /users/get-bookmarks** - Get bookmarked posts
+- **POST /users/:userId/follow** - Follow a user
+- **POST /users/:userId/unfollow** - Unfollow a user
+- **DELETE /users/delete-account** - Delete account
 
-- `POST /posts/:id/comments` - Add a comment to a post
-- `GET /posts/:id/comments` - Get comments for a post
+---
 
-### 🔔 **Notifications**
+## **📝 Post Routes**
 
-- `GET /notifications` - Fetch notifications for a user
+### **POST /posts/** - Create a post
 
-### 🔥 **Trending & AI Recommendations**
+| Key      | Type   | Description                                                                  |
+| -------- | ------ | ---------------------------------------------------------------------------- |
+| content  | String | Post content                                                                 |
+| category | String | `general`, `exams`, `placements`, `competitions`, `hackathons`, `lost_found` |
+| image    | File   | _(Optional)_ Image                                                           |
 
-- `GET /posts/trending` - Fetch trending posts
-- `GET /posts/recommendations` - AI-based personalized recommendations
+#### **Other Post Routes:**
 
-### 📦 **File Uploads**
+- **GET /posts/** - Get all posts
+- **GET /posts/:id** - Get a specific post
+- **DELETE /posts/:id** - Delete a post
 
-- `POST /upload` - Upload images (Cloudinary + Multer)
+---
 
-### 💬 **Real-Time Chat (WebSockets)**
+## **💬 Comments**
 
-- Connect to `ws://server/chat` for real-time messaging
+- **POST /posts/:postId/comments** - Add a comment
+- **GET /posts/:postId/comments** - Get all comments
+- **DELETE /posts/:postId/comments/:commentId** - Delete a comment
+
+---
+
+## **🔖 Bookmark Routes**
+
+- **POST /bookmarks/:postId** - Bookmark a post
+- **DELETE /bookmarks/:bookmarkId** - Remove bookmark
+- **GET /bookmarks/** - Get all bookmarks
+
+---
+
+## **❤️ Like Routes**
+
+- **POST /likes/:postId/like** - Like/unlike a post _(Toggle)_
 
 ---
 
@@ -96,8 +142,7 @@ This makes it clear for API users how to send **multipart/form-data** in Postman
 ### **1️⃣ Clone the Repository**
 
 ```sh
-git clone https://github.com/your-repo/campusx-backend.git
-cd campusx-backend
+git clone git@github.com:prathvihan108/campusX.git
 ```
 
 ### **2️⃣ Install Dependencies**
@@ -110,48 +155,58 @@ npm install
 
 Create a `.env` file and add:
 
-```ini
+```env
+# 📧 Email Configuration
+EMAIL=your-email@smtp.com
+EMAIL_PASSWORD=your-email-password
+EMAIL_HOST=smtp-relay.yourhost.com
+EMAIL_PORT=587
+
+# 🌐 Server Configuration
 PORT=5000
-MONGO_URI=your-mongodb-connection-string
-JWT_SECRET=your-jwt-secret
-CLOUDINARY_URL=your-cloudinary-url
-REDIS_URL=your-redis-url
+
+# 🗄️ Database Configuration
+MONGO_URI=mongodb+srv://<username>:<password>@cluster.mongodb.net
+DB_NAME=campusX
+
+# 🔗 CORS Configuration
+CORS_ORIGIN=http://localhost:3000
+
+# 🔑 JWT Authentication
+ACCESS_TOKEN_SECRET=your_access_token_secret
+ACCESS_TOKEN_EXPIRY=15m
+REFRESH_TOKEN_SECRET=your_refresh_token_secret
+REFRESH_TOKEN_EXPIRY=7d
+
+# ☁️ Cloudinary Configuration
+CLOUDINARY_APIKEY=your_cloudinary_api_key
+CLOUDINARY_SECRET=your_cloudinary_api_secret
+CLOUDINARY_CLOUD_NAME=your_cloudinary_cloud_name
 ```
 
 ### **4️⃣ Start the Server**
 
 ```sh
-npm start
+npm run dev
 ```
 
----
+## **Future Plans**
 
-## **⚡ Redis Integration (Caching & Rate Limiting)**
+### 🔥 Trending & Personalized Recommendations
 
-- **Post Caching:** Frequently accessed posts are stored in Redis for faster retrieval.
-- **Rate Limiting:** Prevent spam by limiting user actions (e.g., max 5 posts per minute).
-- **Trending Posts:** Store trending posts in Redis and refresh periodically.
+get ML-Based post recommendations tailored to your interests.
 
-### **Example: Rate Limiting Rule**
+### 🤖 AI Chatbot Integration (Powered by Generative AI)
 
-- Max **5 posts per minute** per user
-- Max **10 comments per minute** per user
+Quickly get answers to campus-related queries with AI-powered chat.
 
----
-
-## **🛠️ Future Plans**
-
-🚀 Mobile app API support  
-🤖 AI-powered chatbot for quick queries  
-⚡ Enhanced caching for AI-based recommendations  
-💬 End-to-end encrypted chat system  
-📊 Advanced analytics for post engagement
+### 🚫 **Rate Limiting with Redis** to prevent spam in posts
 
 ---
 
 ## **📌 Contributors**
 
-- [Your Name](https://github.com/your-profile)
-- [Other Contributors]
+- [**Prathviraj Hanimanale**](https://github.com/prathvihan108)
 
-🚀 **Built for the CMRIT community!**
+Contributions related to code optimization, potential bug fixes, and improvements are accepted. However, feature requests are not considered at this time.
+If you're making a contribution, please create a pull request with a suitable branch name that reflects the changes being made. 🚀
