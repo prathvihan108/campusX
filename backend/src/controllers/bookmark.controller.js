@@ -3,7 +3,8 @@ import { Post } from "../models/post.model.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { AsyncHandler } from "../utils/AsyncHandler.js";
-
+import { User } from "../models/user.models.js";
+import client from "../utils/redisClient.js";
 // Add a Post to Bookmarks
 const bookmarkPost = AsyncHandler(async (req, res) => {
   const { postId } = req.params;
@@ -49,9 +50,33 @@ const removeBookmark = AsyncHandler(async (req, res) => {
 
 //  Get User's Bookmarked Posts
 const getUserBookmarks = AsyncHandler(async (req, res) => {
-  const bookmarks = await Bookmark.find({ post_owner: req.user._id })
+  const userId = req.user._id;
+  const user = await User.findById(userId);
+
+  const cachedBookmarks = await client.get(`bookmarks:${user}`);
+  console.log("cachedBookmarks", cachedBookmarks);
+  if (cachedBookmarks) {
+    return res.json(
+      new ApiResponse(
+        200,
+        JSON.parse(cachedBookmarks),
+        "bookmarks from Redis cache"
+      )
+    );
+  }
+
+  const bookmarks = await Bookmark.find({ _id: { $in: user.bookmarks } })
     .populate("post", "content image category likesCount")
     .populate("post_owner", "fullName userName avatar");
+
+  console.log("bookmarks", bookmarks);
+
+  try {
+    await client.setEx(`bookmarks:${user}`, 3600, JSON.stringify(bookmarks));
+    console.log("bookmarks cached");
+  } catch (err) {
+    console.error("Redis caching error:", err);
+  }
 
   res
     .status(200)
