@@ -3,6 +3,8 @@ import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { AsyncHandler } from "../utils/AsyncHandler.js";
 import { uploadOnCloudnary } from "../utils/cloudnary.js";
+import client from "../utils/redisClient.js";
+import mongoose from "mongoose";
 
 //  Create a Post
 const createPost = AsyncHandler(async (req, res) => {
@@ -75,6 +77,14 @@ const getAllPosts = AsyncHandler(async (req, res) => {
 //  Get Single Post by ID with Aggregation
 const getPostById = AsyncHandler(async (req, res) => {
   const postId = req.params.id;
+  const cachedPost = await client.get(`post:${postId}`);
+
+  if (cachedPost) {
+    return res.json(
+      new ApiResponse(200, JSON.parse(cachedPost), "Post from Redis cache")
+    );
+  }
+
   const post = await Post.aggregate([
     { $match: { _id: new mongoose.Types.ObjectId(postId) } },
     {
@@ -112,6 +122,12 @@ const getPostById = AsyncHandler(async (req, res) => {
   ]);
 
   if (!post.length) throw new ApiError(404, "Post not found");
+
+  try {
+    await client.setEx(`post:${postId}`, 3600, JSON.stringify(post[0]));
+  } catch (err) {
+    console.error("Redis caching error:", err);
+  }
 
   res
     .status(200)

@@ -5,6 +5,7 @@ import { User } from "../models/user.models.js";
 import { Post } from "../models/post.model.js";
 import { Subscription } from "../models/subscription.model.js";
 import mongoose, { Schema } from "mongoose";
+import client from "../utils/redisClient.js";
 import {
   deleteAvatar,
   deleteCoverImage,
@@ -406,6 +407,18 @@ const getUserChannelProfile = AsyncHandler(async (req, res) => {
   if (!user) {
     throw new ApiError(401, "User name is missing");
   }
+
+  const cachedChannel = await client.get(`channel:${user}`);
+  console.log("cached channel", cachedChannel);
+  if (cachedChannel) {
+    return res.json(
+      new ApiResponse(
+        200,
+        JSON.parse(cachedChannel),
+        "channel from Redis cache"
+      )
+    );
+  }
   console.log("userName: ", user);
   //channel will be an array
   const channel = await User.aggregate([
@@ -467,6 +480,13 @@ const getUserChannelProfile = AsyncHandler(async (req, res) => {
 
   if (!channel?.length) {
     throw new ApiError(401, "channel does not exits");
+  }
+
+  try {
+    await client.setEx(`channel:${user}`, 3600, JSON.stringify(channel[0]));
+    console.log("Channel cached");
+  } catch (err) {
+    console.error("Redis caching error:", err);
   }
 
   return res
