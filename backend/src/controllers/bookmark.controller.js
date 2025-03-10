@@ -7,16 +7,13 @@ import { AsyncHandler } from "../utils/AsyncHandler.js";
 // Add a Post to Bookmarks
 const bookmarkPost = AsyncHandler(async (req, res) => {
   const { postId } = req.params;
-
+  console.log("postId", postId);
   const post = await Post.findById(postId);
+  console.log("post", post);
   if (!post) throw new ApiError(404, "Post not found");
 
-  const existingBookmark = await Bookmark.findOne({
-    post: postId,
-    post_owner: post.author,
-  });
-
-  if (existingBookmark) throw new ApiError(400, "Post already bookmarked");
+  //no need to check if post is already bookmarked as the front-end will have the control to show the bookmark button only if the post is not already bookmarked
+  console.log("post.author:", post.author);
 
   const bookmark = await Bookmark.create({
     post_owner: post.author,
@@ -24,7 +21,7 @@ const bookmarkPost = AsyncHandler(async (req, res) => {
   });
 
   req.user.bookmarks.push(bookmark._id);
-  await req.user.save();
+  await req.user.save({ validateBeforeSave: false });
 
   res
     .status(201)

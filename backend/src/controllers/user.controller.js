@@ -495,6 +495,18 @@ const getUserChannelProfile = AsyncHandler(async (req, res) => {
 });
 
 const getBookmarks = AsyncHandler(async (req, res) => {
+  const cachedBookmarks = await client.get(`bookmarks:${user}`);
+
+  if (cachedBookmarks) {
+    return res.json(
+      new ApiResponse(
+        200,
+        JSON.parse(cachedBookmarks),
+        "bookmarks from Redis cache"
+      )
+    );
+  }
+
   const user = await User.aggregate([
     {
       $match: { _id: new mongoose.Types.ObjectId(req.user._id) },
@@ -552,7 +564,18 @@ const getBookmarks = AsyncHandler(async (req, res) => {
       },
     },
   ]);
+
   console.log("user", user);
+
+  try {
+    await client.setEx(
+      `bookmarks:${user}`,
+      3600,
+      JSON.stringify(user[0].bookmarks)
+    );
+  } catch (err) {
+    console.error("Redis caching error:", err);
+  }
 
   return res
     .status(200)
