@@ -1,9 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
-import axios from "axios";
-import { toast } from "react-toastify";
 
-// Backend API URL
-const apiUrl = import.meta.env.VITE_API_URL;
+import { toast } from "react-toastify";
+import axiosInstance from "../utils/axiosInstance";
 
 // Create Context
 export const AuthContext = createContext();
@@ -16,17 +14,13 @@ const AuthProvider = ({ children }) => {
 	const [showLogout, setShowLogout] = useState(false);
 	const [showCreatePost, setShowCreatePost] = useState(false);
 
-	// useEffect(() => {
-	// 	const storedUser = JSON.parse(localStorage.getItem("user"));
-	// 	if (storedUser) setUser(storedUser);
-	// }, []);
 	console.log("signup model state initil", showSignup);
 
 	// Handle User Signup with Avatar Upload
-	const handleSignUp = async (formData, navigate) => {
+	const handleSignUp = async (formData) => {
 		try {
 			// FormData already constructed in Signup.jsx
-			const response = await axios.post(`${apiUrl}/users/register/`, formData, {
+			const response = await axiosInstance.post("/users/register/", formData, {
 				headers: { "Content-Type": "multipart/form-data" },
 			});
 
@@ -61,14 +55,12 @@ const AuthProvider = ({ children }) => {
 		}
 	};
 
-	const handleLogin = async (formData, navigate) => {
+	const handleLogin = async (formData) => {
 		try {
-			const response = await axios.post(`${apiUrl}/users/login/`, formData, {
+			const response = await axiosInstance.post("/users/login/", formData, {
 				headers: { "Content-Type": "multipart/form-data" },
-				withCredentials: true, // 🔹 Ensures cookies are sent & received
 			});
 
-			// Debugging: Log the response
 			console.log("login Response received:", response.data);
 			console.log("Created user", response?.data?.data?.user);
 
@@ -82,17 +74,11 @@ const AuthProvider = ({ children }) => {
 				// Refresh Page
 				setTimeout(() => {
 					window.location.reload();
-				}, 1000); // Refresh after 2 seconds
+				}, 1000);
 
 				console.log("Login successful.");
 
-				// // Store user in localStorage
-				// localStorage.setItem("user", JSON.stringify(userData));
-
-				// Update user state in AuthContext
 				setUser(userData);
-
-				// Close the Signup modal and show Login modal
 
 				setShowLogin(false);
 			}
@@ -115,26 +101,15 @@ const AuthProvider = ({ children }) => {
 	};
 
 	const handleLogout = async () => {
-		// Step 1: Remove user data from localStorage
-
-		// localStorage.removeItem("user");
-		// console.log("user after removal", localStorage.getItem("user"));
-		// setUser(null);
-
-		// toast.success("Logged out successfully!", { autoClose: 2000 });
-
-		// console.log("User logged out.");
-
 		try {
 			console.log("user before removal", localStorage.getItem("user"));
 			localStorage.removeItem("user");
 			console.log("user after removal", localStorage.getItem("user"));
-			const response = await axios.post(
-				`${apiUrl}/users/logout/`,
-				{}, // ✅ Empty object as data
+			const response = await axiosInstance.post(
+				"/users/logout/",
+				{},
 				{
-					headers: { "Content-Type": "multipart/form-data" }, //
-					withCredentials: true,
+					headers: { "Content-Type": "multipart/form-data" },
 				}
 			);
 
@@ -166,11 +141,6 @@ const AuthProvider = ({ children }) => {
 		}
 	};
 
-	const axiosInstance = axios.create({
-		baseURL: `${apiUrl}`,
-		withCredentials: true,
-	});
-
 	const fetchUser = async () => {
 		try {
 			const res = await axiosInstance.get("/users/current-user");
@@ -184,12 +154,10 @@ const AuthProvider = ({ children }) => {
 			if (err.response?.status === 403) {
 				console.log("Access Token Expired, Trying to refresh...");
 				try {
-					await axiosInstance.post("/users/refresh-token"); // 🔥 Refresh token request
-					return fetchUser(); // 🔥 Retry original request
+					await axiosInstance.post("/users/refresh-token");
+					return fetchUser(); //  Retry original request
 				} catch (refreshErr) {
 					toast.error("Session expired, Please login again!");
-
-					// window.location.href = "/login"; // Redirect to login
 				}
 			}
 			throw err;

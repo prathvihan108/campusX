@@ -1,20 +1,17 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
 import PostContext from "./PostContext";
-
-const apiUrl = import.meta.env.VITE_API_URL;
+import axiosInstance from "../utils/axiosInstance";
 
 const PostContextProvider = ({ children }) => {
 	const [posts, setPosts] = useState([]);
 
-	// Fetch posts once when the component mounts
+	// Fetch posts once when the component mount
 	console.log("'PostContextProvider' component mounted");
 	useEffect(() => {
 		const fetchAllPosts = async () => {
 			try {
-				const response = await axios.get(
-					"https://localhost:8005/api/v1/posts/"
-				);
+				const response = await axiosInstance.get("/posts/");
+
 				console.log("Fetched posts:", response.data);
 				setPosts(response.data.data);
 			} catch (error) {
@@ -23,7 +20,7 @@ const PostContextProvider = ({ children }) => {
 		};
 
 		fetchAllPosts();
-	}, []); // ✅ No unnecessary re-renders
+	}, []); // No unnecessary re-renders
 
 	return (
 		<PostContext.Provider value={{ posts, setPosts }}>

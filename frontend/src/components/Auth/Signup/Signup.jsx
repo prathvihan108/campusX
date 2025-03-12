@@ -48,7 +48,7 @@ const Signup = () => {
 		}
 
 		// Call API function
-		handleSignUp(data, navigate);
+		handleSignUp(data);
 	};
 
 	return (

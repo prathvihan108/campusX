@@ -5,6 +5,7 @@ const PostCard = ({ post, currentUserId, toggleLike }) => {
 	const [isLiked, setIsLiked] = useState(
 		post.likes.some((likeId) => likeId === currentUserId)
 	);
+
 	console.log("post id", post._id);
 	console.log("post likes: ", post.likes);
 	console.log("Is Liked:", isLiked);

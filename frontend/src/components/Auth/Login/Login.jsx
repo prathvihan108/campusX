@@ -10,6 +10,7 @@ const Login = () => {
 		email: "",
 		password: "",
 	});
+
 	const [showPassword, setShowPassword] = useState(false);
 	const { setShowLogin, handleLogin } = useAuth();
 
@@ -36,7 +37,7 @@ const Login = () => {
 		}
 
 		// Call API function
-		handleLogin(data, navigate);
+		handleLogin(data);
 	};
 
 	return (

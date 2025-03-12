@@ -1,14 +1,8 @@
-import axios from "axios";
-
-const apiUrl = import.meta.env.VITE_API_URL;
+import axiosInstance from "../utils/axiosInstance";
 
 export const toggleLike = async (postId) => {
 	try {
-		const response = await axios.post(
-			`${apiUrl}/likes/${postId}/like/`,
-			{},
-			{ withCredentials: true }
-		);
+		const response = await axiosInstance.post(`/likes/${postId}/like/`, {}); //same for like and unlike.
 
 		console.log(response?.data?.message);
 	} catch (error) {
