@@ -3,6 +3,7 @@ import { Post } from "../models/post.model.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { AsyncHandler } from "../utils/AsyncHandler.js";
+import STATUS_CODES from "../constants/statusCodes.js";
 
 //  Add a Comment
 const addComment = AsyncHandler(async (req, res) => {
@@ -10,9 +11,9 @@ const addComment = AsyncHandler(async (req, res) => {
   const { text } = req.body; // Extract text from body
 
   const post = await Post.findById(postId);
-  if (!post) throw new ApiError(404, "Post not found");
+  if (!post) throw new ApiError(STATUS_CODES.NOT_FOUND, "Post not found");
   if (!text) {
-    throw new ApiError(400, "comment message not found");
+    throw new ApiError(STATUS_CODES.BAD_REQUEST, "comment message not found");
   }
 
   const comment = await Comment.create({
@@ -29,7 +30,9 @@ const addComment = AsyncHandler(async (req, res) => {
   post.comments.push(comment._id);
   await post.save({ validateBeforeSave: false });
 
-  res.status(201).json(new ApiResponse(201, comment, "Comment added"));
+  res
+    .status(STATUS_CODES.CREATED)
+    .json(new ApiResponse(STATUS_CODES.CREATED, comment, "Comment added"));
 });
 
 //Get Comments for a Post
@@ -40,7 +43,9 @@ const getComments = AsyncHandler(async (req, res) => {
     .populate("author", "fullName userName avatar")
     .sort({ createdAt: -1 });
 
-  res.status(200).json(new ApiResponse(200, comments, "Comments fetched"));
+  res
+    .status(STATUS_CODES.OK)
+    .json(new ApiResponse(STATUS_CODES.OK, comments, "Comments fetched"));
 });
 
 //  Delete a Comment (Only Author or Post Owner Can Delete)
@@ -49,16 +54,16 @@ const deleteComment = AsyncHandler(async (req, res) => {
   const { commentId } = req.params;
 
   const comment = await Comment.findById(commentId);
-  if (!comment) throw new ApiError(404, "Comment not found");
+  if (!comment) throw new ApiError(STATUS_CODES.NOT_FOUND, "Comment not found");
 
   const post = await Post.findById(comment.post);
-  if (!post) throw new ApiError(404, "Post not found");
+  if (!post) throw new ApiError(STATUS_CODES.NOT_FOUND, "Post not found");
 
   if (
     comment.author.toString() !== req.user._id.toString() &&
     post.author.toString() !== req.user._id.toString()
   ) {
-    throw new ApiError(403, "Unauthorized");
+    throw new ApiError(STATUS_CODES.FORBIDDEN, "Unauthorized");
   }
 
   await comment.deleteOne();
@@ -67,7 +72,9 @@ const deleteComment = AsyncHandler(async (req, res) => {
   );
   await post.save();
 
-  res.status(200).json(new ApiResponse(200, {}, "Comment deleted"));
+  res
+    .status(STATUS_CODES.OK)
+    .json(new ApiResponse(STATUS_CODES.OK, {}, "Comment deleted"));
 });
 
 export { addComment, getComments, deleteComment };

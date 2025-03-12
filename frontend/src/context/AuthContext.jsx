@@ -61,7 +61,6 @@ const AuthProvider = ({ children }) => {
 	const handleLogin = async (formData) => {
 		setShowLoading(true);
 		try {
-			await new Promise((resolve) => setTimeout(resolve, 5000));
 			const response = await axiosInstance.post("/users/login/", formData, {
 				headers: { "Content-Type": "multipart/form-data" },
 			});
@@ -82,6 +81,12 @@ const AuthProvider = ({ children }) => {
 					window.location.reload();
 				}, 1000);
 
+				await new Promise((resolve) =>
+					setTimeout(() => {
+						setShowLoading(false);
+						resolve();
+					}, 4000)
+				);
 				console.log("Login successful.");
 
 				setUser(userData);
@@ -127,13 +132,19 @@ const AuthProvider = ({ children }) => {
 				setUser(null);
 
 				toast.success("Logged out successfully!", { autoClose: 2000 });
-				setShowLoading(false);
 
 				console.log("User logged out.");
 				// Refresh Page
 				setTimeout(() => {
 					window.location.reload();
-				}, 1000); // Refresh after 2 seconds
+				}, 1000);
+
+				await new Promise((resolve) =>
+					setTimeout(() => {
+						setShowLoading(false);
+						resolve();
+					}, 4000)
+				);
 			}
 		} catch (error) {
 			console.log("error", error);

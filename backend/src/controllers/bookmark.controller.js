@@ -5,13 +5,14 @@ import { ApiResponse } from "../utils/ApiResponse.js";
 import { AsyncHandler } from "../utils/AsyncHandler.js";
 import { User } from "../models/user.models.js";
 import client from "../utils/redisClient.js";
+import STATUS_CODES from "../constants/statusCodes.js";
 // Add a Post to Bookmarks
 const bookmarkPost = AsyncHandler(async (req, res) => {
   const { postId } = req.params;
   console.log("postId", postId);
   const post = await Post.findById(postId);
   console.log("post", post);
-  if (!post) throw new ApiError(404, "Post not found");
+  if (!post) throw new ApiError(STATUS_CODES.NOT_FOUND, "Post not found");
 
   //no need to check if post is already bookmarked as the front-end will have the control to show the bookmark button only if the post is not already bookmarked
   console.log("post.author:", post.author);
@@ -25,8 +26,14 @@ const bookmarkPost = AsyncHandler(async (req, res) => {
   await req.user.save({ validateBeforeSave: false });
 
   res
-    .status(201)
-    .json(new ApiResponse(201, bookmark, "Post bookmarked successfully"));
+    .status(STATUS_CODES.CREATED)
+    .json(
+      new ApiResponse(
+        STATUS_CODES.CREATED,
+        bookmark,
+        "Post bookmarked successfully"
+      )
+    );
 });
 
 //  Remove Bookmark
@@ -34,7 +41,8 @@ const removeBookmark = AsyncHandler(async (req, res) => {
   const { bookmarkId } = req.params;
 
   const bookmark = await Bookmark.findById(bookmarkId);
-  if (!bookmark) throw new ApiError(404, "Bookmark not found");
+  if (!bookmark)
+    throw new ApiError(STATUS_CODES.NOT_FOUND, "Bookmark not found");
 
   await Bookmark.deleteOne({ _id: bookmarkId });
 
@@ -44,8 +52,10 @@ const removeBookmark = AsyncHandler(async (req, res) => {
   await req.user.save();
 
   res
-    .status(200)
-    .json(new ApiResponse(200, {}, "Bookmark removed successfully"));
+    .status(STATUS_CODES.OK)
+    .json(
+      new ApiResponse(STATUS_CODES.OK, {}, "Bookmark removed successfully")
+    );
 });
 
 //  Get User's Bookmarked Posts
@@ -58,7 +68,7 @@ const getUserBookmarks = AsyncHandler(async (req, res) => {
   if (cachedBookmarks) {
     return res.json(
       new ApiResponse(
-        200,
+        STATUS_CODES.OK,
         JSON.parse(cachedBookmarks),
         "bookmarks from Redis cache"
       )
@@ -79,8 +89,10 @@ const getUserBookmarks = AsyncHandler(async (req, res) => {
   }
 
   res
-    .status(200)
-    .json(new ApiResponse(200, bookmarks, "Bookmarked posts fetched"));
+    .status(STATUS_CODES.OK)
+    .json(
+      new ApiResponse(STATUS_CODES.OK, bookmarks, "Bookmarked posts fetched")
+    );
 });
 
 export { bookmarkPost, removeBookmark, getUserBookmarks };

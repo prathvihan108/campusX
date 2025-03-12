@@ -1,4 +1,5 @@
 import { AsyncHandler } from "../utils/AsyncHandler.js";
+import STATUS_CODES from "../constants/statusCodes.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { User } from "../models/user.models.js";
@@ -29,7 +30,7 @@ const generateAccessAndRefreshTokens = async (userId) => {
     return { accessToken, refreshToken };
   } catch (error) {
     throw new ApiError(
-      401,
+      STATUS_CODES.INTERNAL_ERROR,
       "something went wrong while generating acess and refresh token"
     );
   }
@@ -40,7 +41,7 @@ const registerUser = AsyncHandler(async (req, res) => {
   console.log("Request Files:", req.files);
 
   if (!req.files || Object.keys(req.files).length === 0) {
-    throw new ApiError(400, "No files uploaded");
+    throw new ApiError(STATUS_CODES.BAD_REQUEST, "No files uploaded");
   }
   const { fullName, email, userName, password, role, year, department, bio } =
     req.body;
@@ -51,13 +52,16 @@ const registerUser = AsyncHandler(async (req, res) => {
       (field) => (field?.trim?.() ?? "") === ""
     )
   ) {
-    throw new ApiError(400, "All required fields must be filled");
+    throw new ApiError(
+      STATUS_CODES.BAD_REQUEST,
+      "All required fields must be filled"
+    );
   }
 
   // Ensure role is valid
   const validRoles = ["Student", "Faculty", "Cell"];
   if (!validRoles.includes(role)) {
-    throw new ApiError(400, "Invalid role");
+    throw new ApiError(STATUS_CODES.BAD_REQUEST, "Invalid role");
   }
 
   const validYears = [
@@ -67,7 +71,7 @@ const registerUser = AsyncHandler(async (req, res) => {
     "Final-Year",
   ];
   if (!validYears.includes(year)) {
-    throw new ApiError(400, "Invalid Year");
+    throw new ApiError(STATUS_CODES.BAD_REQUEST, "Invalid Year");
   }
 
   const validDepartments = [
@@ -81,7 +85,7 @@ const registerUser = AsyncHandler(async (req, res) => {
     "CIVIL",
   ];
   if (!validDepartments.includes(department)) {
-    throw new ApiError(400, "Invalid department");
+    throw new ApiError(STATUS_CODES.BAD_REQUEST, "Invalid department");
   }
 
   const existingUser = await User.findOne({ $or: [{ email }, { userName }] });
@@ -89,9 +93,11 @@ const registerUser = AsyncHandler(async (req, res) => {
 
   if (existingUser) {
     return res
-      .status(409)
-      .json(new ApiResponse(409, null, "User already exists"));
-    // throw new ApiError(409, "User already exists");
+      .status(STATUS_CODES.CONFLICT)
+      .json(
+        new ApiResponse(STATUS_CODES.CONFLICT, null, "User already exists")
+      );
+    // throw new ApiError(STATUS_CODES.CONFLICT, "User already exists");
   }
 
   console.log(req.files);
@@ -100,7 +106,7 @@ const registerUser = AsyncHandler(async (req, res) => {
   const coverImageLocalPath = req.files?.coverImage?.[0]?.path;
 
   if (!avatarLocalPath) {
-    throw new ApiError(400, "Avatar is required");
+    throw new ApiError(STATUS_CODES.BAD_REQUEST, "Avatar is required");
   }
 
   const avatar = await uploadOnCloudnary(avatarLocalPath);
@@ -110,7 +116,10 @@ const registerUser = AsyncHandler(async (req, res) => {
     : null;
 
   if (!avatar) {
-    throw new ApiError(400, "Avatar upload to Cloudinary failed");
+    throw new ApiError(
+      STATUS_CODES.BAD_REQUEST,
+      "Avatar upload to Cloudinary failed"
+    );
   }
   console.log("Role:", role, "Year:", year);
 
@@ -133,12 +142,21 @@ const registerUser = AsyncHandler(async (req, res) => {
   console.log("created user", createdUser);
 
   if (!createdUser) {
-    throw new ApiError(401, "Error while registering user!!");
+    throw new ApiError(
+      STATUS_CODES.INTERNAL_ERROR,
+      "Error while registering user!!"
+    );
   }
 
   return res
-    .status(201)
-    .json(new ApiResponse(201, { createdUser }, "User created successfully"));
+    .status(STATUS_CODES.CREATED)
+    .json(
+      new ApiResponse(
+        STATUS_CODES.CREATED,
+        { createdUser },
+        "User created successfully"
+      )
+    );
 });
 
 const loginUser = AsyncHandler(async (req, res) => {
@@ -152,7 +170,10 @@ const loginUser = AsyncHandler(async (req, res) => {
   console.log("Request Body:", req.body);
   console.log(email);
   if (!email) {
-    throw new ApiError(400, "username or email is required");
+    throw new ApiError(
+      STATUS_CODES.BAD_REQUEST,
+      "username or email is required"
+    );
   }
 
   const user = await User.findOne({
@@ -162,17 +183,16 @@ const loginUser = AsyncHandler(async (req, res) => {
   console.log("user:", user);
   if (!user) {
     return res
-      .status(404)
-      .json(new ApiResponse(404, null, "user does not exits"));
+      .status(STATUS_CODES.NOT_FOUND)
+      .json(
+        new ApiResponse(STATUS_CODES.NOT_FOUND, null, "user does not exits")
+      );
   }
   const isPasswordValid = await user.isPasswordCorrect(password);
   console.log("isPasswordValid", isPasswordValid);
 
   if (!isPasswordValid) {
-    // return res
-    //   .status(401)
-    //   .json(new ApiResponse(401, null, "password not valid"));
-    throw new ApiError(401, "password not valid");
+    throw new ApiError(STATUS_CODES.UNAUTHORIZED, "password not valid");
   }
 
   const { accessToken, refreshToken } = await generateAccessAndRefreshTokens(
@@ -190,12 +210,12 @@ const loginUser = AsyncHandler(async (req, res) => {
     sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",
   };
   return res
-    .status(200)
+    .status(STATUS_CODES.OK)
     .cookie("accessToken", accessToken, options)
     .cookie("refreshToken", refreshToken, options)
     .json(
       new ApiResponse(
-        200,
+        STATUS_CODES.OK,
         {
           user: loggedInUser,
           accessToken,
@@ -207,8 +227,6 @@ const loginUser = AsyncHandler(async (req, res) => {
 });
 
 const logoutUser = AsyncHandler(async (req, res) => {
-  // req.user._id;
-  // console.log("Refresh token before logout", console.log(user.refreshToken));
   console.log("user id is", req.user._id);
   const user = await User.findByIdAndUpdate(
     req.user._id,
@@ -228,17 +246,20 @@ const logoutUser = AsyncHandler(async (req, res) => {
     sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",
   };
   return res
-    .status(200)
+    .status(STATUS_CODES.OK)
     .clearCookie("accessToken", options)
     .clearCookie("refreshToken", options)
-    .json(new ApiResponse(200, user, "user logged out"));
+    .json(new ApiResponse(STATUS_CODES.OK, user, "user logged out"));
 });
 
 const refreshAccessToken = AsyncHandler(async (req, res) => {
   const incomingRefreshToken =
     req.cookies.refreshToken || req.body.refreshToken;
   if (!incomingRefreshToken) {
-    throw new ApiError(401, "unauthorised request:refresh token not found");
+    throw new ApiError(
+      STATUS_CODES.UNAUTHORIZED,
+      "unauthorised request:refresh token not found"
+    );
   }
   try {
     const decodedToken = jwt.verify(
@@ -248,12 +269,15 @@ const refreshAccessToken = AsyncHandler(async (req, res) => {
 
     const user = await User.findById(decodedToken?._id);
     if (!user) {
-      throw new ApiError(401, "invalid  refresh token");
+      throw new ApiError(STATUS_CODES.BAD_REQUEST, "invalid  refresh token");
     }
     //verify from the database too
 
     if (incomingRefreshToken != user?.refreshToken) {
-      throw new ApiError(401, "refresh token is expired or used");
+      throw new ApiError(
+        STATUS_CODES.UNAUTHORIZED,
+        "refresh token is expired or used"
+      );
     }
     const options = {
       httpOnly: true,
@@ -265,19 +289,19 @@ const refreshAccessToken = AsyncHandler(async (req, res) => {
       user?._id
     );
     res
-      .status(200)
+      .status(STATUS_CODES.OK)
       .cookie("accessToken", accessToken, options)
       .cookie("refreshToken", refreshToken, options)
       .json(
         new ApiResponse(
-          200,
+          STATUS_CODES.OK,
           { accessToken, refreshToken },
           "accessToken refreshed successfully"
         )
       );
   } catch (error) {
     throw new ApiError(
-      402,
+      STATUS_CODES.INTERNAL_ERROR,
       "error while refreshing the access token" + error.message
     );
   }
@@ -287,7 +311,7 @@ const changeCurrentPassword = AsyncHandler(async (req, res) => {
   const { oldPassword, newPassword, confPassword } = req.body;
   console.log(" body:", req.body);
   if (!(newPassword === confPassword)) {
-    throw new ApiError(401, "Passwords do not match");
+    throw new ApiError(STATUS_CODES.BAD_REQUEST, "Passwords do not match");
   }
   const user = await User.findById(req.user?._id);
   console.log("user ", user);
@@ -296,21 +320,23 @@ const changeCurrentPassword = AsyncHandler(async (req, res) => {
   const isPasswordCorrect = await user.isPasswordCorrect(oldPassword);
   console.log("isPasswordCorrect :", isPasswordCorrect);
   if (!isPasswordCorrect) {
-    throw new ApiError(400, "password is wrong");
+    throw new ApiError(STATUS_CODES.BAD_REQUEST, "password is wrong");
   }
   user.password = newPassword;
   await user.save({ validateBeforeSave: false });
   return res
-    .status(200)
-    .json(new ApiResponse(200, {}, "Password chanaged successfully"));
+    .status(STATUS_CODES.OK)
+    .json(
+      new ApiResponse(STATUS_CODES.OK, {}, "Password chanaged successfully")
+    );
 });
 
 const getCurrentUser = AsyncHandler(async (req, res) => {
   return res
-    .status(200)
+    .status(STATUS_CODES.OK)
     .json(
       new ApiResponse(
-        200,
+        STATUS_CODES.OK,
         { user: req.user },
         "Curent user feteched successfully"
       )
@@ -320,7 +346,7 @@ const getCurrentUser = AsyncHandler(async (req, res) => {
 const updateAccountDetails = AsyncHandler(async (req, res) => {
   const { fullName, email } = req.body;
   if (!fullName || !email) {
-    throw new ApiError(400, "All fields are required");
+    throw new ApiError(STATUS_CODES.BAD_REQUEST, "All fields are required");
   }
   const user = await User.findByIdAndUpdate(
     req.user?._id,
@@ -331,14 +357,16 @@ const updateAccountDetails = AsyncHandler(async (req, res) => {
   ).select("-password");
 
   return res
-    .status(200)
-    .json(new ApiResponse(200, user, "Updated profile successfully"));
+    .status(STATUS_CODES.OK)
+    .json(
+      new ApiResponse(STATUS_CODES.OK, user, "Updated profile successfully")
+    );
 });
 
 const updateUserAvatar = AsyncHandler(async (req, res) => {
   const avatarLocalPath = req.file?.path;
   if (!avatarLocalPath) {
-    throw new ApiError(400, "avatar file not found");
+    throw new ApiError(STATUS_CODES.BAD_REQUEST, "avatar file not found");
   }
 
   const user = await User.findById(req.user?._id);
@@ -347,7 +375,10 @@ const updateUserAvatar = AsyncHandler(async (req, res) => {
   console.log("Old cloudnary url", oldCloudinaryUrl);
   const avatar = await updateAvatar(oldCloudinaryUrl, avatarLocalPath);
   if (!avatar.url) {
-    throw new ApiError(400, "error while uploading avatar");
+    throw new ApiError(
+      STATUS_CODES.BAD_REQUEST,
+      "error while uploading avatar"
+    );
   }
 
   await User.findByIdAndUpdate(
@@ -363,15 +394,15 @@ const updateUserAvatar = AsyncHandler(async (req, res) => {
   );
 
   return res
-    .status(200)
-    .json(new ApiResponse(200, {}, "avatar updated successfully"));
+    .status(STATUS_CODES.OK)
+    .json(new ApiResponse(STATUS_CODES.OK, {}, "avatar updated successfully"));
 });
 
 const updateUserCoverImage = AsyncHandler(async (req, res) => {
   const coverImageLocalPath = req.file?.path;
   console.log("Cover image path", coverImageLocalPath);
   if (!coverImageLocalPath) {
-    throw new ApiError(400, "coverImage file not found");
+    throw new ApiError(STATUS_CODES.BAD_REQUEST, "coverImage file not found");
   }
 
   const user = await User.findById(req.user?._id);
@@ -383,7 +414,10 @@ const updateUserCoverImage = AsyncHandler(async (req, res) => {
     coverImageLocalPath
   );
   if (!coverImage.url) {
-    throw new ApiError(400, "Error while uploading cover image");
+    throw new ApiError(
+      STATUS_CODES.BAD_REQUEST,
+      "Error while uploading cover image"
+    );
   }
 
   await User.findByIdAndUpdate(
@@ -397,15 +431,17 @@ const updateUserCoverImage = AsyncHandler(async (req, res) => {
   );
 
   return res
-    .status(200)
-    .json(new ApiResponse(200, {}, "coverImage updated successfully"));
+    .status(STATUS_CODES.OK)
+    .json(
+      new ApiResponse(STATUS_CODES.OK, {}, "coverImage updated successfully")
+    );
 });
 
 const getUserChannelProfile = AsyncHandler(async (req, res) => {
   const user = req.params.user?.toLowerCase().trim();
 
   if (!user) {
-    throw new ApiError(401, "User name is missing");
+    throw new ApiError(STATUS_CODES.BAD_REQUEST, "User name is missing");
   }
 
   const cachedChannel = await client.get(`channel:${user}`);
@@ -413,7 +449,7 @@ const getUserChannelProfile = AsyncHandler(async (req, res) => {
   if (cachedChannel) {
     return res.json(
       new ApiResponse(
-        200,
+        STATUS_CODES.OK,
         JSON.parse(cachedChannel),
         "channel from Redis cache"
       )
@@ -479,7 +515,7 @@ const getUserChannelProfile = AsyncHandler(async (req, res) => {
   console.log("channel: ", channel);
 
   if (!channel?.length) {
-    throw new ApiError(401, "channel does not exits");
+    throw new ApiError(STATUS_CODES.BAD_REQUEST, "channel does not exits");
   }
 
   try {
@@ -490,8 +526,10 @@ const getUserChannelProfile = AsyncHandler(async (req, res) => {
   }
 
   return res
-    .status(200)
-    .json(new ApiResponse(200, channel[0], "User channel feteched"));
+    .status(STATUS_CODES.OK)
+    .json(
+      new ApiResponse(STATUS_CODES.OK, channel[0], "User channel feteched")
+    );
 });
 
 const getBookmarks = AsyncHandler(async (req, res) => {
@@ -500,7 +538,7 @@ const getBookmarks = AsyncHandler(async (req, res) => {
   if (cachedBookmarks) {
     return res.json(
       new ApiResponse(
-        200,
+        STATUS_CODES.OK,
         JSON.parse(cachedBookmarks),
         "bookmarks from Redis cache"
       )
@@ -578,10 +616,10 @@ const getBookmarks = AsyncHandler(async (req, res) => {
   }
 
   return res
-    .status(200)
+    .status(STATUS_CODES.OK)
     .json(
       new ApiResponse(
-        200,
+        STATUS_CODES.OK,
         user[0].bookmarks,
         "Bookmarked posts fetched successfully"
       )
@@ -595,8 +633,14 @@ const followUser = async (req, res) => {
 
     if (userId === subscriberId.toString()) {
       return res
-        .status(400)
-        .json(new ApiResponse(400, null, "You cannot follow yourself"));
+        .status(STATUS_CODES.BAD_REQUEST)
+        .json(
+          new ApiResponse(
+            STATUS_CODES.BAD_REQUEST,
+            null,
+            "You cannot follow yourself"
+          )
+        );
     }
 
     const subscription = await Subscription.create({
@@ -605,8 +649,10 @@ const followUser = async (req, res) => {
     });
 
     res
-      .status(201)
-      .json(new ApiResponse(201, subscription, "Followed successfully"));
+      .status(STATUS_CODES.OK)
+      .json(
+        new ApiResponse(STATUS_CODES.OK, subscription, "Followed successfully")
+      );
   } catch (error) {
     res.status(500).json(new ApiResponse(500, null, error.message));
   }
@@ -624,11 +670,19 @@ const unfollowUser = async (req, res) => {
 
     if (!subscription) {
       return res
-        .status(404)
-        .json(new ApiResponse(404, null, "Subscription not found"));
+        .status(STATUS_CODES.NOT_FOUND)
+        .json(
+          new ApiResponse(
+            STATUS_CODES.NOT_FOUND,
+            null,
+            "Subscription not found"
+          )
+        );
     }
 
-    res.status(200).json(new ApiResponse(200, null, "Unfollowed successfully"));
+    res
+      .status(STATUS_CODES.OK)
+      .json(new ApiResponse(STATUS_CODES.OK, null, "Unfollowed successfully"));
   } catch (error) {
     res.status(500).json(new ApiResponse(500, null, error.message));
   }
@@ -638,7 +692,9 @@ const deleteAccount = AsyncHandler(async (req, res) => {
   const user = await User.findById(req.user._id);
 
   if (!user) {
-    return res.status(404).json(new ApiResponse(404, null, "User not found"));
+    return res
+      .status(STATUS_CODES.NOT_FOUND)
+      .json(new ApiResponse(STATUS_CODES.NOT_FOUND, null, "User not found"));
   }
   const coverImageCloudinaryUrl = user.coverImage;
   const avatarCloudinaryUrl = user.avatar;
@@ -661,8 +717,10 @@ const deleteAccount = AsyncHandler(async (req, res) => {
   await User.findByIdAndDelete(user._id);
 
   return res
-    .status(200)
-    .json(new ApiResponse(200, null, "Account deleted successfully"));
+    .status(STATUS_CODES.OK)
+    .json(
+      new ApiResponse(STATUS_CODES.OK, null, "Account deleted successfully")
+    );
 });
 
 export {

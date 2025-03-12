@@ -1,5 +1,6 @@
 import { Post } from "../models/post.model.js";
 import { ApiError } from "../utils/ApiError.js";
+import STATUS_CODES from "../constants/statusCodes.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { AsyncHandler } from "../utils/AsyncHandler.js";
 import { uploadOnCloudnary } from "../utils/cloudnary.js";
@@ -28,7 +29,11 @@ const createPost = AsyncHandler(async (req, res) => {
     select: "fullName email avatar",
   });
 
-  res.status(201).json(new ApiResponse(201, post, "Post created successfully"));
+  res
+    .status(STATUS_CODES.CREATED)
+    .json(
+      new ApiResponse(STATUS_CODES.CREATED, post, "Post created successfully")
+    );
 });
 
 // Get All Posts with Aggregation
@@ -70,8 +75,10 @@ const getAllPosts = AsyncHandler(async (req, res) => {
   ]);
 
   res
-    .status(200)
-    .json(new ApiResponse(200, posts, "Posts fetched successfully"));
+    .status(STATUS_CODES.OK)
+    .json(
+      new ApiResponse(STATUS_CODES.OK, posts, "Posts fetched successfully")
+    );
 });
 
 //  Get Single Post by ID with Aggregation
@@ -81,7 +88,11 @@ const getPostById = AsyncHandler(async (req, res) => {
 
   if (cachedPost) {
     return res.json(
-      new ApiResponse(200, JSON.parse(cachedPost), "Post from Redis cache")
+      new ApiResponse(
+        STATUS_CODES.OK,
+        JSON.parse(cachedPost),
+        "Post from Redis cache"
+      )
     );
   }
 
@@ -121,7 +132,8 @@ const getPostById = AsyncHandler(async (req, res) => {
     },
   ]);
 
-  if (!post.length) throw new ApiError(404, "Post not found");
+  if (!post.length)
+    throw new ApiError(STATUS_CODES.NOT_FOUND, "Post not found");
 
   try {
     await client.setEx(`post:${postId}`, 3600, JSON.stringify(post[0]));
@@ -130,20 +142,24 @@ const getPostById = AsyncHandler(async (req, res) => {
   }
 
   res
-    .status(200)
-    .json(new ApiResponse(200, post[0], "Post fetched successfully"));
+    .status(STATUS_CODES.OK)
+    .json(
+      new ApiResponse(STATUS_CODES.OK, post[0], "Post fetched successfully")
+    );
 });
 
 //  Delete Post (Only Author Can Delete)
 const deletePost = AsyncHandler(async (req, res) => {
   const post = await Post.findById(req.params.id);
 
-  if (!post) throw new ApiError(404, "Post not found");
+  if (!post) throw new ApiError(STATUS_CODES.NOT_FOUND, "Post not found");
   if (post.author.toString() !== req.user._id.toString())
-    throw new ApiError(403, "Unauthorized");
+    throw new ApiError(STATUS_CODES.FORBIDDEN, "FORBIDDEN");
 
   await post.deleteOne();
-  res.status(200).json(new ApiResponse(200, {}, "Post deleted successfully"));
+  res
+    .status(STATUS_CODES.OK)
+    .json(new ApiResponse(STATUS_CODES.OK, {}, "Post deleted successfully"));
 });
 
 export { createPost, getAllPosts, getPostById, deletePost };

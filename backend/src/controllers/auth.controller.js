@@ -1,5 +1,6 @@
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { sendOtp } from "../utils/sendOtp.js";
+import STATUS_CODES from "../constants/statusCodes.js";
 
 let otpStore = new Map();
 
@@ -13,7 +14,9 @@ export const sendOtpController = async (req, res) => {
 
   await sendOtp(email, otp);
   console.log("OTP sent successfully");
-  res.status(200).json(new ApiResponse(200, null, "OTP sent successfully"));
+  res
+    .status(STATUS_CODES.OK)
+    .json(new ApiResponse(STATUS_CODES.OK, null, "OTP sent successfully"));
 };
 
 export const verifyOtpController = (req, res) => {
@@ -22,9 +25,13 @@ export const verifyOtpController = (req, res) => {
   if (otpStore.get(email) === otp) {
     otpStore.delete(email);
     res
-      .status(200)
-      .json(new ApiResponse(200, null, "OTP verified successfully"));
+      .status(STATUS_CODES.OK)
+      .json(
+        new ApiResponse(STATUS_CODES.OK, null, "OTP verified successfully")
+      );
   } else {
-    res.status(400).json(new ApiResponse(400, null, "Invalid OTP"));
+    res
+      .status(STATUS_CODES.BAD_REQUEST)
+      .json(new ApiResponse(STATUS_CODES.BAD_REQUEST, null, "Invalid OTP"));
   }
 };

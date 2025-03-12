@@ -27,8 +27,8 @@ const CreatePostForm = () => {
 
 	const handleSubmit = (e) => {
 		e.preventDefault();
-		if (Object.values(formData).some((value) => !value)) {
-			alert("All fields are required!");
+		if (!formData.content || !formData.category) {
+			alert("content and category are required!");
 			return;
 		}
 
