@@ -12,7 +12,9 @@ const PostContextProvider = ({ children }) => {
 	useEffect(() => {
 		const fetchAllPosts = async () => {
 			try {
-				const response = await axios.get(apiUrl + "/posts/");
+				const response = await axios.get(
+					"https://localhost:8005/api/v1/posts/"
+				);
 				console.log("Fetched posts:", response.data);
 				setPosts(response.data.data);
 			} catch (error) {

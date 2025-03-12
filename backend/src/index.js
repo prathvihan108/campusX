@@ -1,28 +1,35 @@
 import dotenv from "dotenv";
 import https from "https";
 import fs from "fs";
-import { app } from "./app.js"; // Import `app` from `app.js`
+import { app } from "./app.js";
 import connectDB from "./db/db.js";
-import os from "os";
+import connectWebSocket from "./webSocket/webSocket.js";
+
 dotenv.config({ path: "../.env" });
 
-// Load SSL certificate
 const options = {
   key: fs.readFileSync("key.pem"),
   cert: fs.readFileSync("cert.pem"),
 };
 
-// console.log(`PORT from env: ${process.env.PORT}`);
 const port = process.env.PORT || 5000;
 const host_url = process.env.HOST_URL || "https://localhost";
-console.log(`Using port: ${port}`);
+
+let server;
 
 connectDB()
   .then(() => {
-    const server = https.createServer(options, app).listen(port, () => {
+    server = https.createServer(options, app);
+
+    // Start the server
+    server.listen(port, () => {
       console.log(`🚀 Server running on ${host_url}:${port}`);
+
+      // connectWebSocket(server);
     });
   })
   .catch((err) => {
     console.log("❌ MongoDB Connection Failed!", err);
   });
+
+export { server };

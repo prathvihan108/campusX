@@ -30,6 +30,6 @@ app.get("/", (req, res) => {
   res.send("hello");
 });
 
-app.use(errorMiddleware); //should be last for error handling
+app.use(errorMiddleware);
 
 export { app };
