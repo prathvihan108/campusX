@@ -1,10 +1,9 @@
 import React, { useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useAuth } from "../../../context/AuthContext.jsx";
 
 const Login = () => {
-	const navigate = useNavigate();
 	const [formData, setFormData] = useState({
 		userName: "",
 		email: "",

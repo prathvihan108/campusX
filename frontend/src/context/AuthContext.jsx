@@ -2,6 +2,7 @@ import React, { createContext, useContext, useState, useEffect } from "react";
 
 import { toast } from "react-toastify";
 import axiosInstance from "../utils/axiosInstance";
+import LoadingModel from "../components/Common/Loading/LoadingModel";
 
 // Create Context
 export const AuthContext = createContext();
@@ -12,12 +13,14 @@ const AuthProvider = ({ children }) => {
 	const [showLogin, setShowLogin] = useState(false);
 	const [showSignup, setShowSignup] = useState(false);
 	const [showLogout, setShowLogout] = useState(false);
+	const [showLoading, setShowLoading] = useState(false);
 	const [showCreatePost, setShowCreatePost] = useState(false);
 
 	console.log("signup model state initil", showSignup);
 
 	// Handle User Signup with Avatar Upload
 	const handleSignUp = async (formData) => {
+		setShowLoading(true);
 		try {
 			// FormData already constructed in Signup.jsx
 			const response = await axiosInstance.post("/users/register/", formData, {
@@ -34,7 +37,7 @@ const AuthProvider = ({ children }) => {
 				// Show success toast
 				toast.success("Signup successful! Please log in.", { autoClose: 3000 });
 				console.log("Signup successful! Please log in.");
-
+				setShowLoading(false);
 				setShowSignup(false);
 				setShowLogin(true);
 			}
@@ -56,7 +59,9 @@ const AuthProvider = ({ children }) => {
 	};
 
 	const handleLogin = async (formData) => {
+		setShowLoading(true);
 		try {
+			await new Promise((resolve) => setTimeout(resolve, 5000));
 			const response = await axiosInstance.post("/users/login/", formData, {
 				headers: { "Content-Type": "multipart/form-data" },
 			});
@@ -69,6 +74,7 @@ const AuthProvider = ({ children }) => {
 				console.log("userData", userData);
 
 				// Show success toast
+
 				toast.success("Login successful! Redirecting.", { autoClose: 3000 });
 
 				// Refresh Page
@@ -79,7 +85,7 @@ const AuthProvider = ({ children }) => {
 				console.log("Login successful.");
 
 				setUser(userData);
-
+				setShowLoading(false);
 				setShowLogin(false);
 			}
 		} catch (error) {
@@ -101,7 +107,9 @@ const AuthProvider = ({ children }) => {
 	};
 
 	const handleLogout = async () => {
+		setShowLoading(true);
 		try {
+			await new Promise((resolve) => setTimeout(resolve, 5000));
 			console.log("user before removal", localStorage.getItem("user"));
 			localStorage.removeItem("user");
 			console.log("user after removal", localStorage.getItem("user"));
@@ -119,6 +127,7 @@ const AuthProvider = ({ children }) => {
 				setUser(null);
 
 				toast.success("Logged out successfully!", { autoClose: 2000 });
+				setShowLoading(false);
 
 				console.log("User logged out.");
 				// Refresh Page
@@ -165,9 +174,11 @@ const AuthProvider = ({ children }) => {
 	};
 
 	const handleCreatePost = async (postData) => {
+		setShowLoading(true);
 		try {
 			const res = await axiosInstance.post("/posts/", postData);
 			setShowCreatePost(false);
+			setShowLoading(false);
 
 			console.log("Post created", res.data?.data);
 			toast.success("Post created successfully");
@@ -199,6 +210,8 @@ const AuthProvider = ({ children }) => {
 				setShowCreatePost,
 				handleCreatePost,
 				fetchUser,
+				showLoading,
+				setShowLoading,
 			}}
 		>
 			{children}
