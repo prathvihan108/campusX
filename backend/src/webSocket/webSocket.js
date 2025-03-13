@@ -1,6 +1,7 @@
 import { Server } from "socket.io";
-import { sub } from "../config/redis.js";
-import { subscribeUserStatus } from "../subscribers/userSubscriber.js";
+import { subscribeLikeStatus } from "../subscribers/likeSubscriber.js";
+
+const userSockets = new Map(); // Store userId -> socketId mapping
 
 const connectWebSocket = async (server) => {
   try {
@@ -10,20 +11,24 @@ const connectWebSocket = async (server) => {
 
     console.log("✅ WebSocket server started");
 
-    await sub.subscribe("user_status");
-
-    sub.on("message", (channel, message) => {
-      if (channel === "user_status") {
-        io.emit("user_status", JSON.parse(message));
-      }
-    });
-
     io.on("connection", (socket) => {
       console.log("Client connected:", socket.id);
-      socket.on("disconnect", () => console.log("Client disconnected"));
-    });
+      subscribeLikeStatus(io, userSockets);
 
-    subscribeUserStatus(io);
+      // Register user when they log in
+      socket.on("register", (userId) => {
+        console.log("Socket if of the registered user:", userId);
+        userSockets.set(userId, socket.id); // Store user socket
+      });
+
+      // Remove user from tracking when they disconnect
+      socket.on("disconnect", () => {
+        userSockets.forEach((value, key) => {
+          if (value === socket.id) userSockets.delete(key);
+        });
+        console.log("Client disconnected:", socket.id);
+      });
+    });
   } catch (error) {
     console.log("❌ WebSocket setup error:", error);
   }

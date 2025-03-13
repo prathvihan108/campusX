@@ -7,12 +7,12 @@ import { User } from "../models/user.models.js";
 // This middleware will be used to protect the routes that require authentication.
 export const varifyJWT = AsyncHandler(async (req, res, next) => {
   try {
-    console.log("access token", req.cookies?.accessToken);
+    //console.log("access token", req.cookies?.accessToken);
     const token =
       req.cookies?.accessToken ||
       req.header("Authorization")?.replace("Bearer ", "");
 
-    console.log("Token:", token);
+    //console.log("Token:", token);
 
     if (!token) {
       console.log("No token found");

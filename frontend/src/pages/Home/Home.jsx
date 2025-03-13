@@ -5,10 +5,11 @@ import { toggleLike } from "../../services/likesServices.jsx";
 import PostCard from "../../components/Common/Posts/PostCard.jsx";
 import { useAuth } from "../../context/AuthContext.jsx";
 import LoadingModel from "../../components/Common/Loading/LoadingModel.jsx";
+import LikeNotification from "../../components/Notifications/likeNotification.js";
 
 const Home = () => {
 	const { posts } = useContext(PostContext); // Get posts
-	console.log("Posts from home:", posts);
+	//console.log("Posts from home:", posts);
 	const [loading, setLoading] = useState(true);
 	const { fetchUser, user } = useAuth();
 
@@ -26,7 +27,6 @@ const Home = () => {
 	return (
 		<div className=" lg:flex lg:flex-row p-4 justify-center my-[6.5rem] relative">
 			<FilterComponent />
-			<LoadingModel />
 
 			{loading ? (
 				<p>Loading...</p>

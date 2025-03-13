@@ -2,6 +2,7 @@ import React, { createContext, useContext, useState, useEffect } from "react";
 
 import { toast } from "react-toastify";
 import axiosInstance from "../utils/axiosInstance";
+import { socket } from "../utils/socket.js";
 import LoadingModel from "../components/Common/Loading/LoadingModel";
 
 // Create Context
@@ -65,12 +66,16 @@ const AuthProvider = ({ children }) => {
 				headers: { "Content-Type": "multipart/form-data" },
 			});
 
-			console.log("login Response received:", response.data);
-			console.log("Created user", response?.data?.data?.user);
+			// console.log("login Response received:", response.data);
 
 			if (response?.data?.data?.user) {
 				const userData = response?.data.data?.user;
 				console.log("userData", userData);
+				localStorage.setItem("userId", userData._id);
+
+				// Emit register event for socket connection
+				socket.emit("register", userData._id);
+				console.log(" Registered socket for user:", userData._id);
 
 				// Show success toast
 
@@ -81,12 +86,12 @@ const AuthProvider = ({ children }) => {
 					window.location.reload();
 				}, 1000);
 
-				await new Promise((resolve) =>
-					setTimeout(() => {
-						setShowLoading(false);
-						resolve();
-					}, 4000)
-				);
+				// await new Promise((resolve) =>
+				// 	setTimeout(() => {
+				// 		setShowLoading(false);
+				// 		resolve();
+				// 	}, 4000)
+				// );
 				console.log("Login successful.");
 
 				setUser(userData);
@@ -139,12 +144,12 @@ const AuthProvider = ({ children }) => {
 					window.location.reload();
 				}, 1000);
 
-				await new Promise((resolve) =>
-					setTimeout(() => {
-						setShowLoading(false);
-						resolve();
-					}, 4000)
-				);
+				// await new Promise((resolve) =>
+				// 	setTimeout(() => {
+				// 		setShowLoading(false);
+				// 		resolve();
+				// 	}, 4000)
+				// );
 			}
 		} catch (error) {
 			console.log("error", error);

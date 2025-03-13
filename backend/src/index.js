@@ -25,7 +25,7 @@ connectDB()
     server.listen(port, () => {
       console.log(`🚀 Server running on ${host_url}:${port}`);
 
-      // connectWebSocket(server);
+      connectWebSocket(server);
     });
   })
   .catch((err) => {

@@ -6,6 +6,8 @@ import PostContextProvider from "./context/PostContextProvider.jsx";
 import AuthProvider from "./context/AuthContext.jsx";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import LikeNotification from "./components/Notifications/likeNotification.js";
+import LoadingModel from "./components/Common/Loading/LoadingModel.jsx";
 
 export default function Layout() {
 	return (
@@ -14,6 +16,8 @@ export default function Layout() {
 				<PostContextProvider>
 					<Header />
 					<ToastContainer />
+					<LoadingModel />
+					<LikeNotification />
 					<Outlet />
 					<Footer />
 				</PostContextProvider>
