@@ -1,5 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { useAuth } from "../../context/AuthContext.jsx";
+import EmojiPicker from "emoji-picker-react";
+
 const categories = [
 	"general",
 	"exams",
@@ -16,6 +18,8 @@ const CreatePostForm = () => {
 		category: "",
 		image: null,
 	});
+	const [showPicker, setShowPicker] = useState(false);
+	const pickerRef = useRef(null);
 
 	const handleChange = (e) => {
 		const { name, value, files } = e.target;
@@ -25,27 +29,42 @@ const CreatePostForm = () => {
 		}));
 	};
 
+	const addEmoji = (emoji) => {
+		setFormData((prev) => ({
+			...prev,
+			content: prev.content + emoji.emoji,
+		}));
+		setShowPicker(false);
+	};
+
 	const handleSubmit = (e) => {
 		e.preventDefault();
 		if (!formData.content || !formData.category) {
-			alert("content and category are required!");
+			alert("Content and category are required!");
 			return;
 		}
 
-		// Create FormData object
 		const data = new FormData();
 		Object.entries(formData).forEach(([key, value]) => {
 			data.append(key, value);
 		});
 
-		// Debugging: Check FormData contents
-		for (let pair of data.entries()) {
-			console.log(pair[0], pair[1]);
-		}
-
-		// Call API function
 		handleCreatePost(data);
 	};
+
+	// Close emoji picker when clicking outside
+	useEffect(() => {
+		const handleClickOutside = (event) => {
+			if (pickerRef.current && !pickerRef.current.contains(event.target)) {
+				setShowPicker(false);
+			}
+		};
+
+		document.addEventListener("mousedown", handleClickOutside);
+		return () => {
+			document.removeEventListener("mousedown", handleClickOutside);
+		};
+	}, []);
 
 	return (
 		<div className="fixed inset-0 flex items-center justify-center backdrop-blur-sm z-50">
@@ -64,14 +83,31 @@ const CreatePostForm = () => {
 						<label className="block text-sm font-medium text-gray-600">
 							Content
 						</label>
-						<textarea
-							name="content"
-							placeholder="What's on your mind?"
-							value={formData.content}
-							onChange={handleChange}
-							className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-400 outline-none"
-							required
-						/>
+						<div className="relative">
+							<textarea
+								name="content"
+								placeholder="What's on your mind?"
+								value={formData.content}
+								onChange={handleChange}
+								className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-400 outline-none"
+								required
+							/>
+							<button
+								type="button"
+								onClick={() => setShowPicker(!showPicker)}
+								className="absolute right-2 top-2"
+							>
+								😀
+							</button>
+							{showPicker && (
+								<div
+									ref={pickerRef}
+									className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white shadow-md rounded-lg p-2"
+								>
+									<EmojiPicker onEmojiClick={addEmoji} />
+								</div>
+							)}
+						</div>
 					</div>
 					<div>
 						<label className="block text-sm font-medium text-gray-600">

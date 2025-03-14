@@ -205,8 +205,7 @@ CampusX has 5 main database models, each serving a specific function:
 
 5️⃣ Bookmark Model – Allows users to save posts for later reference.
 
-click on the below link to check ER diagram of the current DB models.
-[View ER Diagram](https://dbdiagram.io/d/67cc5771263d6cf9a0aed056)
+![DB_MODEL](./DB_MODEl.png)
 
 ## **⚙️ Installation & Setup**
 
