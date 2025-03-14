@@ -4,6 +4,7 @@ import fs from "fs";
 import { app } from "./app.js";
 import connectDB from "./db/db.js";
 import connectWebSocket from "./webSocket/webSocket.js";
+import { connectRedis } from "./config/redis.js";
 
 dotenv.config({ path: "../.env" });
 
@@ -18,14 +19,19 @@ const host_url = process.env.HOST_URL || "https://localhost";
 let server;
 
 connectDB()
-  .then(() => {
+  .then(async () => {
     server = https.createServer(options, app);
 
     // Start the server
-    server.listen(port, () => {
+    server.listen(port, async () => {
       console.log(`🚀 Server running on ${host_url}:${port}`);
 
-      connectWebSocket(server);
+      try {
+        await connectRedis();
+        connectWebSocket(server);
+      } catch (err) {
+        console.error("❌ Redis Connection Failed!", err);
+      }
     });
   })
   .catch((err) => {

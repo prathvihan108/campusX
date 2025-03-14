@@ -3,15 +3,19 @@ import { createClient } from "redis";
 const pub = createClient({ url: "redis://127.0.0.1:6379" });
 const sub = createClient({ url: "redis://127.0.0.1:6379" });
 
-// Event listeners
-// sub.on("connect", () => console.log("✅ Subscriber connected"));
-// sub.on("error", (err) => console.error("❌ Subscriber error:", err));
-// pub.on("connect", () => console.log("✅ Publisher connected"));
-// pub.on("error", (err) => console.error("❌ Publisher error:", err));
+pub.on("error", (err) => console.error("❌ Redis Publisher Error:", err));
+sub.on("error", (err) => console.error("❌ Redis Subscriber Error:", err));
 
-// Connect once
-await pub.connect();
+async function connectRedis() {
+  try {
+    await pub.connect();
+    console.log("✅ Redis Publisher Connected");
 
-await sub.connect();
+    await sub.connect();
+    console.log("✅ Redis Subscriber Connected");
+  } catch (err) {
+    console.error("❌ Redis Connection Error:", err);
+  }
+}
 
-export { pub, sub };
+export { pub, sub, connectRedis };

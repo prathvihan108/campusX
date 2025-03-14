@@ -7,6 +7,15 @@ const socket = io(SOCKET_URL, {
 	withCredentials: true,
 });
 
+socket.on("connect", () => {
+	console.log("Connected to  WebSocket Server! :Socket ID:", socket.id);
+});
+
+// Listen for connection errors
+socket.on("connect_error", (err) => {
+	console.error("❌ WebSocket connection error:", err);
+});
+
 // Automatically re-register the user after refresh
 const userId = localStorage.getItem("userId");
 if (userId) {

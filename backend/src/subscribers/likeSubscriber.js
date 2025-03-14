@@ -1,26 +1,27 @@
 import { sub } from "../config/redis.js";
 
-const subscribeLikeStatus = (io, userSockets) => {
-  console.log("🟡 Initializing Redis subscription...");
+const subscribeLikeStatus = async (io, userSockets) => {
   sub.on("error", (err) => console.error("❌ Redis Client Error:", err));
-  sub.on("connect", async () => {
-    console.log("✅ Connected to Redis successfully.");
 
-    try {
-      await sub.subscribe("like_status");
-      console.log("✅ Subscribed to 'like_status' channel.");
-    } catch (err) {
-      console.error("❌ Redis subscription error:", err);
-    }
-  });
+  if (!sub.isReady) {
+    console.log("🟡 Connecting Redis subscriber...");
+    await sub.connect();
+  }
 
-  sub.on("message", (channel, message) => {
-    console.log("📩 sub.on triggered with message:", message);
+  try {
+    await sub.subscribe("like_status", (message) => {
+      console.log("📩 Message received:", message);
 
-    if (channel === "like_status") {
       const data = JSON.parse(message);
       console.log("📌 Data received:", data);
 
+      // Print all socket mappings
+      console.log("All sockets:");
+      userSockets.forEach((socketId, userId) => {
+        console.log(`User ID: ${userId}, Socket ID: ${socketId}`);
+      });
+
+      // Send message to owner if they are online
       const ownerSocketId = userSockets.get(data.postOwnerId);
       console.log("📡 Owner Socket ID:", ownerSocketId);
 
@@ -30,8 +31,12 @@ const subscribeLikeStatus = (io, userSockets) => {
       } else {
         console.log("⚠️ Post owner not online:", data.postOwnerId);
       }
-    }
-  });
+    });
+
+    console.log("✅ Subscribed to 'like_status' channel.");
+  } catch (err) {
+    console.error("❌ Redis subscription error:", err);
+  }
 };
 
 export { subscribeLikeStatus };

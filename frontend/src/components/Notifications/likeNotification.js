@@ -4,6 +4,7 @@ import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 const LikeNotification = () => {
+	console.log("LikeNotification model loaded");
 	useEffect(() => {
 		socket.on("like_status", (data) => {
 			console.log("Received like_status event:", data);
