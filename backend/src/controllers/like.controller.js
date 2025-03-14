@@ -18,7 +18,7 @@ const toggleLike = AsyncHandler(async (req, res) => {
     post.likesCount += 1;
 
     await post.save();
-    publishLikeStatus("liked", post.author, req.user._id);
+    publishLikeStatus("liked", post.author, req.user.userName);
     res
       .status(STATUS_CODES.OK)
       .json(new ApiResponse(STATUS_CODES.OK, {}, "Post liked"));

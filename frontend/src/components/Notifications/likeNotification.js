@@ -9,7 +9,7 @@ const LikeNotification = () => {
 		socket.on("like_status", (data) => {
 			console.log("Received like_status event:", data);
 			if (data?.status === "liked") {
-				toast.success(`Post Liked! by ${data?.userId}`, {
+				toast.success(`Your Post Liked! by ${data?.userName}`, {
 					position: "top-right",
 					autoClose: 2000,
 				});

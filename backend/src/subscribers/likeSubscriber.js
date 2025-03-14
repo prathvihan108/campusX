@@ -4,16 +4,16 @@ const subscribeLikeStatus = async (io, userSockets) => {
   sub.on("error", (err) => console.error("❌ Redis Client Error:", err));
 
   if (!sub.isReady) {
-    console.log("🟡 Connecting Redis subscriber...");
+    console.log(" Connecting Redis subscriber...");
     await sub.connect();
   }
 
   try {
     await sub.subscribe("like_status", (message) => {
-      console.log("📩 Message received:", message);
+      console.log("Message received:", message);
 
       const data = JSON.parse(message);
-      console.log("📌 Data received:", data);
+      console.log(" Data received:", data);
 
       // Print all socket mappings
       console.log("All sockets:");
@@ -23,11 +23,11 @@ const subscribeLikeStatus = async (io, userSockets) => {
 
       // Send message to owner if they are online
       const ownerSocketId = userSockets.get(data.postOwnerId);
-      console.log("📡 Owner Socket ID:", ownerSocketId);
+      console.log(" Owner Socket ID:", ownerSocketId);
 
       if (ownerSocketId) {
         io.to(ownerSocketId).emit("like_status", data);
-        console.log("📤 Sent like notification to:", ownerSocketId);
+        console.log(" Sent like notification to:", ownerSocketId);
       } else {
         console.log("⚠️ Post owner not online:", data.postOwnerId);
       }

@@ -86,6 +86,7 @@ const getPostById = AsyncHandler(async (req, res) => {
   const postId = req.params.id;
   const cachedPost = await client.get(`post:${postId}`);
 
+  //check for the cached post.
   if (cachedPost) {
     return res.json(
       new ApiResponse(
@@ -95,7 +96,7 @@ const getPostById = AsyncHandler(async (req, res) => {
       )
     );
   }
-
+  //mongo db  aggregation pipeline to fetch all the posts.
   const post = await Post.aggregate([
     { $match: { _id: new mongoose.Types.ObjectId(postId) } },
     {
@@ -135,6 +136,7 @@ const getPostById = AsyncHandler(async (req, res) => {
   if (!post.length)
     throw new ApiError(STATUS_CODES.NOT_FOUND, "Post not found");
 
+  //cache the post to redis
   try {
     await client.setEx(`post:${postId}`, 3600, JSON.stringify(post[0]));
   } catch (err) {

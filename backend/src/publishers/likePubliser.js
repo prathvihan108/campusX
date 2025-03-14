@@ -1,6 +1,6 @@
 import { pub } from "../config/redis.js";
 
-async function publishLikeStatus(status, postOwnerId, userId) {
+async function publishLikeStatus(status, postOwnerId, userName) {
   console.log("published Like status");
 
   if (!pub.isOpen) {
@@ -11,7 +11,7 @@ async function publishLikeStatus(status, postOwnerId, userId) {
   try {
     await pub.publish(
       "like_status",
-      JSON.stringify({ status, postOwnerId, userId })
+      JSON.stringify({ status, postOwnerId, userName })
     );
     console.log("✅ Like status published successfully");
   } catch (err) {

@@ -18,11 +18,11 @@ const Header = () => {
 			{/* Profile Picture on the Left */}
 			{user && (
 				<div className="flex items-center space-x-4">
-					<div className="flex items-center space-x-2 p-2 rounded-md bg-gray-800 dark:bg-gray-900">
+					<div className="flex items-center space-x-2 p-2 rounded-md">
 						<img
 							src={user.avatar}
 							alt="Profile"
-							className="h-8 w-8 rounded-full border border-gray-700 dark:border-gray-600"
+							className="h-15 w-15 rounded-full border-2 border-blue-700"
 						/>
 						{/* <div className="flex flex-col text-left">
 							<h3 className="text-amber-200 dark:text-amber-300 text-sm font-semibold">

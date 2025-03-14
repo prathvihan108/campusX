@@ -25,6 +25,10 @@ const bookmarkPost = AsyncHandler(async (req, res) => {
   req.user.bookmarks.push(bookmark._id);
   await req.user.save({ validateBeforeSave: false });
 
+  //remove the boomarks from the cache
+  await client.del(`bookmarks:${req.user._id}`);
+  console.log("🗑️ Cache cleared for user's bookmarks");
+
   res
     .status(STATUS_CODES.CREATED)
     .json(
@@ -51,6 +55,9 @@ const removeBookmark = AsyncHandler(async (req, res) => {
   );
   await req.user.save();
 
+  await client.del(`bookmarks:${req.user._id}`);
+  console.log("🗑️ Cache cleared for user's bookmarks");
+
   res
     .status(STATUS_CODES.OK)
     .json(
@@ -63,7 +70,8 @@ const getUserBookmarks = AsyncHandler(async (req, res) => {
   const userId = req.user._id;
   const user = await User.findById(userId);
 
-  const cachedBookmarks = await client.get(`bookmarks:${user}`);
+  //chech if the bookmarks are cached
+  const cachedBookmarks = await client.get(`bookmarks:${userId}`);
   console.log("cachedBookmarks", cachedBookmarks);
   if (cachedBookmarks) {
     return res.json(
@@ -81,8 +89,9 @@ const getUserBookmarks = AsyncHandler(async (req, res) => {
 
   console.log("bookmarks", bookmarks);
 
+  //cache the user bookmarks
   try {
-    await client.setEx(`bookmarks:${user}`, 3600, JSON.stringify(bookmarks));
+    await client.setEx(`bookmarks:${userId}`, 3600, JSON.stringify(bookmarks));
     console.log("bookmarks cached");
   } catch (err) {
     console.error("Redis caching error:", err);

@@ -34,14 +34,17 @@ const PostCard = ({ post, currentUserId, toggleLike }) => {
 				<img
 					src={post.authorDetails.avatar}
 					alt={post.authorDetails.fullName}
-					className="h-12 w-12 rounded-full border-2 border-gray-300 dark:border-gray-700 mr-4"
+					className="h-15 w-15 rounded-full border-2 border-gray-300 dark:border-gray-700 mr-4"
 				/>
 				<div>
-					<h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+					<h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
 						{post.authorDetails.fullName}
 					</h3>
-					<p className="text-sm text-gray-600 dark:text-gray-400">
-						@{post.authorDetails.userName} • {post.authorDetails.role}
+					<p className="text-md text-blue-600 ">
+						@{post.authorDetails.email} [{post.authorDetails.role}]
+					</p>
+					<p className="text-md text-gray-600 dark:text-gray-400">
+						{post.authorDetails.department} - {post.authorDetails.year}
 					</p>
 				</div>
 				{/* <div className="ml-auto">
