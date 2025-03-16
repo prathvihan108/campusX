@@ -13,3 +13,8 @@ frontend/key.pem
 frontend/cert.pem
 backend/key.pem
 backend/cert.pem
+
+
+backend/public/temp/*
+!backend/public/temp/.gitkeep
+

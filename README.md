@@ -39,38 +39,10 @@ CampusX is powered by a modern web technology stack:
 - **File Handling:** Multer for handling file uploads
 - **AI Features:** Machine learning for personalized post recommendations _(Not yet implemented)_
 
-# 🚀 **Optimizing CampusX Performance with Redis**(On Going)
+📌 Visit the [README.md](backend/README.md) in for the backend architecture.
 
-CampusX leverages **Redis** to improve app performance by caching frequently accessed data and using queues for background tasks. WebSockets are used to notify the frontend in real time.
+## License
 
-## **⚡ Caching with Redis for Faster API Responses**
+This project is licensed under the MIT License - see the [LICENSE](./LICENSE) file for details.
 
-Caching helps reduce the load on the database by storing frequently accessed data in memory. In CampusX, Redis caching is used for:
-
-- **User Profiles:** When a user profile is requested, it is first checked in Redis. If found, it is returned instantly; otherwise, it is fetched from the database and stored in Redis for future requests.
-- **Recent Posts & Comments:** Instead of querying the database every time, recent posts and comments are cached in Redis for quick retrieval, reducing query times.
-
-This approach significantly improves API response times and enhances user experience.
-
----
-
-## 🚫 **Rate Limiting with Redis** to prevent spam in posts
-
-## **📡 Real-Time Updates Using WebSockets**
-
-WebSockets are used to send real-time updates to the frontend for various actions. In CampusX, WebSockets notify users about:
-
-Important events like comments, likes, or mentions are delivered in real time using WebSockets.
-
-This ensures users stay updated without needing to refresh the page.
-
----
-
-📌 Visit the [README.md](backend/README.md) in `/backend` for the backend architecture.
-
-## **Future Plans**
-
-### 🔥 Trending & Personalized Recommendations
-
-See what’s popular on campus and get ML-Based post recommendations tailored to your interests.
 .

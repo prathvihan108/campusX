@@ -8,16 +8,13 @@
 campusX
 ├── backend
 │   ├── cert.pem
-│   ├── DB_MODEl.png
-│   ├── dump.rdb
-│   ├── image-1.png
 │   ├── key.pem
 │   ├── package.json
 │   ├── package-lock.json
 │   ├── public
 │   │   ├── temp
 │   │   │   └── uploads
-│   │       ├── 20220817_130813.jpg
+│   │       ├──
 │   │   ├── README.md
 │   ├── src
 │   │   ├── app.js
@@ -79,7 +76,7 @@ campusX
 
 - **Node.js** - Runtime environment
 - **Express.js** - Web framework
-- **MongoDB + Mongoose** - Database & ORM
+- **MongoDB + Mongoose** - Database & ODM
 - **JWT Authentication** - Secure login system
 - **Cloudinary** - Image storage
 - **Multer** - File handling middleware
@@ -252,6 +249,8 @@ CampusX has 5 main database models, each serving a specific function:
 
 ### **1️⃣ Clone the Repository**
 
+clone using SSH (Recommended for Frequent Use)
+
 ```sh
 git clone git@github.com:prathvihan108/campusX.git
 ```
@@ -270,7 +269,7 @@ npm install
 
 ## Other OS's visit the Docs
 
-[Redis installation ans set up](https://redis.io/docs/latest/operate/oss_and_stack/install/install-redis/)
+[Redis installation and set up](https://redis.io/docs/latest/operate/oss_and_stack/install/install-redis/)
 
 ## Step 1: fire the follwing commands one by one
 
@@ -296,9 +295,9 @@ After restart of the laptop:if the redis not getting connected then run the foll
 redis-server &
 ```
 
-# Generating Self-Signed SSL Certificates (key.pem & cert.pem) on Linux distributons.
+# Generating Self-Signed SSL Certificates (key.pem & cert.pem) on Linux distributons.(This is compulsary as i am running my project on https(secure protocol) [know-more-SSL/TLS](https://dev.to/prathvihan108/understanding-ssltls-encryption-how-session-keys-secure-your-communication-2n35)
 
-Other OS's please ask my advanced NLP model here: [catgpt777](https://catgpt3.netlify.app/)
+For Windows/MAC, please ask my advanced NLP model here for identicle commannds: [catgpt777](https://catgpt3.netlify.app/)
 
 ## Step 1: Install OpenSSL
 
@@ -435,6 +434,8 @@ Ensure these steps are followed for smooth API testing.
 
 ## For More Info on how campusX backend works visit the following
 
+[Understanding REST APIs and Best Practices (With CampusX Implementation)](https://dev.to/prathvihan108/understanding-rest-apis-and-best-practices-with-campusx-implementation-64c)
+
 [Multer for file uploads in campusX](https://dev.to/prathvihan108/efficient-file-uploads-in-campusx-with-multer-4p90)
 
 [Cloudnary for image optimisation in campusX](https://dev.to/prathvihan108/optimizing-image-management-in-campusx-with-cloudinary-2ln6)
@@ -451,11 +452,11 @@ Ensure these steps are followed for smooth API testing.
 
 [Socket.io and Web Sockets in campusX](https://dev.to/prathvihan108/understanding-websockets-and-the-socketio-library-2pca)
 
-## **Future Plans**
+## **Future Plans**(up coming)
 
 ### Personalized Recommendations
 
-get ML-Based post recommendations tailored to your interests.
+Get ML-Based post recommendations tailored to your interests.
 
 ## **📌 Contributors**
 
@@ -463,3 +464,7 @@ get ML-Based post recommendations tailored to your interests.
 
 Contributions related to code optimization, potential bug fixes, and improvements are accepted. However, feature requests are not considered at this time.
 If you're making a contribution, please create a pull request with a suitable branch name that reflects the changes being made. 🚀
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](../LICENSE) file for details.
