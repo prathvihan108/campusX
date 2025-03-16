@@ -18,3 +18,6 @@ backend/cert.pem
 backend/public/temp/*
 !backend/public/temp/.gitkeep
 
+structure.md
+
+

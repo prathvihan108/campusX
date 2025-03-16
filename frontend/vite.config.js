@@ -10,13 +10,20 @@ export default defineConfig(({ mode }) => {
 	return {
 		plugins: [react(), tailwindcss()],
 
+		//to enable https
+		// server: {
+		// 	https: {
+		// 		key: fs.readFileSync("key.pem"),
+		// 		cert: fs.readFileSync("cert.pem"),
+		// 	},
+		// 	host: env.VITE_HOST || "localhost",
+		// 	port: env.VITE_PORT || 5173,
+		// },
+
 		server: {
-			https: {
-				key: fs.readFileSync("key.pem"),
-				cert: fs.readFileSync("cert.pem"),
-			},
 			host: env.VITE_HOST || "localhost",
 			port: env.VITE_PORT || 5173,
+			https: false, // Disable HTTPS
 		},
 	};
 });

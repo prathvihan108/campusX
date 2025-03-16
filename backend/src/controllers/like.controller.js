@@ -3,7 +3,7 @@ import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { AsyncHandler } from "../utils/AsyncHandler.js";
 import STATUS_CODES from "../constants/statusCodes.js";
-import publishLikeStatus from "../publishers/likePubliser.js";
+import publishLikeStatus from "../redis_pub_sub/publishers/likePublisher.js";
 // Like or Unlike a Post
 const toggleLike = AsyncHandler(async (req, res) => {
   const { postId } = req.params; // Extract postId from URL

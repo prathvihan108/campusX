@@ -39,10 +39,10 @@ CampusX is powered by a modern web technology stack:
 - **File Handling:** Multer for handling file uploads
 - **AI Features:** Machine learning for personalized post recommendations _(Not yet implemented)_
 
-📌 Visit the [README.md](backend/README.md) in for the backend architecture.
+## 📌 Visit the [README.md](backend/README.md) for the backend architecture.
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](./LICENSE) file for details.
+This project is licensed under the CC BY-NC 4.0 License - see the [LICENSE](./LICENSE) file for details.
 
-.
+Full License Details: [https://creativecommons.org/licenses/by-nc/4.0/](https://creativecommons.org/licenses/by-nc/4.0/)

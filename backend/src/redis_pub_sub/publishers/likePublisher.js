@@ -1,10 +1,10 @@
-import { pub } from "../config/redis.js";
+import { pub } from "../../config/redis.js";
 
 async function publishLikeStatus(status, postOwnerId, userName) {
   console.log("published Like status");
 
   if (!pub.isOpen) {
-    console.log("🟡 Connecting Redis publisher...");
+    console.log(" Connecting Redis publisher...");
     await pub.connect();
   }
 
@@ -13,9 +13,9 @@ async function publishLikeStatus(status, postOwnerId, userName) {
       "like_status",
       JSON.stringify({ status, postOwnerId, userName })
     );
-    console.log("✅ Like status published successfully");
+    console.log(" Like status published successfully");
   } catch (err) {
-    console.error("❌ Error publishing like status:", err);
+    console.error(" Error publishing like status:", err);
   }
 }
 

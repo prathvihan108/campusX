@@ -27,7 +27,7 @@ const bookmarkPost = AsyncHandler(async (req, res) => {
 
   //remove the boomarks from the cache
   await client.del(`bookmarks:${req.user._id}`);
-  console.log("🗑️ Cache cleared for user's bookmarks");
+  console.log(" Cache cleared for user's bookmarks");
 
   res
     .status(STATUS_CODES.CREATED)

@@ -1,7 +1,7 @@
-import { sub } from "../config/redis.js";
+import { sub } from "../../config/redis.js";
 
 const subscribeLikeStatus = async (io, userSockets) => {
-  sub.on("error", (err) => console.error("❌ Redis Client Error:", err));
+  sub.on("error", (err) => console.error(" Redis Client Error:", err));
 
   if (!sub.isReady) {
     console.log(" Connecting Redis subscriber...");
@@ -15,7 +15,6 @@ const subscribeLikeStatus = async (io, userSockets) => {
       const data = JSON.parse(message);
       console.log(" Data received:", data);
 
-      // Print all socket mappings
       console.log("All sockets:");
       userSockets.forEach((socketId, userId) => {
         console.log(`User ID: ${userId}, Socket ID: ${socketId}`);
@@ -33,9 +32,9 @@ const subscribeLikeStatus = async (io, userSockets) => {
       }
     });
 
-    console.log("✅ Subscribed to 'like_status' channel.");
+    console.log("Subscribed to 'like_status' channel.");
   } catch (err) {
-    console.error("❌ Redis subscription error:", err);
+    console.error(" Redis subscription error:", err);
   }
 };
 

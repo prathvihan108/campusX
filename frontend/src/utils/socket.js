@@ -1,6 +1,7 @@
 import { io } from "socket.io-client";
 
-const SOCKET_URL = "https://localhost:8005"; // backend URL
+//const SOCKET_URL = "https://10.101.7.74:8005"; // backend URL
+const SOCKET_URL = import.meta.env.VITE_SOCKET_URL;
 
 const socket = io(SOCKET_URL, {
 	transports: ["websocket"],
@@ -13,7 +14,8 @@ socket.on("connect", () => {
 
 // Listen for connection errors
 socket.on("connect_error", (err) => {
-	console.error("❌ WebSocket connection error:", err);
+	console.error(" WebSocket connection error:", err);
+	console.log("socket url:", SOCKET_URL);
 });
 
 // Automatically re-register the user after refresh

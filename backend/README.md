@@ -5,71 +5,71 @@
 # Project Structure:
 
 ```
-campusX
-├── backend
-│   ├── cert.pem
-│   ├── key.pem
-│   ├── package.json
-│   ├── package-lock.json
-│   ├── public
-│   │   ├── temp
-│   │   │   └── uploads
-│   │       ├──
-│   │   ├── README.md
-│   ├── src
-│   │   ├── app.js
-│   │   ├── config
-│   │   │   ├── redis.js
-│   │   │   └── server.js
-│   │   ├── constants
-│   │   │   └── statusCodes.js
-│   │   ├── constants.js
-│   │   ├── controllers
-│   │   │   ├── auth.controller.js
-│   │   │   ├── bookmark.controller.js
-│   │   │   ├── comment.controller.js
-│   │   │   ├── like.controller.js
-│   │   │   ├── post.controller.js
-│   │   │   └── user.controller.js
-│   │   ├── db
-│   │   │   └── db.js
-│   │   ├── index.js
-│   │   ├── middlewares
-│   │   │   ├── auth.middleware.js
-│   │   │   ├── error.middleware.js
-│   │   │   └── multer.middleware.js
-│   │   ├── models
-│   │   │   ├── bookmark.model.js
-│   │   │   ├── comment.model.js
-│   │   │   ├── notification.model.js
-│   │   │   ├── post.model.js
-│   │   │   ├── report.model.js
-│   │   │   ├── subscription.model.js
-│   │   │   └── user.models.js
-│   │   ├── publishers
-│   │   │   ├── likePubliser.js
-│   │   │   └── userPublisher.js
-│   │   ├── routes
-│   │   │   ├── auth.routes.js
-│   │   │   ├── bookmark.routes.js
-│   │   │   ├── like.routes.js
-│   │   │   ├── post.routes.js
-│   │   │   └── user.routes.js
-│   │   ├── subscribers
-│   │   │   ├── likeSubscriber.js
-│   │   │   └── userSubscriber.js
-│   │   ├── utils
-│   │   │   ├── ApiError.js
-│   │   │   ├── ApiResponse.js
-│   │   │   ├── AsyncHandler.js
-│   │   │   ├── cloudnary.js
-│   │   │   ├── redisClient.js
-│   │   │   └── sendOtp.js
-│   │   └── webSocket
-│   │       └── webSocket.js
-├── LICENSE
+.
+├── cert.pem
+├── DB_MODEl.png
+├── dump.rdb
+├── image-1.png
+├── key.pem
+├── package.json
 ├── package-lock.json
+├── public
+│   ├── temp
+│   └── uploads
+│       ├── 20220817_130813.jpg
+│       └── college-svgrepo-com.svg
 ├── README.md
+└── src
+    ├── app.js
+    ├── config
+    │   ├── redis.js
+    │   └── server.js
+    ├── constants
+    │   └── statusCodes.js
+    ├── constants.js
+    ├── controllers
+    │   ├── auth.controller.js
+    │   ├── bookmark.controller.js
+    │   ├── comment.controller.js
+    │   ├── like.controller.js
+    │   ├── post.controller.js
+    │   └── user.controller.js
+    ├── db
+    │   └── db.js
+    ├── index.js
+    ├── middlewares
+    │   ├── auth.middleware.js
+    │   ├── error.middleware.js
+    │   └── multer.middleware.js
+    ├── models
+    │   ├── bookmark.model.js
+    │   ├── comment.model.js
+    │   ├── notification.model.js
+    │   ├── post.model.js
+    │   ├── report.model.js
+    │   ├── subscription.model.js
+    │   └── user.models.js
+    ├── redis_pub_sub
+    │   ├── publishers
+    │   │   └── likePubliser.js
+    │   └── subscribers
+    │       └── likeSubscriber.js
+    ├── routes
+    │   ├── auth.routes.js
+    │   ├── bookmark.routes.js
+    │   ├── like.routes.js
+    │   ├── post.routes.js
+    │   └── user.routes.js
+    ├── utils
+    │   ├── ApiError.js
+    │   ├── ApiResponse.js
+    │   ├── AsyncHandler.js
+    │   ├── cloudnary.js
+    │   ├── redisClient.js
+    │   └── sendOtp.js
+    └── webSocket
+        └── webSocket.js
+
 ```
 
 ## **🚀 Tech Stack**
@@ -295,7 +295,7 @@ After restart of the laptop:if the redis not getting connected then run the foll
 redis-server &
 ```
 
-# Generating Self-Signed SSL Certificates (key.pem & cert.pem) on Linux distributons.(This is compulsary as i am running my project on https(secure protocol) [know-more-SSL/TLS](https://dev.to/prathvihan108/understanding-ssltls-encryption-how-session-keys-secure-your-communication-2n35)
+# Generating Self-Signed SSL Certificates (key.pem & cert.pem) on Linux distributons.(Optional Step :Do it if u wnat to test using https ) [know-more-SSL/TLS](https://dev.to/prathvihan108/understanding-ssltls-encryption-how-session-keys-secure-your-communication-2n35)
 
 For Windows/MAC, please ask my advanced NLP model here for identicle commannds: [catgpt777](https://catgpt3.netlify.app/)
 
@@ -330,7 +330,7 @@ sudo apt update && sudo apt install openssl -y
 
 ---
 
-## Step 3: Generate SSL Certificates in Frontend Directory(optonal: only if u want to use to test teh fornt end too)
+## Step 3: Generate SSL Certificates in Frontend Directory(No need if u are using PostMan)
 
 1. Navigate to the frontend directory:
    ```sh
@@ -467,4 +467,6 @@ If you're making a contribution, please create a pull request with a suitable br
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](../LICENSE) file for details.
+This project is licensed under the CC BY-NC 4.0 License - see the [LICENSE](../LICENSE) file for details.
+
+Full License Details: [https://creativecommons.org/licenses/by-nc/4.0/](https://creativecommons.org/licenses/by-nc/4.0/)
