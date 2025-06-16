@@ -1,107 +1,91 @@
-import { Bookmark } from "../models/bookmark.model.js";
 import { Post } from "../models/post.model.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { AsyncHandler } from "../utils/AsyncHandler.js";
-import { User } from "../models/user.models.js";
-import client from "../utils/redisClient.js";
 import STATUS_CODES from "../constants/statusCodes.js";
-// Add a Post to Bookmarks
-const bookmarkPost = AsyncHandler(async (req, res) => {
+import client from "../utils/redisClient.js";
+
+// Toggle Bookmark on a Post
+const toggleBookmark = AsyncHandler(async (req, res) => {
   const { postId } = req.params;
-  console.log("postId", postId);
+
   const post = await Post.findById(postId);
-  console.log("post", post);
   if (!post) throw new ApiError(STATUS_CODES.NOT_FOUND, "Post not found");
 
-  //no need to check if post is already bookmarked as the front-end will have the control to show the bookmark button only if the post is not already bookmarked
-  console.log("post.author:", post.author);
+  const userId = req.user._id;
+  const userIndex = post.bookmarks.indexOf(userId);
 
-  const bookmark = await Bookmark.create({
-    post_owner: post.author,
-    post: postId,
-  });
+  if (userIndex === -1) {
+    // Add bookmark
+    post.bookmarks.push(userId);
+    post.bookmarksCount += 1;
+    await post.save();
 
-  req.user.bookmarks.push(bookmark._id);
-  await req.user.save({ validateBeforeSave: false });
+    // Clear cache
+    await client.del(`bookmarks:${userId}`);
+    console.log("📌 Post bookmarked, cache cleared");
 
-  //remove the boomarks from the cache
-  await client.del(`bookmarks:${req.user._id}`);
-  console.log(" Cache cleared for user's bookmarks");
+    res
+      .status(STATUS_CODES.OK)
+      .json(new ApiResponse(STATUS_CODES.OK, {}, "Post bookmarked"));
+  } else {
+    // Remove bookmark
+    post.bookmarks.splice(userIndex, 1);
+    post.bookmarksCount -= 1;
+    await post.save();
 
-  res
-    .status(STATUS_CODES.CREATED)
-    .json(
-      new ApiResponse(
-        STATUS_CODES.CREATED,
-        bookmark,
-        "Post bookmarked successfully"
-      )
-    );
+    // Clear cache
+    await client.del(`bookmarks:${userId}`);
+    console.log("❌ Bookmark removed, cache cleared");
+
+    res
+      .status(STATUS_CODES.OK)
+      .json(new ApiResponse(STATUS_CODES.OK, {}, "Bookmark removed"));
+  }
 });
 
-//  Remove Bookmark
-const removeBookmark = AsyncHandler(async (req, res) => {
-  const { bookmarkId } = req.params;
+// Get Bookmarked Posts for the Logged-in User
+const getUserBookmarkedPosts = AsyncHandler(async (req, res) => {
+  const userId = req.user._id;
 
-  const bookmark = await Bookmark.findById(bookmarkId);
-  if (!bookmark)
-    throw new ApiError(STATUS_CODES.NOT_FOUND, "Bookmark not found");
+  // Try cache first
+  // const cached = await client.get(`bookmarks:${userId}`);
+  // console.log("Bookmarks from cache :" + JSON.parse(cached));
+  // if (cached) {
+  //   return res
+  //     .status(STATUS_CODES.OK)
+  //     .json(
+  //       new ApiResponse(
+  //         STATUS_CODES.OK,
+  //         JSON.parse(cached),
+  //         "Bookmarked posts from cache"
+  //       )
+  //     );
+  // }
 
-  await Bookmark.deleteOne({ _id: bookmarkId });
-
-  req.user.bookmarks = req.user.bookmarks.filter(
-    (id) => id.toString() !== bookmarkId.toString()
-  );
-  await req.user.save();
-
-  await client.del(`bookmarks:${req.user._id}`);
-  console.log("🗑️ Cache cleared for user's bookmarks");
+  // Fetch posts where the user has bookmarked
+  const posts = await Post.find({ bookmarks: userId })
+    .select("content image category likesCount bookmarksCount createdAt") // only required fields
+    .populate("author", "fullName userName avatar");
+  // Cache result
+  // try {
+  //   await client.setEx(`bookmarks:${userId}`, 3600, JSON.stringify(posts));
+  //   console.log("✅ Bookmarks cached for user");
+  //   console.log("Bookmarks: " + posts);
+  // } catch (err) {
+  //   console.error("Redis caching failed:", err);
+  // }
+  console.log("Bookmarks from backend: " + posts);
 
   res
     .status(STATUS_CODES.OK)
     .json(
-      new ApiResponse(STATUS_CODES.OK, {}, "Bookmark removed successfully")
-    );
-});
-
-//  Get User's Bookmarked Posts
-const getUserBookmarks = AsyncHandler(async (req, res) => {
-  const userId = req.user._id;
-  const user = await User.findById(userId);
-
-  //chech if the bookmarks are cached
-  const cachedBookmarks = await client.get(`bookmarks:${userId}`);
-  console.log("cachedBookmarks", cachedBookmarks);
-  if (cachedBookmarks) {
-    return res.json(
       new ApiResponse(
         STATUS_CODES.OK,
-        JSON.parse(cachedBookmarks),
-        "bookmarks from Redis cache"
+        posts,
+        "Bookmarked posts fetched successfully"
       )
-    );
-  }
-
-  const bookmarks = await Bookmark.find({ _id: { $in: user.bookmarks } })
-    .populate("post", "content image category likesCount")
-    .populate("post_owner", "fullName userName avatar");
-
-  console.log("bookmarks", bookmarks);
-
-  //cache the user bookmarks
-  try {
-    await client.setEx(`bookmarks:${userId}`, 3600, JSON.stringify(bookmarks));
-    console.log("bookmarks cached");
-  } catch (err) {
-    console.error("Redis caching error:", err);
-  }
-
-  res
-    .status(STATUS_CODES.OK)
-    .json(
-      new ApiResponse(STATUS_CODES.OK, bookmarks, "Bookmarked posts fetched")
     );
 });
 
-export { bookmarkPost, removeBookmark, getUserBookmarks };
+export { toggleBookmark, getUserBookmarkedPosts };

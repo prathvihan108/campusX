@@ -8,18 +8,21 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import LikeNotification from "./components/Notifications/likeNotification.js";
 import LoadingModel from "./components/Common/Loading/LoadingModel.jsx";
-
 export default function Layout() {
 	return (
 		<AuthProvider>
 			<ThemeProvider>
 				<PostContextProvider>
-					<Header />
-					<ToastContainer />
-					<LoadingModel />
-					<LikeNotification />
-					<Outlet />
-					<Footer />
+					<div className="min-h-screen flex flex-col">
+						<Header />
+						<main className="flex-1 pt-25 pb-20">
+							<ToastContainer />
+							<LoadingModel />
+							<LikeNotification />
+							<Outlet />
+						</main>
+						<Footer />
+					</div>
 				</PostContextProvider>
 			</ThemeProvider>
 		</AuthProvider>

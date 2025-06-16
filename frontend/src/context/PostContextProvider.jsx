@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from "react";
 import PostContext from "./PostContext";
 import axiosInstance from "../utils/axiosInstance";
+import { useLocation } from "react-router-dom";
 
 const PostContextProvider = ({ children }) => {
 	const [posts, setPosts] = useState([]);
+	const location = useLocation();
 
 	// Fetch posts once when the component mount
 	console.log("'PostContextProvider' component mounted");
@@ -20,7 +22,7 @@ const PostContextProvider = ({ children }) => {
 		};
 
 		fetchAllPosts();
-	}, []); // No unnecessary re-renders
+	}, [location.pathname]);
 
 	return (
 		<PostContext.Provider value={{ posts, setPosts }}>

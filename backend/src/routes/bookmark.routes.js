@@ -1,18 +1,16 @@
 import { Router } from "express";
-import { upload } from "../middlewares/multer.middleware.js";
 import { varifyJWT } from "../middlewares/auth.middleware.js";
-
 import {
-  bookmarkPost,
-  removeBookmark,
-  getUserBookmarks,
+  toggleBookmark,
+  getUserBookmarkedPosts,
 } from "../controllers/bookmark.controller.js";
+
 const router = Router();
 
-router.route("/:postId").post(varifyJWT, upload.none(), bookmarkPost); // Bookmark Post
+// Toggle bookmark (add/remove) on a post
+router.route("/:postId").post(varifyJWT, toggleBookmark);
 
-router.route("/:bookmarkId").delete(varifyJWT, removeBookmark); // Remove Bookmark
-
-router.route("/").get(varifyJWT, getUserBookmarks); // Get User Bookmarks
+// Get all bookmarks for the logged-in user
+router.route("/").get(varifyJWT, getUserBookmarkedPosts);
 
 export default router;

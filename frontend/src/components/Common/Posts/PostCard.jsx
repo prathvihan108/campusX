@@ -1,16 +1,27 @@
 import React, { useState } from "react";
 import { Heart, MessageCircle, Send, Bookmark } from "lucide-react";
 
-const PostCard = ({ post, currentUserId, toggleLike }) => {
+const PostCard = ({
+	post,
+	currentUserId,
+	toggleLike,
+	toggleBookmark,
+
+	handleFollow,
+	handleUnfolllow,
+}) => {
 	const [isLiked, setIsLiked] = useState(
-		post.likes.some((likeId) => likeId === currentUserId)
+		post.likes?.some((likeId) => likeId === currentUserId) || false
+	);
+
+	const [isBookmarked, setIsBookmarked] = useState(
+		post.bookmarks?.some((bookmarkId) => bookmarkId === currentUserId) || false
 	);
 
 	// console.log("post id", post._id);
 	// console.log("post likes: ", post.likes);
 	// console.log("Is Liked:", isLiked);
 	const [LikesCount, setLikesCount] = useState(post.likesCount);
-	const [isBookmarked, setIsBookmarked] = useState(false);
 
 	const handleToggleLike = async () => {
 		if (isLiked) {
@@ -20,11 +31,16 @@ const PostCard = ({ post, currentUserId, toggleLike }) => {
 			await toggleLike(post._id);
 			setLikesCount((prev) => prev + 1);
 		}
-		setIsLiked(!isLiked);
+		setIsLiked((prev) => !prev);
 	};
 
-	const toggleBookmark = () => {
-		setIsBookmarked(!isBookmarked);
+	const handleToggleBookmark = async () => {
+		try {
+			await toggleBookmark(post._id);
+			setIsBookmarked((prev) => !prev);
+		} catch (error) {
+			console.error("Failed to toggle bookmark:", error);
+		}
 	};
 
 	return (
@@ -106,7 +122,7 @@ const PostCard = ({ post, currentUserId, toggleLike }) => {
 								? "text-yellow-500"
 								: "text-gray-600 dark:text-gray-400 hover:text-yellow-500"
 						}`}
-						onClick={toggleBookmark}
+						onClick={handleToggleBookmark}
 					>
 						<Bookmark className="w-5 h-5 mr-2" />{" "}
 						{isBookmarked ? "Saved" : "Save"}
