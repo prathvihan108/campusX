@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Heart, MessageCircle, Send, Bookmark } from "lucide-react";
 
 const PostCard = ({
@@ -6,9 +6,9 @@ const PostCard = ({
 	currentUserId,
 	toggleLike,
 	toggleBookmark,
-
-	handleFollow,
-	handleUnfolllow,
+	isFollowing,
+	toggleFollow,
+	fetchMyFollowers,
 }) => {
 	const [isLiked, setIsLiked] = useState(
 		post.likes?.some((likeId) => likeId === currentUserId) || false
@@ -63,18 +63,6 @@ const PostCard = ({
 						{post.authorDetails.department} - {post.authorDetails.year}
 					</p>
 				</div>
-				{/* <div className="ml-auto">
-					<button
-						onClick={toggleFollow}
-						className={`px-4 py-2 text-sm font-semibold rounded-full ${
-							isFollowing
-								? "bg-green-500 hover:bg-green-600 text-white"
-								: "bg-blue-500 hover:bg-blue-600 text-white"
-						} transition-colors duration-200`}
-					>
-						{isFollowing ? "Following" : "Follow"}
-					</button>
-				</div> */}
 			</div>
 
 			{/* Post Content */}
@@ -133,10 +121,21 @@ const PostCard = ({
 				</span>
 			</div>
 
-			{/* DM Button */}
-			<button className="w-full py-2 bg-purple-500 hover:bg-purple-600 text-white rounded-full flex items-center justify-center transition-colors duration-200">
-				<Send className="w-4 h-4 mr-2" /> DM
-			</button>
+			{/* Follow/Unfollow Button */}
+			{currentUserId !== post.authorDetails._id && (
+				<button
+					onClick={() => toggleFollow(post.authorDetails._id)}
+					className={`w-full py-2 rounded-full flex items-center justify-center transition-colors duration-200
+				   ${
+							isFollowing
+								? "bg-green-500 hover:bg-green-600"
+								: "bg-blue-500 hover:bg-blue-600"
+						}
+				   text-white`}
+				>
+					{isFollowing ? "Unfollow" : "Follow"}
+				</button>
+			)}
 		</div>
 	);
 };

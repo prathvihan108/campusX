@@ -11,8 +11,6 @@ import {
   updateUserCoverImage,
   getUserChannelProfile,
   getBookmarks,
-  followUser,
-  unfollowUser,
   deleteAccount,
 } from "../controllers/user.controller.js";
 import { upload } from "../middlewares/multer.middleware.js";
@@ -54,8 +52,6 @@ router
 
 router.route("/get-bookmarks").get(varifyJWT, getBookmarks);
 
-router.route("/:userId/follow").post(varifyJWT, followUser);
-router.route("/:userId/unfollow").post(varifyJWT, unfollowUser);
 router.route("/delete-account").delete(varifyJWT, deleteAccount);
 
 export default router;

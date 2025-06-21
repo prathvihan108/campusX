@@ -4,7 +4,7 @@ import "./index.css";
 
 import Layout from "./Layout.jsx";
 import Home from "./pages/Home/Home.jsx";
-import ChatBot from "./pages/ChatBot/ChatBot.jsx";
+import Followers from "./pages/Followers/Followers.jsx";
 import Noties from "./pages/Noties/Noties.jsx";
 import Bookmarks from "./pages/Bookmarks/Bookmarks.jsx";
 import CreatePost from "./pages/CreatePost/CreatePost.jsx";
@@ -27,7 +27,7 @@ const router = createBrowserRouter(
 		<Route path="/" element={<Layout />}>
 			<Route path="" element={<Home />} />
 			<Route path="create-post" element={<CreatePost />} />
-			<Route path="chatbot" element={<ChatBot />} />
+			<Route path="followers" element={<Followers />} />
 
 			<Route path="bookmarks" element={<Bookmarks />} />
 			<Route path="notifications" element={<Noties />} />

@@ -626,68 +626,6 @@ const getBookmarks = AsyncHandler(async (req, res) => {
     );
 });
 
-const followUser = async (req, res) => {
-  try {
-    const { userId } = req.params;
-    const subscriberId = req.user._id;
-
-    if (userId === subscriberId.toString()) {
-      return res
-        .status(STATUS_CODES.BAD_REQUEST)
-        .json(
-          new ApiResponse(
-            STATUS_CODES.BAD_REQUEST,
-            null,
-            "You cannot follow yourself"
-          )
-        );
-    }
-
-    const subscription = await Subscription.create({
-      subscriber: subscriberId,
-      channel: userId,
-    });
-
-    res
-      .status(STATUS_CODES.OK)
-      .json(
-        new ApiResponse(STATUS_CODES.OK, subscription, "Followed successfully")
-      );
-  } catch (error) {
-    res.status(500).json(new ApiResponse(500, null, error.message));
-  }
-};
-
-const unfollowUser = async (req, res) => {
-  try {
-    const { userId } = req.params;
-    const subscriberId = req.user._id;
-
-    const subscription = await Subscription.findOneAndDelete({
-      subscriber: subscriberId,
-      channel: userId,
-    });
-
-    if (!subscription) {
-      return res
-        .status(STATUS_CODES.NOT_FOUND)
-        .json(
-          new ApiResponse(
-            STATUS_CODES.NOT_FOUND,
-            null,
-            "Subscription not found"
-          )
-        );
-    }
-
-    res
-      .status(STATUS_CODES.OK)
-      .json(new ApiResponse(STATUS_CODES.OK, null, "Unfollowed successfully"));
-  } catch (error) {
-    res.status(500).json(new ApiResponse(500, null, error.message));
-  }
-};
-
 const deleteAccount = AsyncHandler(async (req, res) => {
   const user = await User.findById(req.user._id);
 
@@ -735,7 +673,5 @@ export {
   updateUserCoverImage,
   getUserChannelProfile,
   getBookmarks,
-  followUser,
-  unfollowUser,
   deleteAccount,
 };

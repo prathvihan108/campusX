@@ -6,6 +6,8 @@ import { toggleBookmark } from "../../services/bookmarksServices.jsx";
 import {
 	handleFollow,
 	handleUnfollow,
+	checkIsFollowing,
+	fetchMyFollowers,
 } from "../../services/followersServices.jsx";
 import PostCard from "../../components/Common/Posts/PostCard.jsx";
 import { useAuth } from "../../context/AuthContext.jsx";
@@ -14,6 +16,7 @@ const Home = () => {
 	const { posts } = useContext(PostContext);
 	const [loading, setLoading] = useState(true);
 	const { fetchUser, user } = useAuth();
+	const [followingMap, setFollowingMap] = useState({});
 
 	const currentUserId = user?._id;
 
@@ -23,6 +26,59 @@ const Home = () => {
 			setLoading(false);
 		}
 	}, [posts]);
+
+	useEffect(() => {
+		const initializeFollowingMap = async () => {
+			try {
+				if (!posts || posts.length === 0) return;
+
+				// Get unique author IDs (excluding self if needed)
+				const authorIds = [
+					...new Set(
+						posts
+							.map((post) => post.authorDetails._id)
+							.filter((id) => id !== currentUserId)
+					),
+				];
+
+				// Step 2: Check follow status for each
+				const map = {};
+				await Promise.all(
+					authorIds.map(async (authorId) => {
+						const isFollowing = await checkIsFollowing(authorId);
+						map[authorId] = isFollowing;
+					})
+				);
+
+				setFollowingMap(map);
+			} catch (err) {
+				console.error("Error initializing following map:", err);
+			}
+		};
+
+		initializeFollowingMap();
+	}, [posts]);
+
+	// { userId1: true, userId2: false, ... }
+
+	const toggleFollow = async (userId) => {
+		try {
+			const isFollowing = followingMap[userId];
+
+			if (isFollowing) {
+				await handleUnfollow(userId);
+			} else {
+				await handleFollow(userId);
+			}
+
+			setFollowingMap((prev) => ({
+				...prev,
+				[userId]: !isFollowing,
+			}));
+		} catch (err) {
+			console.error("Follow toggle failed:", err);
+		}
+	};
 
 	return (
 		<div className="flex flex-col lg:flex-row gap-6 p-6 max-w-7xl mx-auto mt-24">
@@ -49,8 +105,9 @@ const Home = () => {
 									currentUserId={currentUserId}
 									toggleLike={toggleLike}
 									toggleBookmark={toggleBookmark}
-									handleFollow={handleFollow}
-									handleUnfollow={handleUnfollow}
+									toggleFollow={toggleFollow}
+									isFollowing={followingMap[post.authorDetails._id] || false}
+									fetchMyFollowers={fetchMyFollowers}
 								/>
 							) : null
 						)}
