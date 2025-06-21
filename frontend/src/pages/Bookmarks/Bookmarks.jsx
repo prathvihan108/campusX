@@ -29,32 +29,35 @@ function BookMarks() {
 	}
 
 	return (
-		<div className="px-4 sm:px-6 py-6 max-w-3xl mx-auto">
-			<h1 className="text-xl sm:text-2xl font-semibold mb-4 text-center sm:text-left">
+		<div className="px-4 sm:px-6 py-6 max-w-3xl mx-auto text-white">
+			<h1 className="text-2xl font-semibold mb-6 text-center sm:text-left">
 				Bookmarked Posts
 			</h1>
-			<div className="space-y-4">
+
+			<div className="space-y-6">
 				{bookmarks.map((post) => {
 					const author = post.author;
 
 					return (
 						<div
 							key={post._id}
-							className="border rounded-lg p-4 shadow hover:shadow-md transition bg-white"
+							className="bg-gray-800/90 backdrop-blur-md border border-gray-700 rounded-xl p-5 shadow-md hover:shadow-lg transition"
 						>
-							<div className="flex items-center mb-2">
+							{/* Author */}
+							<div className="flex items-center mb-3">
 								<img
 									src={author.avatar}
 									alt={author.fullName}
-									className="w-10 h-10 rounded-full mr-3"
+									className="w-11 h-11 rounded-full border-2 border-white mr-4"
 								/>
 								<div>
-									<p className="font-medium text-base">{author.fullName}</p>
-									<p className="text-sm text-gray-500">@{author.userName}</p>
+									<p className="font-semibold text-white">{author.fullName}</p>
+									<p className="text-sm text-gray-400">@{author.userName}</p>
 								</div>
 							</div>
 
-							<p className="text-gray-800 text-sm sm:text-base mb-2">
+							{/* Post Content */}
+							<p className="text-gray-200 text-sm sm:text-base mb-3 leading-relaxed">
 								{post.content}
 							</p>
 
@@ -62,12 +65,12 @@ function BookMarks() {
 								<img
 									src={post.image}
 									alt="Post"
-									className="w-full max-h-52 sm:max-h-60 object-cover rounded-md"
+									className="w-full max-h-60 object-cover rounded-md border border-gray-600"
 								/>
 							)}
 
-							<div className="text-sm text-gray-500 mt-2">
-								<span>Category: {post.category}</span> ·{" "}
+							<div className="text-sm text-gray-400 mt-3">
+								<span className="mr-4">Category: {post.category}</span>
 								<span>{post.likesCount} likes</span>
 							</div>
 						</div>

@@ -28,9 +28,10 @@ function Followers() {
 
 	return (
 		<div className="px-4 sm:px-6 py-6 max-w-3xl mx-auto">
-			<h1 className="text-xl sm:text-2xl font-semibold mb-4 text-center sm:text-left">
+			<h1 className="text-2xl font-semibold mb-6 text-center text-white">
 				Your Followers
 			</h1>
+
 			<div className="space-y-4">
 				{followers.map((item) => {
 					const follower = item.subscriber;
@@ -38,18 +39,18 @@ function Followers() {
 					return (
 						<div
 							key={item._id}
-							className="border rounded-lg p-4 shadow hover:shadow-md transition bg-white flex items-center"
+							className="bg-gray-800/90 backdrop-blur-md border border-gray-700 rounded-xl p-4 shadow-md hover:shadow-lg transition flex items-center"
 						>
 							<img
 								src={follower.avatar}
 								alt={follower.fullName}
-								className="w-12 h-12 rounded-full mr-4"
+								className="w-12 h-12 rounded-full mr-4 border-2 border-white"
 							/>
 							<div>
-								<p className="font-medium text-base">{follower.fullName}</p>
-								<p className="text-sm text-gray-500">{follower.email}</p>
+								<p className="font-semibold text-white">{follower.fullName}</p>
+								<p className="text-sm text-gray-300">{follower.email}</p>
 								<p className="text-sm text-gray-400">
-									{follower.role}, {follower.department} - {follower.year}
+									{follower.role}, {follower.department} – {follower.year}
 								</p>
 							</div>
 						</div>

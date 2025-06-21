@@ -40,7 +40,7 @@ const getComments = AsyncHandler(async (req, res) => {
   const { postId } = req.params;
 
   const comments = await Comment.find({ post: postId })
-    .populate("author", "fullName userName avatar")
+    .populate("author", "fullName userName avatar role year department")
     .sort({ createdAt: -1 });
 
   res

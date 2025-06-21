@@ -7,6 +7,7 @@ import Home from "./pages/Home/Home.jsx";
 import Followers from "./pages/Followers/Followers.jsx";
 import Noties from "./pages/Noties/Noties.jsx";
 import Bookmarks from "./pages/Bookmarks/Bookmarks.jsx";
+import Comments from "./pages/Comments/Comments.jsx";
 import CreatePost from "./pages/CreatePost/CreatePost.jsx";
 
 import Login from "./components/Auth/Login/Login.jsx";
@@ -25,8 +26,11 @@ console.log("Hello from main.jsx");
 const router = createBrowserRouter(
 	createRoutesFromElements(
 		<Route path="/" element={<Layout />}>
-			<Route path="" element={<Home />} />
+			<Route path="" element={<Home />}>
+				<Route path="post/:postId/comments" element={<Comments />} />
+			</Route>
 			<Route path="create-post" element={<CreatePost />} />
+
 			<Route path="followers" element={<Followers />} />
 
 			<Route path="bookmarks" element={<Bookmarks />} />

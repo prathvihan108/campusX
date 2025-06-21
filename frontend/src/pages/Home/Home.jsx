@@ -3,6 +3,7 @@ import PostContext from "../../context/PostContext.js";
 import FilterComponent from "../../components/Common/FilterComponent/FilterComponent.jsx";
 import { toggleLike } from "../../services/likesServices.jsx";
 import { toggleBookmark } from "../../services/bookmarksServices.jsx";
+import { Outlet } from "react-router-dom";
 import {
 	handleFollow,
 	handleUnfollow,
@@ -81,43 +82,48 @@ const Home = () => {
 	};
 
 	return (
-		<div className="flex flex-col lg:flex-row gap-6 p-6 max-w-7xl mx-auto mt-24">
-			{/* Sidebar / Filter */}
-			<aside className="lg:w-1/3 w-full">
-				<div className="sticky top-28">
-					<FilterComponent />
-				</div>
-			</aside>
+		<div className="relative">
+			<div className="flex flex-col lg:flex-row gap-6 p-6 max-w-7xl mx-auto mt-24">
+				{/* Sidebar / Filter */}
+				<aside className="lg:w-1/3 w-full">
+					<div className="sticky top-28">
+						<FilterComponent />
+					</div>
+				</aside>
 
-			{/* Posts Feed */}
-			<main className="lg:w-2/3 w-full">
-				{loading ? (
-					<div className="flex justify-center items-center h-[300px]">
-						<p className="text-gray-500 text-lg">Loading...</p>
-					</div>
-				) : posts.length > 0 ? (
-					<div className="grid md:grid-cols-2 gap-6 overflow-y-auto max-h-[75vh] scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100 p-2 rounded-xl border border-gray-200 shadow-sm bg-white">
-						{posts.map((post) =>
-							post ? (
-								<PostCard
-									key={post._id}
-									post={post}
-									currentUserId={currentUserId}
-									toggleLike={toggleLike}
-									toggleBookmark={toggleBookmark}
-									toggleFollow={toggleFollow}
-									isFollowing={followingMap[post.authorDetails._id] || false}
-									fetchMyFollowers={fetchMyFollowers}
-								/>
-							) : null
-						)}
-					</div>
-				) : (
-					<div className="text-center text-gray-500 mt-10">
-						No posts available.
-					</div>
-				)}
-			</main>
+				{/* Posts Feed */}
+				<main className="lg:w-2/3 w-full">
+					{loading ? (
+						<div className="flex justify-center items-center h-[300px]">
+							<p className="text-gray-500 text-lg">Loading...</p>
+						</div>
+					) : posts.length > 0 ? (
+						<div className="grid md:grid-cols-2 gap-6 overflow-y-auto max-h-[75vh] scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100 p-2 rounded-xl border border-gray-200 shadow-sm bg-white">
+							{posts.map((post) =>
+								post ? (
+									<PostCard
+										key={post._id}
+										post={post}
+										currentUserId={currentUserId}
+										toggleLike={toggleLike}
+										toggleBookmark={toggleBookmark}
+										toggleFollow={toggleFollow}
+										isFollowing={followingMap[post.authorDetails._id] || false}
+										fetchMyFollowers={fetchMyFollowers}
+									/>
+								) : null
+							)}
+						</div>
+					) : (
+						<div className="text-center text-gray-500 mt-10">
+							No posts available.
+						</div>
+					)}
+				</main>
+			</div>
+
+			{/* ✅ This renders modal like Comments */}
+			<Outlet />
 		</div>
 	);
 };

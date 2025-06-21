@@ -8,6 +8,7 @@ import postRouter from "./routes/post.routes.js";
 import likeRouter from "./routes/like.routes.js";
 import bookmarkRouter from "./routes/bookmark.routes.js";
 import followerRouter from "./routes/follow.routes.js";
+import commentRouter from "./routes/comment.routes.js";
 import errorMiddleware from "./middlewares/error.middleware.js";
 
 const app = express();
@@ -27,6 +28,7 @@ app.use("/api/v1/posts", postRouter);
 app.use("/api/v1/likes", likeRouter);
 app.use("/api/v1/bookmarks", bookmarkRouter);
 app.use("/api/v1/followers", followerRouter);
+app.use("/api/v1/comments", commentRouter);
 
 app.get("/", (req, res) => {
   res.send("hello");

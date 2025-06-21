@@ -27,11 +27,4 @@ router
   .get(getPostById) // Get Post by ID
   .delete(varifyJWT, deletePost); // Delete Post by ID
 
-router
-  .route("/:postId/comments")
-  .post(varifyJWT, upload.none(), addComment) // Add Comment
-  .get(getComments); // Get Comments
-
-router.route("/:postId/comments/:commentId").delete(varifyJWT, deleteComment); // Delete Comment
-
 export default router;
