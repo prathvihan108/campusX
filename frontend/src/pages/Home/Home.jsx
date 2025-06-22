@@ -83,7 +83,7 @@ const Home = () => {
 
 	return (
 		<div className="relative">
-			<div className="flex flex-col lg:flex-row gap-6 p-6 max-w-7xl mx-auto mt-24">
+			<div className="flex flex-col lg:flex-row gap-6 p-6 max-w-7xl mx-auto mt-10">
 				{/* Sidebar / Filter */}
 				<aside className="lg:w-1/3 w-full">
 					<div className="sticky top-28">

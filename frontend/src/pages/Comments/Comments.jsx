@@ -16,7 +16,8 @@ const Comments = () => {
 	const [comments, setComments] = useState([]);
 	const [newText, setNewText] = useState("");
 	const { setShowLoading } = useAuth();
-
+	const { user } = useAuth();
+	console.log("user in comments#######", user);
 	const [showPicker, setShowPicker] = useState(false);
 	const pickerRef = useRef(null);
 
@@ -163,12 +164,21 @@ const Comments = () => {
 												{comment.author.department} – {comment.author.year}
 											</p>
 										</div>
-										<button
+										{/* Delete button (only if user is author or post owner) */}
+										{comment.author.email === user.email && (
+											<button
+												onClick={() => handleDelete(comment._id)}
+												className="text-sm text-red-500 hover:underline"
+											>
+												Delete
+											</button>
+										)}
+										{/* <button
 											onClick={() => handleDelete(comment._id)}
 											className="text-sm text-red-500 hover:underline"
 										>
 											Delete
-										</button>
+										</button> */}
 									</div>
 
 									<p className="mt-2 text-gray-700 dark:text-gray-300 leading-relaxed">

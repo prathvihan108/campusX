@@ -23,7 +23,7 @@ const toggleBookmark = AsyncHandler(async (req, res) => {
 
     // Clear cache
     await client.del(`bookmarks:${userId}`);
-    console.log("📌 Post bookmarked, cache cleared");
+    console.log("Post bookmarked, cache cleared");
 
     res
       .status(STATUS_CODES.OK)
@@ -36,7 +36,7 @@ const toggleBookmark = AsyncHandler(async (req, res) => {
 
     // Clear cache
     await client.del(`bookmarks:${userId}`);
-    console.log("❌ Bookmark removed, cache cleared");
+    console.log(" Bookmark removed, cache cleared");
 
     res
       .status(STATUS_CODES.OK)
@@ -48,33 +48,33 @@ const toggleBookmark = AsyncHandler(async (req, res) => {
 const getUserBookmarkedPosts = AsyncHandler(async (req, res) => {
   const userId = req.user._id;
 
-  // Try cache first
-  // const cached = await client.get(`bookmarks:${userId}`);
-  // console.log("Bookmarks from cache :" + JSON.parse(cached));
-  // if (cached) {
-  //   return res
-  //     .status(STATUS_CODES.OK)
-  //     .json(
-  //       new ApiResponse(
-  //         STATUS_CODES.OK,
-  //         JSON.parse(cached),
-  //         "Bookmarked posts from cache"
-  //       )
-  //     );
-  // }
+  //Try cache first
+  const cached = await client.get(`bookmarks:${userId}`);
+  console.log("Bookmarks from cache :", JSON.parse(cached));
+  if (cached) {
+    return res
+      .status(STATUS_CODES.OK)
+      .json(
+        new ApiResponse(
+          STATUS_CODES.OK,
+          JSON.parse(cached),
+          "Bookmarked posts from cache"
+        )
+      );
+  }
 
   // Fetch posts where the user has bookmarked
   const posts = await Post.find({ bookmarks: userId })
-    .select("content image category likesCount bookmarksCount createdAt") // only required fields
+    .select("content image category likesCount bookmarksCount createdAt")
     .populate("author", "fullName userName avatar");
-  // Cache result
-  // try {
-  //   await client.setEx(`bookmarks:${userId}`, 3600, JSON.stringify(posts));
-  //   console.log("✅ Bookmarks cached for user");
-  //   console.log("Bookmarks: " + posts);
-  // } catch (err) {
-  //   console.error("Redis caching failed:", err);
-  // }
+  //Cache result
+  try {
+    await client.setEx(`bookmarks:${userId}`, 3600, JSON.stringify(posts));
+    console.log("Bookmarks cached for user");
+    console.log("Bookmarks: " + posts);
+  } catch (err) {
+    console.error("Redis caching failed:", err);
+  }
   console.log("Bookmarks from backend: " + posts);
 
   res

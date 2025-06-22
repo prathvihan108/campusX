@@ -24,7 +24,26 @@ function BookMarks() {
 
 	if (bookmarks.length === 0) {
 		return (
-			<p className="text-center mt-6 text-gray-500">No bookmarks found.</p>
+			<div className="flex flex-col items-center justify-center mt-16 text-gray-600 dark:text-gray-400">
+				<svg
+					xmlns="http://www.w3.org/2000/svg"
+					className="h-12 w-12 mb-4 text-gray-400 dark:text-gray-500"
+					fill="none"
+					viewBox="0 0 24 24"
+					stroke="currentColor"
+					strokeWidth={1.5}
+				>
+					<path
+						strokeLinecap="round"
+						strokeLinejoin="round"
+						d="M5 5v14l7-4 7 4V5a2 2 0 00-2-2H7a2 2 0 00-2 2z"
+					/>
+				</svg>
+				<p className="text-lg font-medium">No bookmarks found</p>
+				<p className="text-sm text-gray-400 dark:text-gray-500 mt-1">
+					You haven't saved any posts yet.
+				</p>
+			</div>
 		);
 	}
 

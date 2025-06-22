@@ -22,7 +22,26 @@ function Followers() {
 
 	if (followers.length === 0) {
 		return (
-			<p className="text-center mt-6 text-gray-500">No followers found.</p>
+			<div className="flex flex-col items-center justify-center mt-16 text-gray-600 dark:text-gray-400">
+				<svg
+					xmlns="http://www.w3.org/2000/svg"
+					className="h-12 w-12 mb-4 text-gray-400 dark:text-gray-500"
+					fill="none"
+					viewBox="0 0 24 24"
+					stroke="currentColor"
+					strokeWidth={1.5}
+				>
+					<path
+						strokeLinecap="round"
+						strokeLinejoin="round"
+						d="M17 20h5v-2a4 4 0 00-4-4h-1M7 20h5v-2a4 4 0 00-4-4H7m4-4a4 4 0 11-8 0 4 4 0 018 0zm10 0a4 4 0 11-8 0 4 4 0 018 0z"
+					/>
+				</svg>
+				<p className="text-lg font-medium">No followers found</p>
+				<p className="text-sm text-gray-400 dark:text-gray-500 mt-1">
+					Looks like no one is following this profile yet.
+				</p>
+			</div>
 		);
 	}
 
