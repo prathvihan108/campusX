@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import MyProfile from "./MyProfile"; // adjust path if needed
-import UserPosts from "./UserPosts"; // or wherever you placed it
+import MyProfile from "./MyProfile";
+import UserPosts from "./UserPosts";
 import { useAuth } from "../../context/AuthContext";
 import {
 	handleFollow,
@@ -15,17 +15,32 @@ import { Outlet } from "react-router-dom";
 
 const MyProfileLayout = () => {
 	const { user, fetchUser } = useAuth();
-	const [followingMap, setFollowingMap] = useState({});
-	const [userPosts, setUserPosts] = useState([]);
+	const [userReady, setUserReady] = useState(false);
 	const [loading, setLoading] = useState(true);
+	const [userPosts, setUserPosts] = useState([]);
+	const [followingMap, setFollowingMap] = useState({});
 
 	const currentUserId = user?._id;
 
-	// Fetch user posts
+	// Fetch user when layout first mounts
+	useEffect(() => {
+		const initUser = async () => {
+			try {
+				await fetchUser();
+				setUserReady(true);
+			} catch (err) {
+				console.error("Error loading user:", err);
+				setUserReady(true);
+			}
+		};
+		initUser();
+	}, []);
+
 	useEffect(() => {
 		const fetchData = async () => {
 			try {
-				fetchUser();
+				if (!currentUserId) return;
+
 				const posts = await getPostsByUserId(currentUserId);
 				setUserPosts(posts);
 
@@ -52,10 +67,10 @@ const MyProfileLayout = () => {
 			}
 		};
 
-		if (currentUserId) {
+		if (userReady && currentUserId) {
 			fetchData();
 		}
-	}, [currentUserId]);
+	}, [userReady, currentUserId]);
 
 	const toggleFollow = async (userId) => {
 		try {
@@ -75,21 +90,35 @@ const MyProfileLayout = () => {
 		}
 	};
 
+	if (!userReady) {
+		return (
+			<div className="flex justify-center items-center h-[300px]">
+				<p className="text-gray-500 text-lg">Loading user...</p>
+			</div>
+		);
+	}
+
 	return (
 		<div className="relative">
 			<div className="flex flex-col lg:flex-row gap-6 p-6 max-w-7xl mx-auto mt-10">
 				{/* Profile Sidebar */}
 				<aside className="lg:w-1/3 w-full">
-					<div className="sticky top-28">
+					<div className="sticky top-28 space-y-4">
+						<h2 className="text-xl font-semibold text-blue-800 border-b pb-2">
+							🧑 Profile
+						</h2>
 						<MyProfile />
 					</div>
 				</aside>
 
 				{/* Posts Section */}
-				<main className="lg:w-2/3 w-full">
+				<main className="lg:w-2/3 w-full space-y-4">
+					<h2 className="text-xl font-semibold text-blue-800 border-b pb-2">
+						📝 Posts
+					</h2>
 					{loading ? (
 						<div className="flex justify-center items-center h-[300px]">
-							<p className="text-gray-500 text-lg">Loading...</p>
+							<p className="text-gray-500 text-lg">Loading posts...</p>
 						</div>
 					) : (
 						<UserPosts
@@ -105,7 +134,7 @@ const MyProfileLayout = () => {
 				</main>
 			</div>
 
-			{/* For comment modal (same as Home.jsx) */}
+			{/* Comment modal and nested routes */}
 			<Outlet />
 		</div>
 	);
