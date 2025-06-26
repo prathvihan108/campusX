@@ -653,6 +653,7 @@ const deleteAccount = AsyncHandler(async (req, res) => {
   console.log("Posts After Deletion:", postsAfter.length);
 
   await User.findByIdAndDelete(user._id);
+  console.log("Accout deleted succss");
 
   return res
     .status(STATUS_CODES.OK)

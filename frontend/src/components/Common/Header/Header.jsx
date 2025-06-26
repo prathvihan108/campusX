@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Link, NavLink } from "react-router-dom";
-
+import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../../context/AuthContext.jsx";
 
 import SignupButton from "../Button/SignupButton.jsx";
@@ -12,7 +12,11 @@ import ThemeToggler from "../Button/ThemeToggler.jsx";
 const Header = () => {
 	const [isLoggedIn, setIsLoggedIn] = useState(false);
 	const { user } = useAuth();
-	console;
+	const navigate = useNavigate();
+
+	const handleAvatarClick = () => {
+		navigate(`/users/channel/${user.userName}`);
+	};
 	return (
 		<header className="fixed top-0 left-0 w-full bg-white dark:bg-gray-800 shadow-md p-4 flex flex-row flex-wrap justify-between items-center z-50 ">
 			{/* Profile Picture on the Left */}
@@ -22,6 +26,7 @@ const Header = () => {
 						<img
 							src={user.avatar}
 							alt="Profile"
+							onClick={handleAvatarClick}
 							className="h-15 w-15 rounded-full border-2 border-blue-700"
 						/>
 						{/* <div className="flex flex-col text-left">
@@ -41,7 +46,7 @@ const Header = () => {
 			{!user && (
 				<Link to="/" className="">
 					<img
-						src="https://upload.wikimedia.org/wikipedia/commons/3/32/Cmrit.png"
+						src="/campusX.png"
 						className="h-12 w-12 rounded-full border-2 border-white shadow-md"
 					/>
 					<span className="font-bold text-2xl text-white drop-shadow-md">
