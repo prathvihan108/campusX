@@ -4,6 +4,7 @@ import { varifyJWT } from "../middlewares/auth.middleware.js";
 import {
   createPost,
   getAllPosts,
+  getUserPosts,
   getPostById,
   deletePost,
 } from "../controllers/post.controller.js";
@@ -15,12 +16,12 @@ import {
 
 const router = Router();
 
-// POST ROUTES
-
 router
   .route("/")
-  .post(varifyJWT, upload.single("image"), createPost) // Create Post
+  .post(varifyJWT, upload.single("image"), createPost)
   .get(getAllPosts); // Get All Posts
+
+router.route("/user/:userId").get(getUserPosts); // Get  Posts of user by User ID
 
 router
   .route("/:id")

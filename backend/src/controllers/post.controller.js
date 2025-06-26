@@ -81,6 +81,63 @@ const getAllPosts = AsyncHandler(async (req, res) => {
     );
 });
 
+// Get Posts by Specific User
+const getUserPosts = AsyncHandler(async (req, res) => {
+  console.log("fetch userPosts function called");
+  const userId = req.params.userId || req.user._id;
+
+  const posts = await Post.aggregate([
+    {
+      $match: {
+        author: new mongoose.Types.ObjectId(userId),
+      },
+    },
+    {
+      $lookup: {
+        from: "users",
+        localField: "author",
+        foreignField: "_id",
+        as: "authorDetails",
+      },
+    },
+    { $unwind: "$authorDetails" },
+    {
+      $lookup: {
+        from: "comments",
+        localField: "_id",
+        foreignField: "post",
+        as: "comments",
+      },
+    },
+    {
+      $lookup: {
+        from: "subscriptions",
+        localField: "author",
+        foreignField: "channel",
+        as: "followers",
+      },
+    },
+    {
+      $addFields: {
+        likeCount: { $size: "$likes" },
+        commentCount: { $size: "$comments" },
+        followerCount: { $size: "$followers" },
+      },
+    },
+    { $sort: { createdAt: -1 } },
+  ]);
+
+  res
+    .status(STATUS_CODES.OK)
+    .json(
+      new ApiResponse(
+        STATUS_CODES.OK,
+        posts,
+        "User's posts fetched successfully"
+      )
+    );
+});
+
 //  Get Single Post by ID with Aggregation
 const getPostById = AsyncHandler(async (req, res) => {
   const postId = req.params.id;
@@ -164,4 +221,4 @@ const deletePost = AsyncHandler(async (req, res) => {
     .json(new ApiResponse(STATUS_CODES.OK, {}, "Post deleted successfully"));
 });
 
-export { createPost, getAllPosts, getPostById, deletePost };
+export { createPost, getAllPosts, getUserPosts, getPostById, deletePost };

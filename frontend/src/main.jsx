@@ -8,7 +8,7 @@ import Followers from "./pages/Followers/Followers.jsx";
 import Noties from "./pages/Noties/Noties.jsx";
 import Bookmarks from "./pages/Bookmarks/Bookmarks.jsx";
 import Comments from "./pages/Comments/Comments.jsx";
-import MyProfile from "./pages/MyProfile/MyProfile.jsx";
+import MyProfileLayout from "./pages/MyProfile/MyProfileLayout.jsx";
 import CreatePost from "./pages/CreatePost/CreatePost.jsx";
 
 import Login from "./components/Auth/Login/Login.jsx";
@@ -28,7 +28,7 @@ const router = createBrowserRouter(
 			<Route path="" element={<Home />}>
 				<Route path="post/:postId/comments" element={<Comments />} />
 			</Route>
-			<Route path="/users/channel/:userName" element={<MyProfile />} />
+			<Route path="/users/channel/:userName" element={<MyProfileLayout />} />
 			<Route path="create-post" element={<CreatePost />} />
 
 			<Route path="followers" element={<Followers />} />
