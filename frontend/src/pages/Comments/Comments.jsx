@@ -142,13 +142,13 @@ const Comments = () => {
 					<div className="space-y-6">
 						{comments.map((comment) => (
 							<div
-								key={comment._id}
+								key={comment?._id}
 								className="flex items-start gap-4 border-b pb-5"
 							>
 								{/* Avatar */}
 								<img
-									src={comment.author.avatar}
-									alt={comment.author.fullName}
+									src={comment.author?.avatar}
+									alt={comment.author?.fullName}
 									className="w-12 h-12 rounded-full border-2 border-blue-400"
 								/>
 
@@ -157,17 +157,21 @@ const Comments = () => {
 									<div className="flex justify-between items-center">
 										<div>
 											<p className="font-semibold text-gray-800 dark:text-white">
-												{comment.author.fullName}
+												{comment.author?.fullName}
 											</p>
 											<p className="text-sm text-gray-500 dark:text-gray-400">
-												{comment.author.email} • {comment.author.role},{" "}
-												{comment.author.department} – {comment.author.year}
+												{comment.author?.email} • {comment.author?.role},{" "}
+												{comment.author?.department} – {comment.author?.year}
 											</p>
 										</div>
 										{/* Delete button (only if user is author or post owner) */}
-										{comment.author.email === user.email && (
+										{console.log(
+											String(comment.author._id) === String(user._id)
+										)}
+
+										{String(comment.author._id) === String(user._id) && (
 											<button
-												onClick={() => handleDelete(comment._id)}
+												onClick={() => handleDelete(comment?._id)}
 												className="text-sm text-red-500 hover:underline"
 											>
 												Delete
