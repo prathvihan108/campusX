@@ -48,48 +48,52 @@ function BookMarks() {
 	}
 
 	return (
-		<div className="px-4 sm:px-6 py-6 max-w-3xl mx-auto text-white">
-			<h1 className="text-2xl font-semibold mb-6 text-center sm:text-left">
+		<div className="px-4 sm:px-6 py-6 max-w-3xl mx-auto text-black">
+			<h1 className="text-2xl font-semibold mb-6 text-center sm:text-left text-white">
 				Bookmarked Posts
 			</h1>
 
-			<div className="space-y-6">
+			<div className="space-y-4">
 				{bookmarks.map((post) => {
 					const author = post.author;
 
 					return (
 						<div
 							key={post._id}
-							className="bg-gray-800/90 backdrop-blur-md border border-gray-700 rounded-xl p-5 shadow-md hover:shadow-lg transition"
+							className="bg-gray-900/80 backdrop-blur-sm border border-gray-700 rounded-lg p-4 shadow-sm hover:shadow-md transition"
 						>
 							{/* Author */}
-							<div className="flex items-center mb-3">
+							<div className="flex items-center mb-2">
 								<img
 									src={author.avatar}
 									alt={author.fullName}
-									className="w-11 h-11 rounded-full border-2 border-white mr-4"
+									className="w-9 h-9 rounded-full border border-white mr-3"
 								/>
 								<div>
-									<p className="font-semibold text-white">{author.fullName}</p>
-									<p className="text-sm text-gray-400">@{author.userName}</p>
+									<p className="font-medium text-white text-sm">
+										{author.fullName}
+									</p>
+									<p className="text-xs text-gray-400">@{author.userName}</p>
 								</div>
 							</div>
 
 							{/* Post Content */}
-							<p className="text-gray-200 text-sm sm:text-base mb-3 leading-relaxed">
+							<p className="text-gray-300 text-sm mb-3 leading-relaxed line-clamp-3">
 								{post.content}
 							</p>
 
+							{/* Optional Image */}
 							{post.image && (
 								<img
 									src={post.image}
 									alt="Post"
-									className="w-full max-h-60 object-cover rounded-md border border-gray-600"
+									className="w-full max-h-80 object-contain rounded-md border border-gray-700"
 								/>
 							)}
 
-							<div className="text-sm text-gray-400 mt-3">
-								<span className="mr-4">Category: {post.category}</span>
+							{/* Meta Info */}
+							<div className="text-xs text-gray-400 mt-2 flex justify-between items-center">
+								<span>#{post.category}</span>
 								<span>{post.likesCount} likes</span>
 							</div>
 						</div>

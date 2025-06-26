@@ -47,8 +47,8 @@ function Followers() {
 
 	return (
 		<div className="px-4 sm:px-6 py-6 max-w-3xl mx-auto">
-			<h1 className="text-2xl font-semibold mb-6 text-center text-white">
-				Your Followers
+			<h1 className="text-2xl font-semibold mb-6 text-center sm:text-left">
+				Followers
 			</h1>
 
 			<div className="space-y-4">

@@ -30,41 +30,6 @@ const UserProfile = () => {
 		}
 	}, [userName]);
 
-	const handleAvatarClick = () => {
-		fileInputRef.current?.click();
-	};
-
-	const handleFileChange = async (e) => {
-		const file = e.target.files[0];
-		if (!file) return;
-
-		const formData = new FormData();
-		formData.append("avatar", file);
-
-		try {
-			const updated = await updateProfilePhoto(formData);
-			setProfile((prev) => ({ ...prev, avatar: updated.avatar }));
-		} catch (err) {
-			console.error("Failed to update avatar", err);
-		}
-	};
-
-	const handleDeleteAccount = async () => {
-		const confirmed = window.confirm(
-			"Are you sure you want to delete your account?"
-		);
-		if (!confirmed) return;
-
-		try {
-			await deleteAccount();
-			alert("Account deleted");
-			navigate("/"); // redirect to homepage or login
-		} catch (err) {
-			console.error("Failed to delete account", err);
-			alert("Something went wrong while deleting account.");
-		}
-	};
-
 	if (loading) {
 		return (
 			<p className="text-center text-gray-500 mt-10">Loading profile...</p>
