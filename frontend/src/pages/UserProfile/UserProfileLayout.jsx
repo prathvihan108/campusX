@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
-import MyProfile from "./MyProfile";
-import MyPosts from "./MyPosts";
-import { useAuth } from "../../context/AuthContext";
+import UserProfile from "./UserProfile";
+import UserPosts from "./UserPosts";
+import { useParams, useSearchParams } from "react-router-dom";
+
 import {
 	handleFollow,
 	handleUnfollow,
@@ -12,43 +13,36 @@ import { toggleLike } from "../../services/likesServices";
 import { toggleBookmark } from "../../services/bookmarksServices";
 import { getPostsByUserId } from "../../services/postsServices";
 import { Outlet } from "react-router-dom";
+import { useAuth } from "../../context/AuthContext";
 
-const MyProfileLayout = () => {
+const UserProfileLayout = () => {
 	const { user, fetchUser } = useAuth();
 	const [userReady, setUserReady] = useState(false);
 	const [loading, setLoading] = useState(true);
 	const [userPosts, setUserPosts] = useState([]);
 	const [followingMap, setFollowingMap] = useState({});
 
+	const { userName } = useParams();
+	const [searchParams] = useSearchParams();
+	const userId = searchParams.get("id");
 	const currentUserId = user?._id;
 
-	// Fetch user when layout first mounts
-	useEffect(() => {
-		const initUser = async () => {
-			try {
-				await fetchUser();
-				setUserReady(true);
-			} catch (err) {
-				console.error("Error loading user:", err);
-				setUserReady(true);
-			}
-		};
-		initUser();
-	}, []);
+	console.log("Username:", userName);
+	console.log("User ID:", userId);
 
 	useEffect(() => {
 		const fetchData = async () => {
 			try {
-				if (!currentUserId) return;
+				if (!userId) return;
 
-				const posts = await getPostsByUserId(currentUserId);
+				const posts = await getPostsByUserId(userId);
 				setUserPosts(posts);
 
 				const authorIds = [
 					...new Set(
 						posts
 							.map((post) => post.authorDetails._id)
-							.filter((id) => id !== currentUserId)
+							.filter((id) => id !== userId)
 					),
 				];
 
@@ -67,10 +61,10 @@ const MyProfileLayout = () => {
 			}
 		};
 
-		if (userReady && currentUserId) {
+		if (userId) {
 			fetchData();
 		}
-	}, [userReady, currentUserId]);
+	}, [userId]);
 
 	const toggleFollow = async (userId) => {
 		try {
@@ -90,7 +84,7 @@ const MyProfileLayout = () => {
 		}
 	};
 
-	if (!userReady) {
+	if (!userId) {
 		return (
 			<div className="flex justify-center items-center h-[300px]">
 				<p className="text-gray-500 text-lg">Loading user...</p>
@@ -105,24 +99,24 @@ const MyProfileLayout = () => {
 				<aside className="lg:w-1/3 w-full">
 					<div className="sticky top-28 space-y-4">
 						<h2 className="text-xl font-semibold text-blue-800 border-b pb-2">
-							MY Profile
+							User Profile
 						</h2>
-						<MyProfile />
+						<UserProfile />
 					</div>
 				</aside>
 
 				{/* Posts Section */}
 				<main className="lg:w-2/3 w-full space-y-4">
 					<h2 className="text-xl font-semibold text-blue-800 border-b pb-2">
-						My Posts
+						User Posts
 					</h2>
 					{loading ? (
 						<div className="flex justify-center items-center h-[300px]">
 							<p className="text-gray-500 text-lg">Loading posts...</p>
 						</div>
 					) : (
-						<MyPosts
-							userId={currentUserId}
+						<UserPosts
+							userId={userId}
 							currentUserId={currentUserId}
 							toggleLike={toggleLike}
 							toggleBookmark={toggleBookmark}
@@ -140,4 +134,4 @@ const MyProfileLayout = () => {
 	);
 };
 
-export default MyProfileLayout;
+export default UserProfileLayout;

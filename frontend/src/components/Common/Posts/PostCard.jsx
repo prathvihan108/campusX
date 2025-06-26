@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from "react";
-import { Heart, MessageCircle, Send, Bookmark } from "lucide-react";
+import React, { useState } from "react";
+import { Heart, MessageCircle, Bookmark } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+
 const PostCard = ({
 	post,
 	currentUserId,
@@ -10,31 +11,35 @@ const PostCard = ({
 	toggleFollow,
 	fetchMyFollowers,
 }) => {
+	const navigate = useNavigate();
+
 	const [isLiked, setIsLiked] = useState(
-		post.likes?.some((likeId) => likeId === currentUserId) || false
+		post.likes?.includes(currentUserId) || false
 	);
 
 	const [isBookmarked, setIsBookmarked] = useState(
-		post.bookmarks?.some((bookmarkId) => bookmarkId === currentUserId) || false
+		post.bookmarks?.includes(currentUserId) || false
 	);
 
-	// console.log("post id", post._id);
-	// console.log("post likes: ", post.likes);
-	// console.log("Is Liked:", isLiked);
-	const [LikesCount, setLikesCount] = useState(post.likesCount);
+	const [LikesCount, setLikesCount] = useState(post.likesCount || 0);
 
-	const handleToggleLike = async () => {
-		if (isLiked) {
-			await toggleLike(post._id);
-			setLikesCount((prev) => prev - 1);
-		} else {
-			await toggleLike(post._id);
-			setLikesCount((prev) => prev + 1);
-		}
-		setIsLiked((prev) => !prev);
+	const handleCardClick = () => {
+		navigate(
+			`/users/channel/${post.authorDetails.userName}?id=${post.authorDetails._id}`
+		);
 	};
 
-	const handleToggleBookmark = async () => {
+	const stopClick = (e) => e.stopPropagation();
+
+	const handleToggleLike = async (e) => {
+		stopClick(e);
+		await toggleLike(post._id);
+		setIsLiked((prev) => !prev);
+		setLikesCount((prev) => (isLiked ? prev - 1 : prev + 1));
+	};
+
+	const handleToggleBookmark = async (e) => {
+		stopClick(e);
 		try {
 			await toggleBookmark(post._id);
 			setIsBookmarked((prev) => !prev);
@@ -43,109 +48,127 @@ const PostCard = ({
 		}
 	};
 
-	//comments
-	const navigate = useNavigate();
-
-	const openComments = () => {
+	const openComments = (e) => {
+		stopClick(e);
 		navigate(`/post/${post._id}/comments`);
 	};
 
+	const handleToggleFollow = async (e) => {
+		stopClick(e);
+		await toggleFollow(post.authorDetails._id);
+		fetchMyFollowers?.(); // optional
+	};
+
 	return (
-		<div className="bg-white dark:bg-gray-900 rounded-2xl shadow-md overflow-hidden p-6 transition-shadow duration-300 hover:shadow-lg h-fit border border-blue-900 dark:border-blue-500 !border-opacity-100">
-			{/* Author Info */}
-			<div className="flex items-center mb-4">
-				<img
-					src={post.authorDetails.avatar}
-					alt={post.authorDetails.fullName}
-					className="h-15 w-15 rounded-full border-2 border-gray-300 dark:border-gray-700 mr-4"
-				/>
-				<div>
-					<h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
-						{post.authorDetails.fullName}
-					</h3>
-					<p className="text-md text-blue-600 ">
-						@{post.authorDetails.email} [{post.authorDetails.role}]
-					</p>
-					<p className="text-md text-gray-600 dark:text-gray-400">
-						{post.authorDetails.department} - {post.authorDetails.year}
-					</p>
-				</div>
-			</div>
-
-			{/* Post Content */}
-			<p className="text-gray-800 dark:text-gray-300 mb-4 leading-relaxed">
-				{post.content}
-			</p>
-
-			{/* Post Image */}
-			{post.image && (
-				<div className=" h-[250px] overflow-hidden rounded-xl border border-gray-200 dark:border-gray-700">
+		<div
+			onClick={handleCardClick}
+			className="cursor-pointer hover:bg-gray-50 transition rounded-lg p-4 border border-gray-200 shadow-sm"
+		>
+			<div className="bg-white dark:bg-gray-900 rounded-2xl shadow-md overflow-hidden p-6 transition-shadow duration-300 hover:shadow-lg h-fit border border-blue-900 dark:border-blue-500 !border-opacity-100">
+				{/* Author Info */}
+				<div className="flex items-center mb-4">
 					<img
-						src={post.image}
-						alt="Post"
-						className="w-full h-full object-contain"
+						src={post.authorDetails.avatar}
+						alt={post.authorDetails.fullName}
+						className="h-15 w-15 rounded-full border-2 border-gray-300 dark:border-gray-700 mr-4"
 					/>
+					<div>
+						<h3
+							onClick={(e) => {
+								stopClick(e);
+								navigate(`/users/channel/${post.authorDetails.userName}`);
+							}}
+							className="text-xl font-semibold text-gray-900 dark:text-gray-100 hover:underline"
+						>
+							{post.authorDetails.fullName}
+						</h3>
+						<p className="text-md text-blue-600">
+							@{post.authorDetails.email} [{post.authorDetails.role}]
+						</p>
+						<p className="text-md text-gray-600 dark:text-gray-400">
+							{post.authorDetails.department} - {post.authorDetails.year}
+						</p>
+					</div>
 				</div>
-			)}
 
-			{/* Post Category */}
-			<span className="inline-block bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-300 text-xs font-semibold px-3 py-1 rounded-full mb-4">
-				#{post.category}
-			</span>
+				{/* Post Content */}
+				<p className="text-gray-800 dark:text-gray-300 mb-4 leading-relaxed">
+					{post.content}
+				</p>
 
-			{/* Actions */}
-			<div className="flex justify-between items-center mb-4">
-				<div className="flex items-center space-x-4">
-					<button
-						onClick={handleToggleLike}
-						className="flex items-center text-gray-600 dark:text-gray-400 hover:text-red-500 transition-colors duration-200"
-					>
-						{isLiked ? (
-							<Heart className="w-5 h-5 mr-2 text-red-500 fill-red-500" />
-						) : (
-							<Heart className="w-5 h-5 mr-2 text-red-500 fill-none" />
-						)}
+				{/* Post Image */}
+				{post.image && (
+					<div className="h-[250px] overflow-hidden rounded-xl border border-gray-200 dark:border-gray-700 mb-4">
+						<img
+							src={post.image}
+							alt="Post"
+							className="w-full h-full object-contain"
+						/>
+					</div>
+				)}
 
-						<p className="text-red-500">{LikesCount}</p>
-					</button>
-					<button
-						className="flex items-center text-gray-600 dark:text-gray-400 hover:text-blue-500 transition-colors duration-200"
-						onClick={openComments}
-					>
-						<MessageCircle className="w-5 h-5 mr-2" /> {post.commentCount}
-					</button>
-					<button
-						className={`flex items-center transition-colors duration-200 ${
-							isBookmarked
-								? "text-yellow-500"
-								: "text-gray-600 dark:text-gray-400 hover:text-yellow-500"
-						}`}
-						onClick={handleToggleBookmark}
-					>
-						<Bookmark className="w-5 h-5 mr-2" />{" "}
-						{isBookmarked ? "Saved" : "Save"}
-					</button>
-				</div>
-				<span className="text-sm text-gray-600 dark:text-gray-400">
-					Followers: {post.followerCount}
+				{/* Post Category */}
+				<span className="inline-block bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-300 text-xs font-semibold px-3 py-1 rounded-full mb-4">
+					#{post.category}
 				</span>
-			</div>
 
-			{/* Follow/Unfollow Button */}
-			{currentUserId !== post.authorDetails._id && (
-				<button
-					onClick={() => toggleFollow(post.authorDetails._id)}
-					className={`w-full py-2 rounded-full flex items-center justify-center transition-colors duration-200
-				   ${
+				{/* Actions */}
+				<div className="flex justify-between items-center mb-4">
+					<div className="flex items-center space-x-4">
+						{/* Like */}
+						<button
+							onClick={handleToggleLike}
+							className="flex items-center text-gray-600 dark:text-gray-400 hover:text-red-500 transition-colors duration-200"
+						>
+							{isLiked ? (
+								<Heart className="w-5 h-5 mr-2 text-red-500 fill-red-500" />
+							) : (
+								<Heart className="w-5 h-5 mr-2 text-red-500 fill-none" />
+							)}
+							<p className="text-red-500">{LikesCount}</p>
+						</button>
+
+						{/* Comment */}
+						<button
+							className="flex items-center text-gray-600 dark:text-gray-400 hover:text-blue-500 transition-colors duration-200"
+							onClick={openComments}
+						>
+							<MessageCircle className="w-5 h-5 mr-2" /> {post.commentCount}
+						</button>
+
+						{/* Bookmark */}
+						<button
+							onClick={handleToggleBookmark}
+							className={`flex items-center transition-colors duration-200 ${
+								isBookmarked
+									? "text-yellow-500"
+									: "text-gray-600 dark:text-gray-400 hover:text-yellow-500"
+							}`}
+						>
+							<Bookmark className="w-5 h-5 mr-2" />
+							{isBookmarked ? "Saved" : "Save"}
+						</button>
+					</div>
+
+					<span className="text-sm text-gray-600 dark:text-gray-400">
+						Followers: {post.followerCount}
+					</span>
+				</div>
+
+				{/* Follow/Unfollow */}
+				{currentUserId !== post.authorDetails._id && (
+					<button
+						onClick={handleToggleFollow}
+						className={`w-full py-2 rounded-full flex items-center justify-center transition-colors duration-200 ${
 							isFollowing
 								? "bg-green-500 hover:bg-green-600"
 								: "bg-blue-500 hover:bg-blue-600"
-						}
-				   text-white`}
-				>
-					{isFollowing ? "Unfollow" : "Follow"}
-				</button>
-			)}
+						} text-white`}
+					>
+						{isFollowing ? "Unfollow" : "Follow"}
+					</button>
+				)}
+			</div>
 		</div>
 	);
 };

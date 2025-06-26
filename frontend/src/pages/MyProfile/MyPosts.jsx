@@ -1,8 +1,8 @@
 import { use, useEffect, useState } from "react";
-import { getPostsByUserId } from "../../services/postsServices";
+import { getPostsByUserId } from "../../services/postsServices.jsx";
 import PostCard from "../../components/Common/Posts/PostCard.jsx";
 
-const UserPosts = ({
+const MyPosts = ({
 	userId,
 	currentUserId,
 	toggleLike,
@@ -15,7 +15,7 @@ const UserPosts = ({
 	const [loading, setLoading] = useState(true);
 
 	useEffect(() => {
-		console.log(userId, currentUserId, "UserPosts component");
+		console.log(userId, currentUserId, "MyPosts component");
 		const fetchPosts = async () => {
 			try {
 				const data = await getPostsByUserId(userId);
@@ -56,4 +56,4 @@ const UserPosts = ({
 	);
 };
 
-export default UserPosts;
+export default MyPosts;

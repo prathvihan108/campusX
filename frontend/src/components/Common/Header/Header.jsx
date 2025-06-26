@@ -15,7 +15,7 @@ const Header = () => {
 	const navigate = useNavigate();
 
 	const handleAvatarClick = () => {
-		navigate(`/users/channel/${user.userName}`);
+		navigate(`/my/channel/${user.userName}`);
 	};
 	return (
 		<header className="fixed top-0 left-0 w-full bg-white dark:bg-gray-800 shadow-md p-4 flex flex-row flex-wrap justify-between items-center z-50 ">
