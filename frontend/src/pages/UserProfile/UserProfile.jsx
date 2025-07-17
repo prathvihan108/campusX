@@ -68,7 +68,16 @@ const UserProfile = () => {
 						{profile.fullName}
 					</h1>
 					<p className="text-lg text-gray-600 dark:text-gray-400">
-						@{profile.userName}
+						username:@{profile.userName}
+					</p>
+					<p className="text-lg text-gray-600 dark:text-gray-400">
+						Email:{profile.email}
+					</p>
+					<p className="text-md text-gray-500 dark:text-gray-300">
+						{profile.department} - {profile.year}
+					</p>
+					<p className="text-md text-gray-500 dark:text-gray-300">
+						Designation:{profile.role}
 					</p>
 				</div>
 			</div>
@@ -88,14 +97,16 @@ const UserProfile = () => {
 				)}
 			</div>
 
-			{/* Email */}
+			{/* Bio */}
 			<div className="mt-6">
-				<p className="text-sm text-gray-500 dark:text-gray-400">
-					Email:{" "}
-					<span className="text-gray-700 dark:text-gray-200">
-						{profile.email}
-					</span>
+				<p className="text-base font-semibold text-gray-600 dark:text-gray-300 mb-2">
+					Bio:
 				</p>
+				<div className="bg-gray-100 dark:bg-gray-800 p-4 rounded-xl shadow-sm">
+					<p className="text-lg text-gray-800 dark:text-gray-100 leading-relaxed">
+						{profile.bio}
+					</p>
+				</div>
 			</div>
 		</div>
 	);

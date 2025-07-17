@@ -445,17 +445,17 @@ const getUserChannelProfile = AsyncHandler(async (req, res) => {
     throw new ApiError(STATUS_CODES.BAD_REQUEST, "User name is missing");
   }
 
-  const cachedChannel = await client.get(`channel:${user}`);
-  console.log("cached channel", cachedChannel);
-  if (cachedChannel) {
-    return res.json(
-      new ApiResponse(
-        STATUS_CODES.OK,
-        JSON.parse(cachedChannel),
-        "channel from Redis cache"
-      )
-    );
-  }
+  // const cachedChannel = await client.get(`channel:${user}`);
+  // console.log("cached channel", cachedChannel);
+  // if (cachedChannel) {
+  //   return res.json(
+  //     new ApiResponse(
+  //       STATUS_CODES.OK,
+  //       JSON.parse(cachedChannel),
+  //       "channel from Redis cache"
+  //     )
+  //   );
+  // }
   console.log("userName: ", user);
   //channel will be an array
   const channel = await User.aggregate([
@@ -504,6 +504,10 @@ const getUserChannelProfile = AsyncHandler(async (req, res) => {
       $project: {
         fullName: 1,
         userName: 1,
+        bio: 1,
+        department: 1,
+        year: 1,
+        role: 1,
         subscribersCount: 1,
         channelsSubscribedTo: 1,
         isSubscribed: 1,

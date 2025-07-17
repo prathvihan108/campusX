@@ -83,7 +83,7 @@ const PostCard = ({
 							{post.authorDetails.fullName}
 						</h3>
 						<p className="text-md text-blue-600">
-							@{post.authorDetails.email} [{post.authorDetails.role}]
+							@{post.authorDetails.userName} [{post.authorDetails.role}]
 						</p>
 						<p className="text-md text-gray-600 dark:text-gray-400">
 							{post.authorDetails.department} - {post.authorDetails.year}
