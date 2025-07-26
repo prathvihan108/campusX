@@ -98,7 +98,7 @@ const Home = () => {
 							<p className="text-gray-500 text-lg">Loading...</p>
 						</div>
 					) : posts.length > 0 ? (
-						<div className="grid md:grid-cols-2 gap-6 overflow-y-auto max-h-[75vh] scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100 p-2 rounded-xl border border-gray-200 shadow-sm bg-white">
+						<div className="grid md:grid-cols-2 gap-6 overflow-y-auto max-h-[75vh] scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100 p-2 rounded-xl border-4 border-blue-500 shadow-sm bg-white">
 							{posts.map((post) =>
 								post ? (
 									<PostCard
