@@ -1,19 +1,22 @@
-# model.py
 import numpy as np
 import pandas as pd
 from sklearn.metrics.pairwise import cosine_similarity
 
-def get_recommendations(user_id, posts_df, users_df, interactions_df, alpha=0.7, top_k=10):
+def get_recommendations(user_id, posts_df, users_df, interactions_df, subscriptions_df=None, alpha=0.7, top_k=10):
+    if user_id not in users_df.index:
+        # Fallback for unknown user — return trending
+        return get_trending_posts(posts_df, top_k)
+
     # Extract target user's feature vector
     user_vector = users_df.loc[user_id]
     post_vectors = posts_df.drop(columns=["post_id"])
-    
+
     # Content-based similarity
     content_similarities = cosine_similarity([user_vector], post_vectors)[0]  # shape = (num_posts,)
 
     # Collaborative filtering score (interaction-based)
     interaction_score = np.zeros(len(posts_df))
-    
+
     # Posts the user has interacted with
     user_interactions = interactions_df[interactions_df['user_id'] == user_id]
 
@@ -29,9 +32,14 @@ def get_recommendations(user_id, posts_df, users_df, interactions_df, alpha=0.7,
         for pid in bookmarked_post_ids:
             interaction_weight_map[pid] = interaction_weight_map.get(pid, 0) + 0.7  # bookmarks less weight
 
-        # For all other users who liked same posts — recommend what they liked
-        similar_users = interactions_df[interactions_df['post_id'].isin(liked_post_ids) & (interactions_df['user_id'] != user_id)]
-        co_liked_posts = interactions_df[interactions_df['user_id'].isin(similar_users['user_id'])]['post_id']
+        # Find similar users
+        similar_users = interactions_df[
+            (interactions_df['post_id'].isin(liked_post_ids)) &
+            (interactions_df['user_id'] != user_id)
+        ]
+        co_liked_posts = interactions_df[
+            interactions_df['user_id'].isin(similar_users['user_id'])
+        ]['post_id']
 
         # Count frequency of co-liked posts
         co_liked_counts = co_liked_posts.value_counts(normalize=True)
@@ -42,7 +50,15 @@ def get_recommendations(user_id, posts_df, users_df, interactions_df, alpha=0.7,
         # Fill interaction score array
         for pid, score in co_liked_counts.items():
             if pid in post_id_to_index:
-                interaction_score[post_id_to_index[pid]] = score
+                interaction_score[post_id_to_index[pid]] += score
+
+    # 🔥 Add author-following boost (subscriptions)
+    if subscriptions_df is not None and not subscriptions_df.empty:
+        followed_channels = subscriptions_df[subscriptions_df['subscriber'] == user_id]['channel'].tolist()
+        if followed_channels:
+            for idx, author_id in enumerate(posts_df['author']):
+                if author_id in followed_channels:
+                    interaction_score[idx] += 0.2  # boost for followed creator
 
     # Combine both scores
     final_score = alpha * content_similarities + (1 - alpha) * interaction_score
@@ -52,3 +68,10 @@ def get_recommendations(user_id, posts_df, users_df, interactions_df, alpha=0.7,
     recommended_post_ids = posts_df.iloc[top_indices]['post_id'].tolist()
 
     return recommended_post_ids
+
+
+def get_trending_posts(post_vectors, top_k=10):
+    # If you later want to sort by anything, e.g. popularity score, add a column
+    trending = post_vectors.head(top_k)
+    return trending.index.tolist()  # Use index as post IDs
+
