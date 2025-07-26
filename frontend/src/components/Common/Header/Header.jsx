@@ -47,7 +47,7 @@ const Header = () => {
 				<Link to="/" className="">
 					<img
 						src="/campusX.png"
-						className="h-12 w-12 rounded-full border-2 border-white shadow-md"
+						className="h-12 w-12 rounded-full border-2 border-black shadow-md"
 					/>
 					<span className="font-bold text-2xl text-white drop-shadow-md">
 						CampusX
