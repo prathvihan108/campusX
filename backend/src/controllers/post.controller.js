@@ -1,3 +1,4 @@
+import axios from "axios";
 import { Post } from "../models/post.model.js";
 import { ApiError } from "../utils/ApiError.js";
 import STATUS_CODES from "../constants/statusCodes.js";
@@ -22,6 +23,7 @@ const createPost = AsyncHandler(async (req, res) => {
     category,
     image: image?.url || "",
   });
+  console.log(req.user._id, "created a post");
 
   // Populate the author with selected fields
   await post.populate({
@@ -38,43 +40,119 @@ const createPost = AsyncHandler(async (req, res) => {
 
 // Get All Posts with Aggregation
 const getAllPosts = AsyncHandler(async (req, res) => {
-  const posts = await Post.aggregate([
-    {
-      $lookup: {
-        from: "users",
-        localField: "author",
-        foreignField: "_id",
-        as: "authorDetails",
-      },
-    },
-    { $unwind: "$authorDetails" },
-    {
-      $lookup: {
-        from: "comments",
-        localField: "_id",
-        foreignField: "post",
-        as: "comments",
-      },
-    },
-    {
-      $lookup: {
-        from: "subscriptions",
-        localField: "author",
-        foreignField: "channel",
-        as: "followers",
-      },
-    },
-    {
-      $addFields: {
-        likeCount: { $size: "$likes" },
-        commentCount: { $size: "$comments" },
-        followerCount: { $size: "$followers" },
-      },
-    },
-    { $sort: { createdAt: -1 } },
-  ]);
+  let posts;
 
-  res
+  // Check if user is logged in
+  const userId = req.query.userId;
+  console.log("getAllPosts function called");
+  console.log(userId, "exists ");
+  if (userId) {
+    try {
+      //  FastAPI recommendation backend
+      const { data } = await axios.post("http://localhost:8000/recommend", {
+        user_id: userId,
+      });
+      console.log("Recommendation data:", data);
+
+      const recommendedIds = data.recommendations || [];
+
+      //  Convert post IDs to ObjectId
+      const objectIds = recommendedIds.map(
+        (id) => new mongoose.Types.ObjectId(id)
+      );
+
+      // Fetch posts by those IDs, keeping the aggregation pipeline
+      posts = await Post.aggregate([
+        {
+          $match: { _id: { $in: objectIds } },
+        },
+        {
+          $lookup: {
+            from: "users",
+            localField: "author",
+            foreignField: "_id",
+            as: "authorDetails",
+          },
+        },
+        { $unwind: "$authorDetails" },
+        {
+          $lookup: {
+            from: "comments",
+            localField: "_id",
+            foreignField: "post",
+            as: "comments",
+          },
+        },
+        {
+          $lookup: {
+            from: "subscriptions",
+            localField: "author",
+            foreignField: "channel",
+            as: "followers",
+          },
+        },
+        {
+          $addFields: {
+            likeCount: { $size: "$likes" },
+            commentCount: { $size: "$comments" },
+            followerCount: { $size: "$followers" },
+          },
+        },
+      ]);
+
+      //  maintain the order returned by ML
+      posts = objectIds
+        .map((id) => posts.find((p) => p._id.equals(id)))
+        .filter(Boolean);
+    } catch (err) {
+      console.error("Recommendation API failed:", err.message);
+      // fallback to normal posts
+    }
+  }
+  if (posts && posts.length > 0) {
+    console.log("Fetching posts with recommendations");
+  }
+  //  Fallback if no user or ML failed
+  if (!posts) {
+    console.log("Fetching all posts without recommendations");
+    posts = await Post.aggregate([
+      {
+        $lookup: {
+          from: "users",
+          localField: "author",
+          foreignField: "_id",
+          as: "authorDetails",
+        },
+      },
+      { $unwind: "$authorDetails" },
+      {
+        $lookup: {
+          from: "comments",
+          localField: "_id",
+          foreignField: "post",
+          as: "comments",
+        },
+      },
+      {
+        $lookup: {
+          from: "subscriptions",
+          localField: "author",
+          foreignField: "channel",
+          as: "followers",
+        },
+      },
+      {
+        $addFields: {
+          likeCount: { $size: "$likes" },
+          commentCount: { $size: "$comments" },
+          followerCount: { $size: "$followers" },
+        },
+      },
+      { $sort: { createdAt: -1 } },
+    ]);
+  }
+
+  return res
     .status(STATUS_CODES.OK)
     .json(
       new ApiResponse(STATUS_CODES.OK, posts, "Posts fetched successfully")
@@ -84,8 +162,8 @@ const getAllPosts = AsyncHandler(async (req, res) => {
 // Get Posts by Specific User
 const getUserPosts = AsyncHandler(async (req, res) => {
   console.log("fetch userPosts function called");
-  const userId = req.params.userId || req.user._id;
-
+  const userId = req.params.userId;
+  console.log("User ID:", userId);
   const posts = await Post.aggregate([
     {
       $match: {

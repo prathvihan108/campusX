@@ -12,7 +12,13 @@ const PostContextProvider = ({ children }) => {
 	useEffect(() => {
 		const fetchAllPosts = async () => {
 			try {
-				const response = await axiosInstance.get("/posts/");
+				const userId = localStorage.getItem("userId");
+
+				const response = await axiosInstance.get("/posts/", {
+					params: {
+						userId: userId || null,
+					},
+				});
 
 				console.log("Fetched posts:", response.data);
 				setPosts(response.data.data);
