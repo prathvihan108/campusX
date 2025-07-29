@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import PostContext from "../../context/PostContext.js";
-import FilterComponent from "../../components/Common/FilterComponent/FilterComponent.jsx";
+import UniversalSearchBar from "../../components/Common/FilterComponent/UniversalSearchBar.jsx";
 import { toggleLike } from "../../services/likesServices.jsx";
 import { toggleBookmark } from "../../services/bookmarksServices.jsx";
 import { Outlet } from "react-router-dom";
@@ -82,17 +82,35 @@ const Home = () => {
 	};
 
 	return (
-		<div className="relative">
-			<div className="flex flex-col lg:flex-row gap-6 p-6 max-w-7xl mx-auto mt-10">
-				{/* Sidebar / Filter */}
-				<aside className="lg:w-1/3 w-full">
-					<div className="sticky top-28">
-						<FilterComponent />
-					</div>
-				</aside>
+		<div className="max-w-7xl mx-auto mt-10 px-4 sm:px-6 lg:px-8">
+			{/* Search Bar Container */}
+			<div className="sticky top-6 z-20 bg-white bg-opacity-90 backdrop-blur-md border border-gray-200 rounded-xl shadow-lg max-w-xl mx-auto px-4 py-3 flex items-center space-x-3">
+				<svg
+					xmlns="http://www.w3.org/2000/svg"
+					className="h-6 w-6 text-gray-400 flex-shrink-0"
+					fill="none"
+					viewBox="0 0 24 24"
+					stroke="currentColor"
+					strokeWidth={2}
+				>
+					<path
+						strokeLinecap="round"
+						strokeLinejoin="round"
+						d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 1110.5 3a7.5 7.5 0 016.15 13.65z"
+					/>
+				</svg>
 
+				<input
+					type="text"
+					placeholder="Search by username or full name..."
+					className="flex-grow p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-shadow text-gray-700 text-base"
+				/>
+			</div>
+
+			{/* Content below search bar */}
+			<div className="mt-8 flex flex-col lg:flex-row gap-6">
 				{/* Posts Feed */}
-				<main className="lg:w-2/3 w-full">
+				<main className="w-full">
 					{loading ? (
 						<div className="flex justify-center items-center h-[300px]">
 							<p className="text-gray-500 text-lg">Loading...</p>
@@ -122,7 +140,7 @@ const Home = () => {
 				</main>
 			</div>
 
-			{/* ✅ This renders modal like Comments */}
+			{/* Modal like Comments */}
 			<Outlet />
 		</div>
 	);
