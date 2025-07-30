@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link, NavLink } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../../context/AuthContext.jsx";
@@ -17,6 +17,10 @@ const Header = () => {
 	const handleAvatarClick = () => {
 		navigate(`/my/channel/${user.userName}`);
 	};
+
+	useEffect(() => {
+		console.log("Header component mounted");
+	}, []);
 	return (
 		<header className="fixed top-0 left-0 w-full bg-white dark:bg-gray-800 shadow-md p-4 flex flex-row flex-wrap justify-between items-center z-50 ">
 			{/* Profile Picture on the Left */}
