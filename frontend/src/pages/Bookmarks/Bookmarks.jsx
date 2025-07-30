@@ -5,20 +5,16 @@ import { fetchBookmarks } from "../../services/bookmarksServices";
 function BookMarks() {
 	const [bookmarks, setBookmarks] = useState([]);
 	const { setShowLoading } = useAuth();
-	console.log("Bookmark page loading..");
 
 	useEffect(() => {
 		const getBookmarks = async () => {
 			try {
 				const bookmarkedPosts = await fetchBookmarks(setShowLoading);
 				setBookmarks(bookmarkedPosts || []);
-				console.log("\nBookmarks:", bookmarkedPosts);
 			} catch (error) {
 				console.error("Failed to fetch bookmarks:", error);
-			} finally {
 			}
 		};
-
 		getBookmarks();
 	}, []);
 
@@ -39,7 +35,7 @@ function BookMarks() {
 						d="M5 5v14l7-4 7 4V5a2 2 0 00-2-2H7a2 2 0 00-2 2z"
 					/>
 				</svg>
-				<p className="text-lg font-medium">No bookmarks found</p>
+				<p className="text-lg font-semibold">No bookmarks found</p>
 				<p className="text-sm text-gray-400 dark:text-gray-500 mt-1">
 					You haven't saved any posts yet.
 				</p>
@@ -48,37 +44,35 @@ function BookMarks() {
 	}
 
 	return (
-		<div className="px-4 sm:px-6 py-6 max-w-3xl mx-auto text-black">
-			<h1 className="text-2xl font-semibold mb-6 text-center sm:text-left text-white">
+		<div className="px-4 sm:px-6 py-6 max-w-3xl mx-auto text-white">
+			<h1 className="text-3xl font-bold mb-6 text-center sm:text-left">
 				Bookmarked Posts
 			</h1>
-
-			<div className="space-y-4">
+			<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 				{bookmarks.map((post) => {
 					const author = post.author;
-
 					return (
-						<div
+						<article
 							key={post._id}
-							className="bg-gray-900/80 backdrop-blur-sm border border-gray-700 rounded-lg p-4 shadow-sm hover:shadow-md transition"
+							className="bg-gray-800 rounded-xl shadow-md hover:shadow-xl transition-shadow duration-300 p-5"
 						>
-							{/* Author */}
-							<div className="flex items-center mb-2">
+							{/* Author Info */}
+							<div className="flex items-center mb-4">
 								<img
 									src={author.avatar}
 									alt={author.fullName}
-									className="w-9 h-9 rounded-full border border-white mr-3"
+									className="w-10 h-10 rounded-full border-2 border-blue-500 mr-4 object-cover"
 								/>
 								<div>
-									<p className="font-medium text-white text-sm">
+									<p className="text-white font-semibold text-base leading-tight">
 										{author.fullName}
 									</p>
-									<p className="text-xs text-gray-400">@{author.userName}</p>
+									<p className="text-blue-400 text-sm">@{author.userName}</p>
 								</div>
 							</div>
 
 							{/* Post Content */}
-							<p className="text-gray-300 text-sm mb-3 leading-relaxed line-clamp-3">
+							<p className="text-gray-300 text-base mb-4 line-clamp-3 leading-relaxed self-start">
 								{post.content}
 							</p>
 
@@ -87,16 +81,16 @@ function BookMarks() {
 								<img
 									src={post.image}
 									alt="Post"
-									className="w-full max-h-80 object-contain rounded-md border border-gray-700"
+									className="w-full max-h-96 object-cover rounded-lg border border-gray-700 mb-4"
 								/>
 							)}
 
-							{/* Meta Info */}
-							<div className="text-xs text-gray-400 mt-2 flex justify-between items-center">
-								<span>#{post.category}</span>
+							{/* Meta info (category, likes) */}
+							<div className="flex justify-between text-gray-400 text-sm font-medium">
+								<span className="capitalize">#{post.category}</span>
 								<span>{post.likesCount} likes</span>
 							</div>
-						</div>
+						</article>
 					);
 				})}
 			</div>
