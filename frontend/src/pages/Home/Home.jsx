@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
-import PostContext from "../../context/PostContext.js";
-import UniversalSearchBar from "../../components/Common/FilterComponent/UniversalSearchBar.jsx";
+import PostContext from "../../context/PostContext";
+import UniversalSearchBar from "../../components/Common/UniversalSearchBar/UniversalSearchBar.jsx";
 import { toggleLike } from "../../services/likesServices.jsx";
 import { toggleBookmark } from "../../services/bookmarksServices.jsx";
 import { Outlet } from "react-router-dom";
@@ -14,68 +14,70 @@ import PostCard from "../../components/Common/Posts/PostCard.jsx";
 import { useAuth } from "../../context/AuthContext.jsx";
 
 const Home = () => {
-	const { posts } = useContext(PostContext);
-	const [loading, setLoading] = useState(true);
+	const { posts, loading, hasMore, fetchNextPage } = useContext(PostContext);
 	const { fetchUser, user } = useAuth();
 	const [followingMap, setFollowingMap] = useState({});
-
 	const currentUserId = user?._id;
 
+	// Fetch user on mount
 	useEffect(() => {
 		fetchUser();
-		if (posts.length > 0) {
-			setLoading(false);
-		}
-	}, [posts]);
+	}, []);
 
+	// Initialize following map whenever posts change
 	useEffect(() => {
 		const initializeFollowingMap = async () => {
-			try {
-				if (!posts || posts.length === 0) return;
+			if (!posts || posts.length === 0) return;
 
-				// Get unique author IDs (excluding self if needed)
-				const authorIds = [
-					...new Set(
-						posts
-							.map((post) => post.authorDetails._id)
-							.filter((id) => id !== currentUserId)
-					),
-				];
+			const authorIds = [
+				...new Set(
+					posts
+						.map((post) => post.authorDetails._id)
+						.filter((id) => id !== currentUserId)
+				),
+			];
 
-				// Step 2: Check follow status for each
-				const map = {};
-				await Promise.all(
-					authorIds.map(async (authorId) => {
-						const isFollowing = await checkIsFollowing(authorId);
-						map[authorId] = isFollowing;
-					})
-				);
+			const map = {};
+			await Promise.all(
+				authorIds.map(async (authorId) => {
+					const isFollowing = await checkIsFollowing(authorId);
+					map[authorId] = isFollowing;
+				})
+			);
 
-				setFollowingMap(map);
-			} catch (err) {
-				console.error("Error initializing following map:", err);
-			}
+			setFollowingMap(map);
 		};
 
 		initializeFollowingMap();
-	}, [posts]);
+	}, [posts, currentUserId]);
 
-	// { userId1: true, userId2: false, ... }
+	// Scroll event to trigger fetching next page
+	useEffect(() => {
+		const handleScroll = () => {
+			if (
+				window.innerHeight + window.scrollY >=
+					document.body.offsetHeight - 300 &&
+				hasMore &&
+				!loading
+			) {
+				fetchNextPage();
+				console.log("Fetching next page of posts...");
+			}
+		};
+
+		window.addEventListener("scroll", handleScroll);
+		return () => window.removeEventListener("scroll", handleScroll);
+	}, [hasMore, loading, fetchNextPage]);
 
 	const toggleFollow = async (userId) => {
 		try {
 			const isFollowing = followingMap[userId];
-
 			if (isFollowing) {
 				await handleUnfollow(userId);
 			} else {
 				await handleFollow(userId);
 			}
-
-			setFollowingMap((prev) => ({
-				...prev,
-				[userId]: !isFollowing,
-			}));
+			setFollowingMap((prev) => ({ ...prev, [userId]: !isFollowing }));
 		} catch (err) {
 			console.error("Follow toggle failed:", err);
 		}
@@ -83,40 +85,18 @@ const Home = () => {
 
 	return (
 		<div className="max-w-7xl mx-auto mt-10 px-4 sm:px-6 lg:px-8">
-			{/* Search Bar Container */}
-			<div className="sticky top-6 z-20 bg-white bg-opacity-90 backdrop-blur-md border border-gray-200 rounded-xl shadow-lg max-w-xl mx-auto px-4 py-3 flex items-center space-x-3">
-				<svg
-					xmlns="http://www.w3.org/2000/svg"
-					className="h-6 w-6 text-gray-400 flex-shrink-0"
-					fill="none"
-					viewBox="0 0 24 24"
-					stroke="currentColor"
-					strokeWidth={2}
-				>
-					<path
-						strokeLinecap="round"
-						strokeLinejoin="round"
-						d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 1110.5 3a7.5 7.5 0 016.15 13.65z"
-					/>
-				</svg>
+			{/* Search Bar */}
+			<UniversalSearchBar />
 
-				<input
-					type="text"
-					placeholder="Search by username or full name..."
-					className="flex-grow p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-shadow text-gray-700 text-base"
-				/>
-			</div>
-
-			{/* Content below search bar */}
 			<div className="mt-8 flex flex-col lg:flex-row gap-6">
 				{/* Posts Feed */}
 				<main className="w-full">
-					{loading ? (
+					{loading && posts.length === 0 ? (
 						<div className="flex justify-center items-center h-[300px]">
 							<p className="text-gray-500 text-lg">Loading...</p>
 						</div>
 					) : posts.length > 0 ? (
-						<div className="grid md:grid-cols-2 gap-6 overflow-y-auto max-h-[75vh] scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100 p-2 rounded-xl border-4 border-blue-500 shadow-sm bg-white">
+						<div className="grid md:grid-cols-2 gap-6 p-2">
 							{posts.map((post) =>
 								post ? (
 									<PostCard
@@ -137,10 +117,16 @@ const Home = () => {
 							No posts available.
 						</div>
 					)}
+
+					{loading && posts.length > 0 && (
+						<div className="flex justify-center py-4">
+							<p className="text-gray-500">Loading more posts...</p>
+						</div>
+					)}
 				</main>
 			</div>
 
-			{/* Modal like Comments */}
+			{/* Comments modal */}
 			<Outlet />
 		</div>
 	);
