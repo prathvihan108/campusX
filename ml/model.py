@@ -15,7 +15,7 @@ def get_recommendations(
 
     user_vector = users_df.loc[user_id]
 
-    # Drop non-numeric columns from posts_df before similarity
+   
     if "post_id" in posts_df.columns:
         post_vectors = posts_df.drop(columns=["post_id", "author"])
     else:
@@ -68,7 +68,7 @@ def get_recommendations(
 
     # Final combined score
     final_score = alpha * content_similarities + (1 - alpha) * interaction_score
-    print("Final scores:", final_score)
+    # print("Final scores:", final_score)
 
     if len(final_score) == 0:
         return []
@@ -95,7 +95,7 @@ def get_recommendations(
         if len(diversified_post_ids) >= top_k:
             break
 
-    print("Diversified recommended post IDs:", diversified_post_ids)
+    # print("Diversified recommended post IDs:", diversified_post_ids)
     return diversified_post_ids
 
 
