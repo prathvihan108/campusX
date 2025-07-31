@@ -1,9 +1,14 @@
 import numpy as np
 import pandas as pd
 from sklearn.metrics.pairwise import cosine_similarity
+from collections import defaultdict
 
-def get_recommendations(user_id, posts_df, users_df, interactions_df, subscriptions_df=None, alpha=0.7, top_k=20):
+
+def get_recommendations(
+    user_id, posts_df, users_df, interactions_df, subscriptions_df=None, alpha=0.7, top_k=40, max_per_author=1
+):
     user_id = str(user_id)
+    print(f"Getting recommendations for user_id: {user_id}")
 
     if user_id not in users_df.index:
         return get_trending_posts(posts_df, top_k)
@@ -24,16 +29,11 @@ def get_recommendations(user_id, posts_df, users_df, interactions_df, subscripti
 
     content_similarities = cosine_similarity([user_vector], post_vectors)[0]
 
-    # ... rest of your code unchanged ...
-
-
     interaction_score = np.zeros(len(posts_df))
 
     user_interactions = interactions_df[interactions_df['user_id'] == user_id]
 
     if not user_interactions.empty:
-        # Defensive: handle possible missing columns
-        liked_post_ids = user_interactions.get('liked', pd.Series()).where(lambda x: x == 1).dropna()
         liked_post_ids = user_interactions[user_interactions['liked'] == 1]['post_id'].tolist()
         bookmarked_post_ids = user_interactions[user_interactions['bookmarked'] == 1]['post_id'].tolist()
         interaction_weight_map = {}
@@ -51,7 +51,6 @@ def get_recommendations(user_id, posts_df, users_df, interactions_df, subscripti
         ]['post_id']
         co_liked_counts = co_liked_posts.value_counts(normalize=True)
 
-        # Defensive mapping post_id to index
         post_id_to_index = {str(pid): idx for idx, pid in enumerate(posts_df.index)}
 
         for pid, score in co_liked_counts.items():
@@ -71,24 +70,38 @@ def get_recommendations(user_id, posts_df, users_df, interactions_df, subscripti
     final_score = alpha * content_similarities + (1 - alpha) * interaction_score
     print("Final scores:", final_score)
 
-   
     if len(final_score) == 0:
         return []
 
+    # Get top posts by score
     top_indices = np.argsort(final_score)[::-1][:top_k]
-    
+
+    # Prepare recommended post IDs and authors for diversification
     if 'post_id' in posts_df.columns:
-        recommended_post_ids = posts_df.iloc[top_indices]['post_id'].tolist()
+        recommended_posts = posts_df.iloc[top_indices][['post_id', 'author']]
     else:
-        recommended_post_ids = posts_df.index[top_indices].tolist()
-    print("Recommended post IDs:", recommended_post_ids)
+        recommended_posts = posts_df.iloc[top_indices][['author']]
+        recommended_posts['post_id'] = recommended_posts.index
 
-    return recommended_post_ids
+    # Diversify recommendations limiting max posts per author
+    author_counts = defaultdict(int)
+    diversified_post_ids = []
+    for _, row in recommended_posts.iterrows():
+        author = row['author']
+        post_id = row['post_id']
+        if author_counts[author] < max_per_author:
+            diversified_post_ids.append(post_id)
+            author_counts[author] += 1
+        if len(diversified_post_ids) >= top_k:
+            break
 
-def get_trending_posts(post_vectors, top_k=20):
-   
+    print("Diversified recommended post IDs:", diversified_post_ids)
+    return diversified_post_ids
+
+
+def get_trending_posts(post_vectors, top_k=40):
     trending = post_vectors.head(top_k)
-    
+    print("Trending posts:", trending)
     if 'post_id' in trending.columns:
         return trending['post_id'].tolist()
     else:

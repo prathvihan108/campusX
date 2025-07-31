@@ -120,9 +120,9 @@ const AuthProvider = ({ children }) => {
 		setShowLoading(true);
 		try {
 			await new Promise((resolve) => setTimeout(resolve, 5000));
-			console.log("user before removal", localStorage.getItem("user"));
-			localStorage.removeItem("user");
-			console.log("user after removal", localStorage.getItem("user"));
+			console.log("userID before removal", localStorage.getItem("user"));
+			localStorage.removeItem("userId");
+			console.log("userID after removal", localStorage.getItem("userId"));
 			const response = await axiosInstance.post(
 				"/users/logout/",
 				{},

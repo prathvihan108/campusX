@@ -1,51 +1,23 @@
-import pandas as pd
-from pymongo import MongoClient
-from dotenv import load_dotenv
-import os
+from collections import defaultdict
 
-load_dotenv()
+def diversify_recommendations(recommended_posts, post_vectors_df, max_per_author=1):
 
-def connect_mongo():
-    client = MongoClient(os.getenv("MONGO_URI"))
-    db = client[os.getenv("DB_NAME")]
-    return db
-
-def get_posts_df():
-    db = connect_mongo()
-    posts = list(db.posts.find({}, {
-        "_id": 1,
-        "category": 1,
-        "author": 1,
-        "likes": 1,
-        "bookmarks": 1
-    }))
-    df = pd.DataFrame(posts)
-    df["_id"] = df["_id"].astype(str)
-    return df
-
-def get_users_df():
-    db = connect_mongo()
-    users = list(db.users.find({}, {
-        "_id": 1,
-        "role": 1,
-        "department": 1,
-        "year": 1
-    }))
-    df = pd.DataFrame(users)
-    df["_id"] = df["_id"].astype(str)
-    return df
-
-def get_interactions_df():
-    db = connect_mongo()
-    posts = list(db.posts.find({}, {"_id": 1, "likes": 1, "bookmarks": 1}))
-    data = []
-
-    for post in posts:
-        post_id = str(post["_id"])
-        for user in post.get("likes", []):
-            data.append({"user_id": str(user), "post_id": post_id, "type": "like"})
-        for user in post.get("bookmarks", []):
-            data.append({"user_id": str(user), "post_id": post_id, "type": "bookmark"})
-
-    df = pd.DataFrame(data)
-    return df
+    # Group post IDs by their author
+    grouped = defaultdict(list)
+    for post_id in recommended_posts:
+        author_id = post_vectors_df.loc[post_id]['author_id']
+        grouped[author_id].append(post_id)
+    
+    # Create a list of lists, one per author
+    author_post_lists = list(grouped.values())
+    
+    result = []
+    author_indices = [0] * len(author_post_lists)
+    while len(result) < len(recommended_posts):
+        for idx, posts in enumerate(author_post_lists):
+            count = 0
+            while author_indices[idx] < len(posts) and count < max_per_author and len(result) < len(recommended_posts):
+                result.append(posts[author_indices[idx]])
+                author_indices[idx] += 1
+                count += 1
+    return result[:len(recommended_posts)]

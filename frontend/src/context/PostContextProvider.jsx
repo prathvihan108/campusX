@@ -3,7 +3,7 @@ import PostContext from "./PostContext";
 import axiosInstance from "../utils/axiosInstance";
 import { useLocation } from "react-router-dom";
 
-const LIMIT = 10; // posts per page
+const LIMIT = 5; // posts per page
 
 const PostContextProvider = ({ children }) => {
 	const [posts, setPosts] = useState([]);
@@ -14,6 +14,7 @@ const PostContextProvider = ({ children }) => {
 
 	// Get userId from localStorage or other auth logic
 	const currentUserId = localStorage.getItem("userId") || null;
+	console.log("Current User ID:", currentUserId);
 
 	// Fetch posts for a given page
 	const fetchPosts = async (pageToLoad) => {
@@ -34,7 +35,7 @@ const PostContextProvider = ({ children }) => {
 				pageToLoad === 1 ? newPosts : [...prevPosts, ...newPosts]
 			);
 
-			if (newPosts.length < LIMIT) {
+			if (newPosts.length < LIMIT - 1) {
 				setHasMore(false);
 			} else {
 				setHasMore(true);
@@ -58,6 +59,7 @@ const PostContextProvider = ({ children }) => {
 	const fetchNextPage = () => {
 		if (!loading && hasMore) {
 			const nextPage = page + 1;
+			console.log("Fetching next page:", nextPage);
 			setPage(nextPage);
 			fetchPosts(nextPage);
 		}
