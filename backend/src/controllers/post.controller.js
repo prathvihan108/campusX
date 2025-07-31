@@ -70,8 +70,12 @@ const getAllPosts = AsyncHandler(async (req, res) => {
 
         posts = await Post.aggregate([
           {
-            $match: { _id: { $in: objectIds } },
+            $match: {
+              _id: { $in: objectIds },
+              author: { $ne: new mongoose.Types.ObjectId(userId) },
+            },
           },
+
           {
             $lookup: {
               from: "users",
@@ -114,49 +118,113 @@ const getAllPosts = AsyncHandler(async (req, res) => {
       console.error("Recommendation API failed:", err.message);
       // fallback to normal posts on error
     }
+  } else {
+    console.log("No userId provided, fetching trending posts");
+    const { data } = await axios.get("http://localhost:8000/trending");
+    try {
+      const recommendedIds = data.recommendations || [];
+
+      const pagedRecommendedIds = recommendedIds.slice(skip, skip + limit);
+
+      if (pagedRecommendedIds.length === 0) {
+        posts = [];
+      } else {
+        const objectIds = pagedRecommendedIds.map(
+          (id) => new mongoose.Types.ObjectId(id)
+        );
+
+        posts = await Post.aggregate([
+          {
+            $match: {
+              _id: { $in: objectIds },
+              author: { $ne: new mongoose.Types.ObjectId(userId) },
+            },
+          },
+
+          {
+            $lookup: {
+              from: "users",
+              localField: "author",
+              foreignField: "_id",
+              as: "authorDetails",
+            },
+          },
+          { $unwind: "$authorDetails" },
+          {
+            $lookup: {
+              from: "comments",
+              localField: "_id",
+              foreignField: "post",
+              as: "comments",
+            },
+          },
+          {
+            $lookup: {
+              from: "subscriptions",
+              localField: "author",
+              foreignField: "channel",
+              as: "followers",
+            },
+          },
+          {
+            $addFields: {
+              likeCount: { $size: "$likes" },
+              commentCount: { $size: "$comments" },
+              followerCount: { $size: "$followers" },
+            },
+          },
+        ]);
+
+        posts = objectIds
+          .map((id) => posts.find((p) => p._id.equals(id)))
+          .filter(Boolean);
+      }
+    } catch (err) {
+      console.error("Trending API failed:", err.message);
+    }
   }
 
-  if (!posts || posts.length === 0) {
-    console.log("Fetching fallback posts with pagination");
+  // if (!posts || posts.length === 0) {
+  //   console.log("Fetching fallback posts with pagination");
 
-    posts = await Post.aggregate([
-      {
-        $lookup: {
-          from: "users",
-          localField: "author",
-          foreignField: "_id",
-          as: "authorDetails",
-        },
-      },
-      { $unwind: "$authorDetails" },
-      {
-        $lookup: {
-          from: "comments",
-          localField: "_id",
-          foreignField: "post",
-          as: "comments",
-        },
-      },
-      {
-        $lookup: {
-          from: "subscriptions",
-          localField: "author",
-          foreignField: "channel",
-          as: "followers",
-        },
-      },
-      {
-        $addFields: {
-          likeCount: { $size: "$likes" },
-          commentCount: { $size: "$comments" },
-          followerCount: { $size: "$followers" },
-        },
-      },
-      { $sort: { createdAt: -1 } },
-      { $skip: skip },
-      { $limit: limit },
-    ]);
-  }
+  //   posts = await Post.aggregate([
+  //     {
+  //       $lookup: {
+  //         from: "users",
+  //         localField: "author",
+  //         foreignField: "_id",
+  //         as: "authorDetails",
+  //       },
+  //     },
+  //     { $unwind: "$authorDetails" },
+  //     {
+  //       $lookup: {
+  //         from: "comments",
+  //         localField: "_id",
+  //         foreignField: "post",
+  //         as: "comments",
+  //       },
+  //     },
+  //     {
+  //       $lookup: {
+  //         from: "subscriptions",
+  //         localField: "author",
+  //         foreignField: "channel",
+  //         as: "followers",
+  //       },
+  //     },
+  //     {
+  //       $addFields: {
+  //         likeCount: { $size: "$likes" },
+  //         commentCount: { $size: "$comments" },
+  //         followerCount: { $size: "$followers" },
+  //       },
+  //     },
+  //     { $sort: { createdAt: -1 } },
+  //     { $skip: skip },
+  //     { $limit: limit },
+  //   ]);
+  // }
 
   return res
     .status(STATUS_CODES.OK)

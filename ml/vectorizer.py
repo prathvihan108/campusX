@@ -19,18 +19,18 @@ def preprocess_posts(posts_df, users_df):
     feature_names = enc.get_feature_names_out(["category", "role", "year", "department"])
     post_features = pd.DataFrame(encoded, columns=feature_names, index=posts_df["post_id"].astype(str))
 
-    # Add 'length' (fallback to 0 if missing)
+   
     if "length" in posts_df.columns:
         post_features["length"] = posts_df["length"].fillna(0).astype(float).values
     else:
         post_features["length"] = 0.0
-    # Add post_id and author as columns to allow reference
+ 
     post_features["post_id"] = posts_df["post_id"].values
     post_features["author"] = posts_df["author"].values
     return post_features
 
 def build_interactions_df(likes_df, bookmarks_df):
-# likes/bookmarks are empty
+
     if likes_df.empty:
         likes_df = pd.DataFrame(columns=["user", "post"])
     if bookmarks_df.empty:

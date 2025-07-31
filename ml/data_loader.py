@@ -57,7 +57,7 @@ def load_bookmarks():
 def load_subscriptions():
     subs = list(db.subscriptions.find({}, {"subscriber": 1, "channel": 1}))
     df = pd.DataFrame(subs)
-    # Defensive: handle empty DataFrame
+    
     if not df.empty:
         df["subscriber"] = df["subscriber"].astype(str)
         df["channel"] = df["channel"].astype(str)
