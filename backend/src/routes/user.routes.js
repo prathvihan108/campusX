@@ -12,6 +12,7 @@ import {
   getUserChannelProfile,
   getBookmarks,
   deleteAccount,
+  searchUserFullNames,
 } from "../controllers/user.controller.js";
 import { upload } from "../middlewares/multer.middleware.js";
 import { varifyJWT } from "../middlewares/auth.middleware.js";
@@ -51,6 +52,8 @@ router
   .patch(varifyJWT, upload.single("coverImage"), updateUserCoverImage);
 
 router.route("/get-bookmarks").get(varifyJWT, getBookmarks);
+
+router.route("/search").get(varifyJWT, searchUserFullNames);
 
 router.route("/delete-account").delete(varifyJWT, deleteAccount);
 
