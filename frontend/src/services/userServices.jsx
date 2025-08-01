@@ -29,3 +29,25 @@ export const deleteAccount = async () => {
 	const res = await axiosInstance.delete("/users/delete-account");
 	return res.data;
 };
+
+//Seach users by username or full name
+// userService.js
+export async function searchUsers(query) {
+	try {
+		const response = await axiosInstance.get("/users/search", {
+			params: { query },
+		});
+
+		if (response.status !== 200) {
+			throw new Error("Failed to fetch users");
+		}
+
+		// Assume your backend structure: { statusCode, data: usersArray, message }
+		const users = response.data.data || [];
+
+		return users;
+	} catch (error) {
+		console.error("Error searching users:", error);
+		return [];
+	}
+}

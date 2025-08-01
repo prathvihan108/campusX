@@ -681,3 +681,35 @@ export {
   getBookmarks,
   deleteAccount,
 };
+
+//userSearch
+export const searchUserFullNames = AsyncHandler(async (req, res) => {
+  const { query } = req.query;
+
+  if (!query || typeof query !== "string") {
+    throw new ApiError(
+      STATUS_CODES.BAD_REQUEST,
+      'Query parameter "query" is required and must be a string'
+    );
+  }
+
+  const regex = new RegExp(query, "i");
+
+  // Find matching users by userName or fullName, return only fullName and _id for identification
+  const users = await User.find({
+    $or: [{ userName: regex }, { fullName: regex }],
+  })
+    .select("fullName _id userName")
+    .limit(10)
+    .lean();
+
+  return res
+    .status(STATUS_CODES.OK)
+    .json(
+      new ApiResponse(
+        STATUS_CODES.OK,
+        users,
+        "User full name suggestions fetched successfully"
+      )
+    );
+});
