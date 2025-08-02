@@ -55,3 +55,13 @@ export const fetchMyFollowers = async () => {
 		throw error;
 	}
 };
+
+export const fetchMyFollowing = async () => {
+	try {
+		const response = await axiosInstance.get(`/followers/meFollowing`);
+		return response.data?.data;
+	} catch (error) {
+		console.error("Error fetching following users:", error);
+		throw error;
+	}
+};
