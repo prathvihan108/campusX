@@ -114,4 +114,28 @@ const getFollowers = async (req, res) => {
   }
 };
 
-export { followUser, unfollowUser, isFollowing, getFollowers };
+const getFollowing = async (req, res) => {
+  try {
+    const userId = req.user._id;
+
+    // Find the records where the subscriber is the current user
+    const following = await Subscription.find({ channel: userId }).populate(
+      "channel",
+      "fullName email avatar role year department"
+    );
+
+    res
+      .status(STATUS_CODES.OK)
+      .json(
+        new ApiResponse(
+          STATUS_CODES.OK,
+          following,
+          "Following users fetched successfully"
+        )
+      );
+  } catch (error) {
+    res.status(500).json(new ApiResponse(500, null, error.message));
+  }
+};
+
+export { followUser, unfollowUser, isFollowing, getFollowers, getFollowing };

@@ -4,7 +4,7 @@ import "./index.css";
 
 import Layout from "./Layout.jsx";
 import Home from "./pages/Home/Home.jsx";
-import Followers from "./pages/Followers/Followers.jsx";
+import FollowersFollowing from "./pages/ FollowersFollowing/ FollowersFollowing.jsx";
 import Noties from "./pages/Noties/Noties.jsx";
 import Bookmarks from "./pages/Bookmarks/Bookmarks.jsx";
 import Comments from "./pages/Comments/Comments.jsx";
@@ -21,6 +21,7 @@ import {
 	Route,
 	RouterProvider,
 } from "react-router-dom";
+// import FollowersFollowing from "./pages/ FollowersFollowing/ FollowersFollowing.jsx";
 
 console.log("Hello from main.jsx");
 
@@ -34,7 +35,7 @@ const router = createBrowserRouter(
 			<Route path="/users/channel/:userName" element={<UserProfileLayout />} />
 			<Route path="create-post" element={<CreatePost />} />
 
-			<Route path="followers" element={<Followers />} />
+			<Route path="followers" element={<FollowersFollowing />} />
 
 			<Route path="bookmarks" element={<Bookmarks />} />
 			<Route path="notifications" element={<Noties />} />
