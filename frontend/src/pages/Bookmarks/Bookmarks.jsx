@@ -5,9 +5,12 @@ import { useNavigate } from "react-router-dom";
 
 function BookMarks() {
 	const [bookmarks, setBookmarks] = useState([]);
-	const { setShowLoading } = useAuth();
-
+	const { setShowLoading, fetchUser } = useAuth();
 	const navigate = useNavigate();
+
+	useEffect(() => {
+		fetchUser();
+	}, []);
 
 	// Navigate to user profile
 	const handleAuthorClick = (author) => {

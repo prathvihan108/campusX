@@ -6,6 +6,12 @@ import { fetchMyFollowing } from "../../services/followersServices.jsx";
 function UserCard({ user }) {
 	const navigate = useNavigate();
 
+	const { fetchUser } = useAuth();
+
+	useEffect(() => {
+		fetchUser();
+	}, []);
+
 	const handleCardClick = () => {
 		console.log("selected userName:", user);
 		navigate(`/users/channel/${user.userName}?id=${user._id}`);
