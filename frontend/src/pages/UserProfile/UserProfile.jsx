@@ -84,7 +84,7 @@ const UserProfile = () => {
 	}
 
 	return (
-		<div className="max-w-5xl mx-auto mt-10 p-6 bg-white dark:bg-gray-900 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-800">
+		<div className="max-w-4xl mx-auto mt-10 p-6 bg-white dark:bg-gray-900 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-800">
 			{/* Cover Image */}
 			{profile.coverImage && (
 				<div className="h-56 md:h-64 w-full rounded-xl overflow-hidden">
@@ -96,7 +96,7 @@ const UserProfile = () => {
 				</div>
 			)}
 
-			{/* Avatar and Info */}
+			{/* Avatar & Info */}
 			<div className="flex flex-col md:flex-row items-center md:items-end gap-6 mt-6">
 				<div>
 					<img
@@ -106,37 +106,38 @@ const UserProfile = () => {
 					/>
 				</div>
 
-				<div className="text-center md:text-left">
+				<div className="text-center md:text-left flex-1">
 					<h1 className="text-3xl font-bold text-gray-900 dark:text-white">
 						{profile.fullName}
 					</h1>
-					<p className="text-lg text-gray-600 dark:text-gray-400">
-						username:@{profile.userName}
+					<p className="text-sm md:text-base text-gray-500 dark:text-gray-400 mb-1">
+						<span className="italic">@{profile.userName}</span>
 					</p>
-					<p className="text-lg text-gray-600 dark:text-gray-400">
-						Email:{profile.email}
+					<p className="text-base text-gray-600 dark:text-gray-400 mb-1">
+						Email: <span className="font-medium">{profile.email}</span>
 					</p>
-					<p className="text-md text-gray-500 dark:text-gray-300">
+					<p className="text-base text-gray-500 dark:text-gray-300">
 						{profile.department} - {profile.year}
 					</p>
-					<p className="text-md text-gray-500 dark:text-gray-300">
-						Designation:{profile.role}
+					<p className="text-base text-gray-500 dark:text-gray-300">
+						Designation: <span className="font-medium">{profile.role}</span>
 					</p>
 				</div>
 			</div>
 
 			{/* Stats */}
-			<div className="flex flex-wrap gap-10 mt-8 text-gray-700 dark:text-gray-300 text-lg">
+			<div className="flex flex-wrap justify-center md:justify-start gap-8 mt-8 text-gray-700 dark:text-gray-300 text-lg font-semibold">
 				<div>
-					<span className="font-semibold">{profile.subscribersCount}</span>{" "}
-					Followers
+					<span className="text-xl">{profile.subscribersCount}</span> Followers
 				</div>
 				<div>
-					<span className="font-semibold">{profile.channelsSubscribedTo}</span>{" "}
+					<span className="text-xl">{profile.channelsSubscribedTo}</span>{" "}
 					Following
 				</div>
 				{profile.isSubscribed && (
-					<div className="text-green-600 font-medium">✔ You are subscribed</div>
+					<div className="text-green-600 font-medium flex items-center">
+						✔ You are subscribed
+					</div>
 				)}
 			</div>
 
@@ -146,23 +147,26 @@ const UserProfile = () => {
 					Bio:
 				</p>
 				<div className="bg-gray-100 dark:bg-gray-800 p-4 rounded-xl shadow-sm">
-					<p className="text-lg text-gray-800 dark:text-gray-100 leading-relaxed">
+					<p className="text-lg text-gray-800 dark:text-gray-100 leading-relaxed whitespace-pre-line">
 						{profile.bio}
 					</p>
 				</div>
 			</div>
-			{/* {follow/unfollow} */}
+
+			{/* Follow/Unfollow Button */}
 			{currentUserId !== profile._id && (
-				<button
-					className={`px-4 py-2 rounded-md font-semibold ${
-						isFollowing
-							? "bg-red-500 hover:bg-red-600"
-							: "bg-blue-600 hover:bg-blue-700"
-					} text-white transition-colors`}
-					onClick={toggleFollow}
-				>
-					{isFollowing ? "Unfollow" : "Follow"}
-				</button>
+				<div className="mt-8 flex justify-center md:justify-start">
+					<button
+						className={`px-6 py-2 rounded-md font-semibold focus:outline-none focus:ring-2 focus:ring-offset-2 ${
+							isFollowing
+								? "bg-red-500 hover:bg-red-600 focus:ring-red-400"
+								: "bg-blue-600 hover:bg-blue-700 focus:ring-blue-400"
+						} text-white transition-colors`}
+						onClick={toggleFollow}
+					>
+						{isFollowing ? "Unfollow" : "Follow"}
+					</button>
+				</div>
 			)}
 		</div>
 	);

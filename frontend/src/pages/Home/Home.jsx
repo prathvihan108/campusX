@@ -15,7 +15,6 @@ const Home = () => {
 	const { posts, loading, hasMore, fetchNextPage } = useContext(PostContext);
 	const { fetchUser, user } = useAuth();
 
-	const [followingMap, setFollowingMap] = useState({});
 	const currentUserId = user?._id;
 
 	//Search bar and post suggestions for seaching users and posts
@@ -68,6 +67,7 @@ const Home = () => {
 	return (
 		<div className="max-w-7xl mx-auto mt-10 px-4 sm:px-6 lg:px-8">
 			{/* Search Bar */}
+
 			<UniversalSearchBar
 				query={query}
 				onQueryChange={setQuery}

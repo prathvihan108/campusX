@@ -29,6 +29,10 @@ const UserProfileLayout = () => {
 	const userId = searchParams.get("id");
 	const currentUserId = user?._id;
 
+	useEffect(() => {
+		fetchUser();
+	}, []);
+
 	// Fetch posts on page or userId change
 	const loadPosts = useCallback(async () => {
 		if (!userId || !hasMore) return;
@@ -53,25 +57,6 @@ const UserProfileLayout = () => {
 			// If less than requested posts returned => no more pages
 			if (posts.length < POSTS_PER_PAGE) {
 				setHasMore(false);
-			}
-
-			// After posts loaded, get follow status for new authors
-			const authorIds = [
-				...new Set(
-					posts
-						.map((post) => post.authorDetails._id)
-						.filter((id) => id !== userId && !followingMap[id]) // only new authors
-				),
-			];
-			if (authorIds.length > 0) {
-				const map = { ...followingMap };
-				await Promise.all(
-					authorIds.map(async (authorId) => {
-						const isFollowing = await checkIsFollowing(authorId);
-						map[authorId] = isFollowing;
-					})
-				);
-				setFollowingMap(map);
 			}
 		} catch (err) {
 			console.error("Failed to fetch profile data:", err);
