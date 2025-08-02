@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Heart, MessageCircle, Bookmark } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { ToastContainer, toast } from "react-toastify";
 
 const PostCard = ({
 	post,
@@ -117,7 +118,14 @@ const PostCard = ({
 					<div className="flex items-center space-x-4">
 						{/* Like */}
 						<button
-							onClick={handleToggleLike}
+							onClick={(e) => {
+								e.stopPropagation();
+								if (currentUserId) {
+									handleToggleLike(e);
+								} else {
+									toast.info("Please log in to like posts");
+								}
+							}}
 							className="flex items-center text-gray-600 dark:text-gray-400 hover:text-red-500 transition-colors duration-200"
 						>
 							{isLiked ? (
@@ -131,14 +139,28 @@ const PostCard = ({
 						{/* Comment */}
 						<button
 							className="flex items-center text-gray-600 dark:text-gray-400 hover:text-blue-500 transition-colors duration-200"
-							onClick={openComments}
+							onClick={(e) => {
+								e.stopPropagation();
+								if (currentUserId) {
+									openComments(e);
+								} else {
+									toast.info("Please log in to comment");
+								}
+							}}
 						>
 							<MessageCircle className="w-5 h-5 mr-2" /> {post.commentCount}
 						</button>
 
 						{/* Bookmark */}
 						<button
-							onClick={handleToggleBookmark}
+							onClick={(e) => {
+								e.stopPropagation();
+								if (currentUserId) {
+									handleToggleBookmark(e);
+								} else {
+									toast.info("Please log in to bookmark posts");
+								}
+							}}
 							className={`flex items-center transition-colors duration-200 ${
 								isBookmarked
 									? "text-yellow-500"
@@ -158,7 +180,14 @@ const PostCard = ({
 				{/* Follow/Unfollow */}
 				{currentUserId !== post.authorDetails._id && (
 					<button
-						onClick={handleToggleFollow}
+						onClick={(e) => {
+							e.stopPropagation();
+							if (currentUserId) {
+								handleToggleFollow(e);
+							} else {
+								toast.info("Please log in to follow");
+							}
+						}}
 						className={`w-full py-2 rounded-full flex items-center justify-center transition-colors duration-200 ${
 							isFollowing
 								? "bg-green-500 hover:bg-green-600"
