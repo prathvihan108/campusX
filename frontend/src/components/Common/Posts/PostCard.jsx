@@ -1,15 +1,14 @@
 import React, { useState } from "react";
 import { Heart, MessageCircle, Bookmark } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 
 const PostCard = ({
 	post,
 	currentUserId,
 	toggleLike,
 	toggleBookmark,
-	isFollowing,
-	toggleFollow,
+
 	fetchMyFollowers,
 }) => {
 	const navigate = useNavigate();
@@ -52,12 +51,6 @@ const PostCard = ({
 	const openComments = (e) => {
 		stopClick(e);
 		navigate(`/post/${post._id}/comments`);
-	};
-
-	const handleToggleFollow = async (e) => {
-		stopClick(e);
-		await toggleFollow(post.authorDetails._id);
-		fetchMyFollowers?.(); // optional
 	};
 
 	return (
@@ -176,27 +169,6 @@ const PostCard = ({
 						Followers: {post.followerCount}
 					</span>
 				</div>
-
-				{/* Follow/Unfollow */}
-				{currentUserId !== post.authorDetails._id && (
-					<button
-						onClick={(e) => {
-							e.stopPropagation();
-							if (currentUserId) {
-								handleToggleFollow(e);
-							} else {
-								toast.info("Please log in to follow");
-							}
-						}}
-						className={`w-full py-2 rounded-full flex items-center justify-center transition-colors duration-200 ${
-							isFollowing
-								? "bg-green-500 hover:bg-green-600"
-								: "bg-blue-500 hover:bg-blue-600"
-						} text-white`}
-					>
-						{isFollowing ? "Unfollow" : "Follow"}
-					</button>
-				)}
 			</div>
 		</div>
 	);

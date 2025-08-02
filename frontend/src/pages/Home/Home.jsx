@@ -6,12 +6,7 @@ import { toggleBookmark } from "../../services/bookmarksServices.jsx";
 import { searchUsers } from "./../../services/userServices.jsx";
 import { Outlet } from "react-router-dom";
 import { useCallback } from "react";
-import {
-	handleFollow,
-	handleUnfollow,
-	checkIsFollowing,
-	fetchMyFollowers,
-} from "../../services/followersServices.jsx";
+import { fetchMyFollowers } from "../../services/followersServices.jsx";
 import PostCard from "../../components/Common/Posts/PostCard.jsx";
 import { useAuth } from "../../context/AuthContext.jsx";
 import { useNavigate } from "react-router-dom";
@@ -52,33 +47,6 @@ const Home = () => {
 		fetchUser();
 	}, []);
 
-	// Initialize following map whenever posts change
-	useEffect(() => {
-		const initializeFollowingMap = async () => {
-			if (!posts || posts.length === 0) return;
-
-			const authorIds = [
-				...new Set(
-					posts
-						.map((post) => post.authorDetails._id)
-						.filter((id) => id !== currentUserId)
-				),
-			];
-
-			const map = {};
-			await Promise.all(
-				authorIds.map(async (authorId) => {
-					const isFollowing = await checkIsFollowing(authorId);
-					map[authorId] = isFollowing;
-				})
-			);
-
-			setFollowingMap(map);
-		};
-
-		initializeFollowingMap();
-	}, [posts, currentUserId]);
-
 	// Scroll event to trigger fetching next page
 	useEffect(() => {
 		const handleScroll = () => {
@@ -96,20 +64,6 @@ const Home = () => {
 		window.addEventListener("scroll", handleScroll);
 		return () => window.removeEventListener("scroll", handleScroll);
 	}, [hasMore, loading, fetchNextPage]);
-
-	const toggleFollow = async (userId) => {
-		try {
-			const isFollowing = followingMap[userId];
-			if (isFollowing) {
-				await handleUnfollow(userId);
-			} else {
-				await handleFollow(userId);
-			}
-			setFollowingMap((prev) => ({ ...prev, [userId]: !isFollowing }));
-		} catch (err) {
-			console.error("Follow toggle failed:", err);
-		}
-	};
 
 	return (
 		<div className="max-w-7xl mx-auto mt-10 px-4 sm:px-6 lg:px-8">
@@ -139,8 +93,6 @@ const Home = () => {
 										currentUserId={currentUserId}
 										toggleLike={toggleLike}
 										toggleBookmark={toggleBookmark}
-										toggleFollow={toggleFollow}
-										isFollowing={followingMap[post.authorDetails._id] || false}
 										fetchMyFollowers={fetchMyFollowers}
 									/>
 								) : null
