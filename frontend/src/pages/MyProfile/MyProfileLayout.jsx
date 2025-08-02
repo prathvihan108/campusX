@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import MyProfile from "./MyProfile";
 import MyPosts from "./MyPosts";
 import { useAuth } from "../../context/AuthContext";
@@ -13,16 +13,19 @@ import { toggleBookmark } from "../../services/bookmarksServices";
 import { getPostsByUserId } from "../../services/postsServices";
 import { Outlet } from "react-router-dom";
 
+const POSTS_PER_PAGE = 5;
+
 const MyProfileLayout = () => {
 	const { user, fetchUser } = useAuth();
 	const [userReady, setUserReady] = useState(false);
-	const [loading, setLoading] = useState(true);
+	const [loading, setLoading] = useState(false);
 	const [userPosts, setUserPosts] = useState([]);
+	const [page, setPage] = useState(1);
+	const [hasMore, setHasMore] = useState(true);
 	const [followingMap, setFollowingMap] = useState({});
 
 	const currentUserId = user?._id;
 
-	// Fetch user when layout first mounts
 	useEffect(() => {
 		const initUser = async () => {
 			try {
@@ -36,41 +39,75 @@ const MyProfileLayout = () => {
 		initUser();
 	}, []);
 
-	useEffect(() => {
-		const fetchData = async () => {
-			try {
-				if (!currentUserId) return;
+	const loadPosts = useCallback(async () => {
+		if (!currentUserId || !hasMore) return;
 
-				const posts = await getPostsByUserId(currentUserId);
-				setUserPosts(posts);
+		setLoading(true);
 
-				const authorIds = [
-					...new Set(
-						posts
-							.map((post) => post.authorDetails._id)
-							.filter((id) => id !== currentUserId)
-					),
-				];
+		try {
+			const posts = await getPostsByUserId(currentUserId, page, POSTS_PER_PAGE);
 
-				const map = {};
+			setUserPosts((prev) => [...prev, ...posts]);
+
+			if (posts.length < POSTS_PER_PAGE) {
+				setHasMore(false);
+			}
+
+			// Check follow status for new authors
+			const authorIds = [
+				...new Set(
+					posts
+						.map((post) => post.authorDetails._id)
+						.filter((id) => id !== currentUserId && !followingMap[id])
+				),
+			];
+
+			if (authorIds.length > 0) {
+				const map = { ...followingMap };
+
 				await Promise.all(
 					authorIds.map(async (authorId) => {
 						const isFollowing = await checkIsFollowing(authorId);
 						map[authorId] = isFollowing;
 					})
 				);
+
 				setFollowingMap(map);
-			} catch (err) {
-				console.error("Failed to fetch profile data:", err);
-			} finally {
-				setLoading(false);
+			}
+		} catch (err) {
+			console.error("Failed to fetch posts:", err);
+		} finally {
+			setLoading(false);
+		}
+	}, [currentUserId, page, hasMore, followingMap]);
+
+	// Reset posts when user or page changes
+	useEffect(() => {
+		if (userReady) {
+			if (page === 1) {
+				setUserPosts([]); // clear posts on first page load
+				setHasMore(true); // reset hasMore for new user or reload
+			}
+			loadPosts();
+		}
+	}, [userReady, currentUserId, page, loadPosts]);
+
+	// Infinite scroll listener
+	useEffect(() => {
+		const handleScroll = () => {
+			if (
+				window.innerHeight + window.scrollY >=
+					document.body.offsetHeight - 500 &&
+				!loading &&
+				hasMore
+			) {
+				setPage((prev) => prev + 1);
 			}
 		};
 
-		if (userReady && currentUserId) {
-			fetchData();
-		}
-	}, [userReady, currentUserId]);
+		window.addEventListener("scroll", handleScroll);
+		return () => window.removeEventListener("scroll", handleScroll);
+	}, [loading, hasMore]);
 
 	const toggleFollow = async (userId) => {
 		try {
@@ -116,25 +153,31 @@ const MyProfileLayout = () => {
 					<h2 className="text-xl font-semibold text-blue-800 border-b pb-2">
 						My Posts
 					</h2>
-					{loading ? (
-						<div className="flex justify-center items-center h-[300px]">
-							<p className="text-gray-500 text-lg">Loading posts...</p>
+					<MyPosts
+						userId={currentUserId}
+						currentUserId={currentUserId}
+						toggleLike={toggleLike}
+						toggleBookmark={toggleBookmark}
+						toggleFollow={toggleFollow}
+						followingMap={followingMap}
+						fetchMyFollowers={fetchMyFollowers}
+						posts={userPosts} // pass posts as prop
+					/>
+
+					{loading && (
+						<div className="flex justify-center items-center py-4">
+							<p className="text-gray-500">Loading more posts...</p>
 						</div>
-					) : (
-						<MyPosts
-							userId={currentUserId}
-							currentUserId={currentUserId}
-							toggleLike={toggleLike}
-							toggleBookmark={toggleBookmark}
-							toggleFollow={toggleFollow}
-							followingMap={followingMap}
-							fetchMyFollowers={fetchMyFollowers}
-						/>
+					)}
+
+					{!hasMore && !loading && (
+						<p className="text-center text-gray-400 py-4">
+							No more posts to load.
+						</p>
 					)}
 				</main>
 			</div>
 
-			{/* Comment modal and nested routes */}
 			<Outlet />
 		</div>
 	);

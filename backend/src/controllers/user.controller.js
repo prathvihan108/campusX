@@ -699,7 +699,7 @@ export const searchUserFullNames = AsyncHandler(async (req, res) => {
   const users = await User.find({
     $or: [{ userName: regex }, { fullName: regex }],
   })
-    .select("fullName _id userName")
+    .select("fullName _id userName avatar")
     .limit(10)
     .lean();
 

@@ -1,46 +1,20 @@
 import axiosInstance from "../utils/axiosInstance";
 
-export const getPostsByUserId = async (userId) => {
+export const getPostsByUserId = async (userId, page = 1, limit = 5) => {
 	try {
-		const response = await axiosInstance.get(`/posts/user/${userId}`);
+		const response = await axiosInstance.get(`/posts/user/${userId}`, {
+			params: { page, limit },
+		});
+		const posts = response.data?.data || [];
+
+		posts.forEach((post, index) => {
+			// If you want to print a specific field, for example `post.content`, do:
+			console.log(`Post #${index + 1} content:`, post.content);
+		});
+
 		return response.data?.data || [];
 	} catch (error) {
 		console.error("Error fetching posts by user:", error);
 		throw error;
-	}
-};
-
-export const fetchPosts = async ({
-	pageToLoad,
-	currentUserId,
-	setPosts,
-	setLoading,
-	setHasMore,
-	loading,
-}) => {
-	if (loading) return; // prevent concurrent calls
-	setLoading(true);
-	try {
-		const limit = 10;
-
-		const response = await axiosInstance.get("/api/posts", {
-			params: {
-				userId: currentUserId,
-				page: pageToLoad,
-				limit,
-			},
-		});
-
-		const newPosts = response.data.data || [];
-
-		setPosts((prevPosts) => [...prevPosts, ...newPosts]);
-
-		if (newPosts.length < limit) {
-			setHasMore(false);
-		}
-	} catch (error) {
-		console.error("Error fetching posts:", error);
-	} finally {
-		setLoading(false);
 	}
 };

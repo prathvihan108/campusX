@@ -184,48 +184,6 @@ const getAllPosts = AsyncHandler(async (req, res) => {
     }
   }
 
-  // if (!posts || posts.length === 0) {
-  //   console.log("Fetching fallback posts with pagination");
-
-  //   posts = await Post.aggregate([
-  //     {
-  //       $lookup: {
-  //         from: "users",
-  //         localField: "author",
-  //         foreignField: "_id",
-  //         as: "authorDetails",
-  //       },
-  //     },
-  //     { $unwind: "$authorDetails" },
-  //     {
-  //       $lookup: {
-  //         from: "comments",
-  //         localField: "_id",
-  //         foreignField: "post",
-  //         as: "comments",
-  //       },
-  //     },
-  //     {
-  //       $lookup: {
-  //         from: "subscriptions",
-  //         localField: "author",
-  //         foreignField: "channel",
-  //         as: "followers",
-  //       },
-  //     },
-  //     {
-  //       $addFields: {
-  //         likeCount: { $size: "$likes" },
-  //         commentCount: { $size: "$comments" },
-  //         followerCount: { $size: "$followers" },
-  //       },
-  //     },
-  //     { $sort: { createdAt: -1 } },
-  //     { $skip: skip },
-  //     { $limit: limit },
-  //   ]);
-  // }
-
   return res
     .status(STATUS_CODES.OK)
     .json(
@@ -235,9 +193,11 @@ const getAllPosts = AsyncHandler(async (req, res) => {
 
 // Get Posts by Specific User
 const getUserPosts = AsyncHandler(async (req, res) => {
-  console.log("fetch userPosts function called");
   const userId = req.params.userId;
-  console.log("User ID:", userId);
+  const page = parseInt(req.query.page) || 1; // default to page 1
+  const limit = parseInt(req.query.limit) || 5; // default page size 5
+  const skip = (page - 1) * limit;
+
   const posts = await Post.aggregate([
     {
       $match: {
@@ -277,7 +237,12 @@ const getUserPosts = AsyncHandler(async (req, res) => {
       },
     },
     { $sort: { createdAt: -1 } },
+    { $skip: skip },
+    { $limit: limit },
   ]);
+  console.log(
+    `Fetched posts for user ${userId} on page ${page} with limit ${limit}`
+  );
 
   res
     .status(STATUS_CODES.OK)

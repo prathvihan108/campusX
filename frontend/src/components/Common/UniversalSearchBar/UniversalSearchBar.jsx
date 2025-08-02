@@ -120,8 +120,11 @@ export default function UniversalSearchBar({
 								}
 							}}
 						>
-							{/* Optional user avatar */}
-							{/* <img src={user.avatar} alt={user.fullName} className="w-8 h-8 rounded-full" /> */}
+							<img
+								src={user.avatar}
+								alt={user.fullName}
+								className="w-8 h-8 rounded-full"
+							/>
 
 							<div className="flex flex-col">
 								<span className="font-medium text-gray-900">
