@@ -16,7 +16,7 @@ const UserPosts = ({
 		return <p className="text-center text-gray-500 mt-6">No posts found.</p>;
 
 	return (
-		<div className="space-y-4">
+		<div className="space-y-1">
 			{posts.map((post) =>
 				post ? (
 					<PostCard

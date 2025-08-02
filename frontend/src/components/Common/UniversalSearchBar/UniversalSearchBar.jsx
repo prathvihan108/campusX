@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
-
+import { useAuth } from "../../../context/AuthContext.jsx";
 import useDebounce from "../../../hooks/useDebounce.jsx";
+import { toast } from "react-toastify";
 
 export default function UniversalSearchBar({
 	query,
@@ -10,6 +11,7 @@ export default function UniversalSearchBar({
 
 	onSuggestionSelect,
 }) {
+	const { user } = useAuth();
 	const debouncedQuery = useDebounce(query, 1000);
 
 	useEffect(() => {
@@ -20,6 +22,18 @@ export default function UniversalSearchBar({
 
 	const handleInputChange = (e) => {
 		onQueryChange(e.target.value);
+	};
+
+	const onChangeHandler = (e) => {
+		if (!user) {
+			toast.info("Please log in to search", {
+				autoClose: 1000,
+				position: "top-right",
+			});
+			// Prevent typing by not calling handleInputChange
+			return;
+		}
+		handleInputChange(e);
 	};
 
 	return (
@@ -46,7 +60,7 @@ export default function UniversalSearchBar({
 			<input
 				type="text"
 				value={query}
-				onChange={handleInputChange}
+				onChange={onChangeHandler}
 				placeholder="Search by full name or username..."
 				className="
 			  w-full

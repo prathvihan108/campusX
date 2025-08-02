@@ -116,7 +116,9 @@ const PostCard = ({
 								if (currentUserId) {
 									handleToggleLike(e);
 								} else {
-									toast.info("Please log in to like posts");
+									toast.info("Please log in to like posts", {
+										autoClose: 500,
+									});
 								}
 							}}
 							className="flex items-center text-gray-600 dark:text-gray-400 hover:text-red-500 transition-colors duration-200"
@@ -137,7 +139,9 @@ const PostCard = ({
 								if (currentUserId) {
 									openComments(e);
 								} else {
-									toast.info("Please log in to comment");
+									toast.info("Please log in to comment", {
+										autoClose: 500,
+									});
 								}
 							}}
 						>
@@ -151,7 +155,9 @@ const PostCard = ({
 								if (currentUserId) {
 									handleToggleBookmark(e);
 								} else {
-									toast.info("Please log in to bookmark posts");
+									toast.info("Please log in to bookmark posts", {
+										autoClose: 500,
+									});
 								}
 							}}
 							className={`flex items-center transition-colors duration-200 ${
