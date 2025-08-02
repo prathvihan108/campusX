@@ -14,6 +14,7 @@ import {
 } from "../../services/followersServices.jsx";
 import PostCard from "../../components/Common/Posts/PostCard.jsx";
 import { useAuth } from "../../context/AuthContext.jsx";
+import { useNavigate } from "react-router-dom";
 
 const Home = () => {
 	const { posts, loading, hasMore, fetchNextPage } = useContext(PostContext);
@@ -25,7 +26,7 @@ const Home = () => {
 	//Search bar and post suggestions for seaching users and posts
 	const [query, setQuery] = useState("");
 	const [suggestions, setSuggestions] = useState([]);
-
+	const navigate = useNavigate();
 	const handleSearch = useCallback(async (q) => {
 		const users = await searchUsers(q);
 		console.log("Search results:", users);
@@ -42,6 +43,7 @@ const Home = () => {
 
 	const handleSuggestionSelect = (user) => {
 		// e.g., fetch posts by user._id and update posts shown on homepage
+		navigate(`/users/channel/${user.userName}?id=${user._id}`);
 		console.log("Selected user:", user);
 	};
 

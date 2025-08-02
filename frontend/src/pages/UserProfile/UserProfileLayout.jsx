@@ -1,8 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import UserProfile from "./UserProfile";
 import UserPosts from "./UserPosts";
 import { useParams, useSearchParams } from "react-router-dom";
-
 import {
 	handleFollow,
 	handleUnfollow,
@@ -15,11 +14,14 @@ import { getPostsByUserId } from "../../services/postsServices";
 import { Outlet } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 
+const POSTS_PER_PAGE = 5;
+
 const UserProfileLayout = () => {
 	const { user, fetchUser } = useAuth();
-	const [userReady, setUserReady] = useState(false);
-	const [loading, setLoading] = useState(true);
+	const [loading, setLoading] = useState(false);
 	const [userPosts, setUserPosts] = useState([]);
+	const [page, setPage] = useState(1);
+	const [hasMore, setHasMore] = useState(true);
 	const [followingMap, setFollowingMap] = useState({});
 
 	const { userName } = useParams();
@@ -27,26 +29,42 @@ const UserProfileLayout = () => {
 	const userId = searchParams.get("id");
 	const currentUserId = user?._id;
 
-	console.log("Username:", userName);
-	console.log("User ID:", userId);
+	// Fetch posts on page or userId change
+	const loadPosts = useCallback(async () => {
+		if (!userId || !hasMore) return;
 
-	useEffect(() => {
-		const fetchData = async () => {
-			try {
-				if (!userId) return;
+		setLoading(true);
 
-				const posts = await getPostsByUserId(userId);
-				setUserPosts(posts);
+		try {
+			const posts = await getPostsByUserId(userId, page, POSTS_PER_PAGE);
 
-				const authorIds = [
-					...new Set(
-						posts
-							.map((post) => post.authorDetails._id)
-							.filter((id) => id !== userId)
-					),
-				];
+			posts.forEach((post, index) => {
+				// If you want to print a specific field, for example `post.content`, do:
+				console.log(
+					`Post #${index + 1} content from userProfile:`,
+					post.content
+				);
+			});
 
-				const map = {};
+			// Append posts
+
+			setUserPosts((prev) => [...prev, ...posts]);
+
+			// If less than requested posts returned => no more pages
+			if (posts.length < POSTS_PER_PAGE) {
+				setHasMore(false);
+			}
+
+			// After posts loaded, get follow status for new authors
+			const authorIds = [
+				...new Set(
+					posts
+						.map((post) => post.authorDetails._id)
+						.filter((id) => id !== userId && !followingMap[id]) // only new authors
+				),
+			];
+			if (authorIds.length > 0) {
+				const map = { ...followingMap };
 				await Promise.all(
 					authorIds.map(async (authorId) => {
 						const isFollowing = await checkIsFollowing(authorId);
@@ -54,17 +72,41 @@ const UserProfileLayout = () => {
 					})
 				);
 				setFollowingMap(map);
-			} catch (err) {
-				console.error("Failed to fetch profile data:", err);
-			} finally {
-				setLoading(false);
+			}
+		} catch (err) {
+			console.error("Failed to fetch profile data:", err);
+		} finally {
+			setLoading(false);
+		}
+	}, [userId, page, hasMore, followingMap]);
+
+	useEffect(() => {
+		// Reset posts when userId changes
+		setUserPosts([]);
+		setPage(1);
+		setHasMore(true);
+	}, [userId]);
+
+	useEffect(() => {
+		loadPosts();
+	}, [loadPosts]);
+
+	// Scroll handler to implement infinite scroll
+	useEffect(() => {
+		const handleScroll = () => {
+			if (
+				window.innerHeight + window.scrollY >=
+				document.body.offsetHeight - 500 // Trigger near bottom, 500px threshold
+			) {
+				if (!loading && hasMore) {
+					setPage((prevPage) => prevPage + 1);
+				}
 			}
 		};
 
-		if (userId) {
-			fetchData();
-		}
-	}, [userId]);
+		window.addEventListener("scroll", handleScroll);
+		return () => window.removeEventListener("scroll", handleScroll);
+	}, [loading, hasMore]);
 
 	const toggleFollow = async (userId) => {
 		try {
@@ -74,7 +116,6 @@ const UserProfileLayout = () => {
 			} else {
 				await handleFollow(userId);
 			}
-
 			setFollowingMap((prev) => ({
 				...prev,
 				[userId]: !isFollowing,
@@ -110,20 +151,28 @@ const UserProfileLayout = () => {
 					<h2 className="text-xl font-semibold text-blue-800 border-b pb-2">
 						User Posts
 					</h2>
-					{loading ? (
-						<div className="flex justify-center items-center h-[300px]">
-							<p className="text-gray-500 text-lg">Loading posts...</p>
+
+					<UserPosts
+						userId={userId}
+						currentUserId={currentUserId}
+						toggleLike={toggleLike}
+						toggleBookmark={toggleBookmark}
+						toggleFollow={toggleFollow}
+						followingMap={followingMap}
+						fetchMyFollowers={fetchMyFollowers}
+						posts={userPosts} // pass the posts here
+					/>
+
+					{loading && (
+						<div className="flex justify-center items-center py-4">
+							<p className="text-gray-500">Loading more posts...</p>
 						</div>
-					) : (
-						<UserPosts
-							userId={userId}
-							currentUserId={currentUserId}
-							toggleLike={toggleLike}
-							toggleBookmark={toggleBookmark}
-							toggleFollow={toggleFollow}
-							followingMap={followingMap}
-							fetchMyFollowers={fetchMyFollowers}
-						/>
+					)}
+
+					{!hasMore && !loading && (
+						<p className="text-center text-gray-400 py-4">
+							No more posts to load.
+						</p>
 					)}
 				</main>
 			</div>

@@ -1,9 +1,8 @@
-import { use, useEffect, useState } from "react";
-import { getPostsByUserId } from "../../services/postsServices.jsx";
+import React from "react";
 import PostCard from "../../components/Common/Posts/PostCard.jsx";
 
 const MyPosts = ({
-	userId,
+	posts,
 	currentUserId,
 	toggleLike,
 	toggleBookmark,
@@ -11,27 +10,7 @@ const MyPosts = ({
 	followingMap,
 	fetchMyFollowers,
 }) => {
-	const [posts, setPosts] = useState([]);
-	const [loading, setLoading] = useState(true);
-
-	useEffect(() => {
-		console.log(userId, currentUserId, "MyPosts component");
-		const fetchPosts = async () => {
-			try {
-				const data = await getPostsByUserId(userId);
-				setPosts(data);
-			} catch (err) {
-				console.error(err);
-			} finally {
-				setLoading(false);
-			}
-		};
-
-		fetchPosts();
-	}, [userId]);
-
-	if (loading)
-		return <p className="text-center text-gray-500 mt-6">Loading...</p>;
+	if (!posts) return null;
 
 	if (posts.length === 0)
 		return <p className="text-center text-gray-500 mt-6">No posts found.</p>;
