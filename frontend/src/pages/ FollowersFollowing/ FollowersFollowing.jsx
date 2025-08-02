@@ -1,15 +1,30 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext.jsx";
 import { fetchMyFollowers } from "../../services/followersServices.jsx";
-import { fetchMyFollowing } from "../../services/followersServices.jsx"; // make sure this exists
-
+import { fetchMyFollowing } from "../../services/followersServices.jsx";
 function UserCard({ user }) {
+	const navigate = useNavigate();
+
+	const handleCardClick = () => {
+		console.log("selected userName:", user);
+		navigate(`/users/channel/${user.userName}?id=${user._id}`);
+	};
+
+	const handleKeyDown = (e) => {
+		if (e.key === "Enter" || e.key === " ") {
+			e.preventDefault();
+			handleCardClick();
+		}
+	};
 	return (
 		<div
-			className="bg-gray-800/90 backdrop-blur-md border border-gray-700 rounded-xl p-4 shadow-md hover:shadow-lg transition flex items-center"
+			className="bg-gray-800/90 backdrop-blur-md border border-gray-700 rounded-xl p-4 shadow-md hover:shadow-lg transition flex items-center cursor-pointer"
 			role="listitem"
 			tabIndex={0}
 			aria-label={`User: ${user.fullName}`}
+			onClick={handleCardClick}
+			onKeyDown={handleKeyDown}
 		>
 			<img
 				src={user.avatar || "/avatar-placeholder.png"}

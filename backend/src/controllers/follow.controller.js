@@ -97,7 +97,7 @@ const getFollowers = async (req, res) => {
 
     const followers = await Subscription.find({ channel: userId }).populate(
       "subscriber",
-      "fullName email avatar role year department"
+      "fullName userName email avatar role year department"
     );
 
     res
@@ -121,7 +121,7 @@ const getFollowing = async (req, res) => {
     // Find the records where the subscriber is the current user
     const following = await Subscription.find({ channel: userId }).populate(
       "channel",
-      "fullName email avatar role year department"
+      "fullName userName email avatar role year department"
     );
 
     res
