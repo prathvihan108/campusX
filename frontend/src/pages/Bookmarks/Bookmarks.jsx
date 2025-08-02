@@ -1,10 +1,26 @@
 import React, { useEffect, useState } from "react";
 import { useAuth } from "../../context/AuthContext.jsx";
 import { fetchBookmarks } from "../../services/bookmarksServices";
+import { useNavigate } from "react-router-dom";
 
 function BookMarks() {
 	const [bookmarks, setBookmarks] = useState([]);
 	const { setShowLoading } = useAuth();
+
+	const navigate = useNavigate();
+
+	// Navigate to user profile
+	const handleAuthorClick = (author) => {
+		if (!author) return;
+		navigate(`/users/channel/${author.userName}?id=${author._id}`);
+	};
+
+	const handleAuthorKeyDown = (e, author) => {
+		if (e.key === "Enter" || e.key === " ") {
+			e.preventDefault();
+			handleAuthorClick(author);
+		}
+	};
 
 	useEffect(() => {
 		const getBookmarks = async () => {
@@ -57,7 +73,14 @@ function BookMarks() {
 							className="bg-gray-800 rounded-xl shadow-md hover:shadow-xl transition-shadow duration-300 p-5"
 						>
 							{/* Author Info */}
-							<div className="flex items-center mb-4">
+							<div
+								className="flex items-center mb-4 cursor-pointer"
+								role="button"
+								tabIndex={0}
+								onClick={() => handleAuthorClick(author)}
+								onKeyDown={(e) => handleAuthorKeyDown(e, author)}
+								aria-label={`View profile of ${author.fullName}`}
+							>
 								<img
 									src={author.avatar}
 									alt={author.fullName}
