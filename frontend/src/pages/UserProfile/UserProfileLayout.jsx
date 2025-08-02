@@ -33,7 +33,6 @@ const UserProfileLayout = () => {
 		fetchUser();
 	}, []);
 
-	// Fetch posts on page or userId change
 	const loadPosts = useCallback(async () => {
 		if (!userId || !hasMore) return;
 
@@ -42,19 +41,8 @@ const UserProfileLayout = () => {
 		try {
 			const posts = await getPostsByUserId(userId, page, POSTS_PER_PAGE);
 
-			posts.forEach((post, index) => {
-				// If you want to print a specific field, for example `post.content`, do:
-				console.log(
-					`Post #${index + 1} content from userProfile:`,
-					post.content
-				);
-			});
-
-			// Append posts
-
 			setUserPosts((prev) => [...prev, ...posts]);
 
-			// If less than requested posts returned => no more pages
 			if (posts.length < POSTS_PER_PAGE) {
 				setHasMore(false);
 			}
@@ -63,10 +51,9 @@ const UserProfileLayout = () => {
 		} finally {
 			setLoading(false);
 		}
-	}, [userId, page, hasMore, followingMap]);
+	}, [userId, page, hasMore]);
 
 	useEffect(() => {
-		// Reset posts when userId changes
 		setUserPosts([]);
 		setPage(1);
 		setHasMore(true);
@@ -76,12 +63,11 @@ const UserProfileLayout = () => {
 		loadPosts();
 	}, [loadPosts]);
 
-	// Scroll handler to implement infinite scroll
 	useEffect(() => {
 		const handleScroll = () => {
 			if (
 				window.innerHeight + window.scrollY >=
-				document.body.offsetHeight - 500 // Trigger near bottom, 500px threshold
+				document.body.offsetHeight - 500
 			) {
 				if (!loading && hasMore) {
 					setPage((prevPage) => prevPage + 1);
@@ -119,48 +105,45 @@ const UserProfileLayout = () => {
 	}
 
 	return (
-		<div className="relative">
-			<div className="flex flex-col lg:flex-row gap-6 p-6 max-w-7xl mx-auto mt-10">
-				{/* Profile Sidebar */}
-				<aside className="lg:w-1/3 w-full">
-					<div className="sticky top-28 space-y-4">
-						<h2 className="text-xl font-semibold text-blue-800 border-b pb-2">
-							User Profile
-						</h2>
-						<UserProfile />
+		<div className="max-w-3xl mx-auto mt-3 px-4 sm:px-6 lg:px-8">
+			{/* User Profile Section */}
+			<section className="mb-10">
+				<h2 className="text-3xl font-extrabold text-blue-800 dark:text-blue-800 mb-4 border-b border-gray-300 dark:border-gray-700 pb-2">
+					User Profile
+				</h2>
+
+				<UserProfile />
+			</section>
+
+			{/* Posts Section */}
+			<section>
+				<h2 className="text-3xl font-extrabold text-blue-800 dark:text-blue-800 mb-4 border-b border-gray-300 dark:border-gray-700 pb-2">
+					Posts
+				</h2>
+
+				<UserPosts
+					userId={userId}
+					currentUserId={currentUserId}
+					toggleLike={toggleLike}
+					toggleBookmark={toggleBookmark}
+					toggleFollow={toggleFollow}
+					followingMap={followingMap}
+					fetchMyFollowers={fetchMyFollowers}
+					posts={userPosts}
+				/>
+
+				{loading && (
+					<div className="flex justify-center items-center py-4">
+						<p className="text-gray-500">Loading more posts...</p>
 					</div>
-				</aside>
+				)}
 
-				{/* Posts Section */}
-				<main className="lg:w-2/3 w-full space-y-4">
-					<h2 className="text-xl font-semibold text-blue-800 border-b pb-2">
-						User Posts
-					</h2>
-
-					<UserPosts
-						userId={userId}
-						currentUserId={currentUserId}
-						toggleLike={toggleLike}
-						toggleBookmark={toggleBookmark}
-						toggleFollow={toggleFollow}
-						followingMap={followingMap}
-						fetchMyFollowers={fetchMyFollowers}
-						posts={userPosts} // pass the posts here
-					/>
-
-					{loading && (
-						<div className="flex justify-center items-center py-4">
-							<p className="text-gray-500">Loading more posts...</p>
-						</div>
-					)}
-
-					{!hasMore && !loading && (
-						<p className="text-center text-gray-400 py-4">
-							No more posts to load.
-						</p>
-					)}
-				</main>
-			</div>
+				{!hasMore && !loading && (
+					<p className="text-center text-gray-400 py-4">
+						No more posts to load.
+					</p>
+				)}
+			</section>
 
 			{/* Comment modal and nested routes */}
 			<Outlet />
