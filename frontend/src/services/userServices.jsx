@@ -30,6 +30,16 @@ export const deleteAccount = async () => {
 	return res.data;
 };
 
+export const updateBio = async (bio) => {
+	try {
+		const res = await axiosInstance.patch("/users/update-bio", { bio });
+		return res.data;
+	} catch (err) {
+		console.error("Error updating bio:", err);
+		throw err;
+	}
+};
+
 //Seach users by username or full name
 // userService.js
 export async function searchUsers(query) {

@@ -11,6 +11,7 @@ import {
   updateUserCoverImage,
   getUserChannelProfile,
   getBookmarks,
+  updateBio,
   deleteAccount,
   searchUserFullNames,
 } from "../controllers/user.controller.js";
@@ -52,6 +53,7 @@ router
   .patch(varifyJWT, upload.single("coverImage"), updateUserCoverImage);
 
 router.route("/get-bookmarks").get(varifyJWT, getBookmarks);
+router.route("/update-bio").patch(varifyJWT, updateBio);
 
 router.route("/search").get(varifyJWT, searchUserFullNames);
 
