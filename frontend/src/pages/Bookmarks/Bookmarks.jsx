@@ -2,9 +2,11 @@ import React, { useEffect, useState } from "react";
 import { useAuth } from "../../context/AuthContext.jsx";
 import { fetchBookmarks } from "../../services/bookmarksServices";
 import { useNavigate } from "react-router-dom";
+import { toggleBookmark } from "../../services/bookmarksServices.jsx";
 
 function BookMarks() {
 	const [bookmarks, setBookmarks] = useState([]);
+
 	const { setShowLoading, fetchUser } = useAuth();
 	const navigate = useNavigate();
 
@@ -22,6 +24,18 @@ function BookMarks() {
 		if (e.key === "Enter" || e.key === " ") {
 			e.preventDefault();
 			handleAuthorClick(author);
+		}
+	};
+
+	// delete bookmark functionality
+
+	const deleteBookmark = async (e, postId) => {
+		e.stopPropagation();
+		try {
+			await toggleBookmark(postId);
+			setBookmarks((prev) => prev.filter((post) => post._id !== postId));
+		} catch (error) {
+			console.error("Failed to toggle bookmark:", error);
 		}
 	};
 
@@ -73,8 +87,17 @@ function BookMarks() {
 					return (
 						<article
 							key={post._id}
-							className="bg-gray-800 rounded-xl shadow-md hover:shadow-xl transition-shadow duration-300 p-5"
+							className="relative bg-gray-800 rounded-xl shadow-md hover:shadow-xl transition-shadow duration-300 p-5"
 						>
+							{/* Delete Button */}
+							<button
+								onClick={(e) => deleteBookmark(e, post._id)}
+								className="absolute top-2 right-2 text-red-600 hover:text-red-700 hover:bg-red-900 hover:bg-opacity-50 rounded-full focus:outline-none text-3xl p-2 transition-colors duration-200"
+								aria-label={`Delete bookmark for post by ${author.fullName}`}
+							>
+								&#x2715;
+							</button>
+
 							{/* Author Info */}
 							<div
 								className="flex items-center mb-4 cursor-pointer"
@@ -96,12 +119,10 @@ function BookMarks() {
 									<p className="text-blue-400 text-sm">@{author.userName}</p>
 								</div>
 							</div>
-
 							{/* Post Content */}
 							<p className="text-gray-300 text-base mb-4 line-clamp-3 leading-relaxed self-start">
 								{post.content}
 							</p>
-
 							{/* Optional Image */}
 							{post.image && (
 								<img
@@ -110,7 +131,6 @@ function BookMarks() {
 									className="w-full max-h-96 object-cover rounded-lg border border-gray-700 mb-4"
 								/>
 							)}
-
 							{/* Meta info (category, likes) */}
 							<div className="flex justify-between text-gray-400 text-sm font-medium">
 								<span className="capitalize">#{post.category}</span>
