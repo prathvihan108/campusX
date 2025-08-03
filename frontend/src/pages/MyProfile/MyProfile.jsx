@@ -59,7 +59,7 @@ const MyProfile = () => {
 			}
 		};
 		if (userName) fetchProfile();
-	}, [userName]);
+	}, [userName, profile?.avatar]);
 
 	const handleChange = (e) => {
 		setBio(e.target.value);
@@ -92,7 +92,10 @@ const MyProfile = () => {
 
 		try {
 			const updated = await updateProfilePhoto(formData);
-			setProfile((prev) => ({ ...prev, avatar: updated.avatar }));
+			setProfile((prev) => ({
+				...prev,
+				avatar: updated.avatar + "?t=" + Date.now(),
+			}));
 		} catch (err) {
 			console.error("Failed to update avatar", err);
 		}
