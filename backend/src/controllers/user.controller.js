@@ -667,6 +667,47 @@ const deleteAccount = AsyncHandler(async (req, res) => {
     );
 });
 
+//update bio
+const updateBio = AsyncHandler(async (req, res) => {
+  const user = await User.findById(req.user._id);
+
+  if (!user) {
+    return res
+      .status(STATUS_CODES.NOT_FOUND)
+      .json(new ApiResponse(STATUS_CODES.NOT_FOUND, null, "User not found"));
+  }
+
+  const { bio } = req.body;
+
+  if (typeof bio !== "string" || bio.trim().length > 500) {
+    return res
+      .status(STATUS_CODES.BAD_REQUEST)
+      .json(
+        new ApiResponse(
+          STATUS_CODES.BAD_REQUEST,
+          null,
+          "Bio must be a valid string with a maximum of 500 characters"
+        )
+      );
+  }
+
+  user.bio = bio.trim();
+
+  await user.save({ validateBeforeSave: false });
+
+  console.info("Bio updated for User ID:", user._id);
+
+  return res
+    .status(STATUS_CODES.OK)
+    .json(
+      new ApiResponse(
+        STATUS_CODES.OK,
+        { bio: user.bio },
+        "Bio updated successfully"
+      )
+    );
+});
+
 export {
   registerUser,
   loginUser,
@@ -680,6 +721,7 @@ export {
   getUserChannelProfile,
   getBookmarks,
   deleteAccount,
+  updateBio,
 };
 
 //userSearch
