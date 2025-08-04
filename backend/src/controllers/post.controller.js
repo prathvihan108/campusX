@@ -326,13 +326,16 @@ const getPostById = AsyncHandler(async (req, res) => {
 
 //  Delete Post (Only Author Can Delete)
 const deletePost = AsyncHandler(async (req, res) => {
+  console.log(`User ${req.user._id} is trying to delete post ${req.params.id}`);
   const post = await Post.findById(req.params.id);
+  console.log("Post found:", post);
 
   if (!post) throw new ApiError(STATUS_CODES.NOT_FOUND, "Post not found");
   if (post.author.toString() !== req.user._id.toString())
     throw new ApiError(STATUS_CODES.FORBIDDEN, "FORBIDDEN");
 
   await post.deleteOne();
+  console.log(`Post ${post._id} deleted by user ${req.user._id}`);
   res
     .status(STATUS_CODES.OK)
     .json(new ApiResponse(STATUS_CODES.OK, {}, "Post deleted successfully"));

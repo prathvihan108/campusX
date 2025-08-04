@@ -7,6 +7,7 @@ const MyPosts = ({
 	toggleLike,
 	toggleBookmark,
 	toggleFollow,
+	deletePost,
 	followingMap,
 	fetchMyFollowers,
 }) => {
@@ -26,7 +27,7 @@ const MyPosts = ({
 						toggleLike={toggleLike}
 						toggleBookmark={toggleBookmark}
 						toggleFollow={toggleFollow}
-						isFollowing={followingMap[post.authorDetails._id] || false}
+						deletePost={deletePost}
 						fetchMyFollowers={fetchMyFollowers}
 					/>
 				) : null
