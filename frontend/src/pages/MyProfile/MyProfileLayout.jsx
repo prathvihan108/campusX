@@ -2,6 +2,7 @@ import React, { useEffect, useState, useCallback } from "react";
 import MyProfile from "./MyProfile";
 import MyPosts from "./MyPosts";
 import { useAuth } from "../../context/AuthContext";
+import { toast } from "react-toastify";
 import {
 	handleFollow,
 	handleUnfollow,
@@ -10,7 +11,7 @@ import {
 } from "../../services/followersServices";
 import { toggleLike } from "../../services/likesServices";
 import { toggleBookmark } from "../../services/bookmarksServices";
-import { getPostsByUserId } from "../../services/postsServices";
+import { getPostsByUserId, deletePostById } from "../../services/postsServices";
 import { Outlet } from "react-router-dom";
 
 const POSTS_PER_PAGE = 5;
@@ -22,8 +23,20 @@ const MyProfileLayout = () => {
 	const [userPosts, setUserPosts] = useState([]);
 	const [page, setPage] = useState(1);
 	const [hasMore, setHasMore] = useState(true);
-	const [followingMap, setFollowingMap] = useState({});
+	// const [followingMap, setFollowingMap] = useState({});
 	const currentUserId = user?._id;
+
+	const deletePost = async (postId) => {
+		try {
+			await deletePostById(postId);
+
+			toast.success("Post deleted successfully");
+			setUserPosts((prev) => prev.filter((post) => post._id !== postId));
+		} catch (error) {
+			console.error("Failed to delete post:", error);
+			toast.error("Failed to delete post");
+		}
+	};
 
 	useEffect(() => {
 		const initUser = async () => {
@@ -48,31 +61,31 @@ const MyProfileLayout = () => {
 
 			if (posts.length < POSTS_PER_PAGE) setHasMore(false);
 
-			// Check follow status for new authors
-			const authorIds = [
-				...new Set(
-					posts
-						.map((post) => post.authorDetails._id)
-						.filter((id) => id !== currentUserId && !followingMap[id])
-				),
-			];
+			// // Check follow status for new authors
+			// const authorIds = [
+			// 	...new Set(
+			// 		posts
+			// 			.map((post) => post.authorDetails._id)
+			// 			.filter((id) => id !== currentUserId && !followingMap[id])
+			// 	),
+			// ];
 
-			if (authorIds.length > 0) {
-				const map = { ...followingMap };
-				await Promise.all(
-					authorIds.map(async (authorId) => {
-						const isFollowing = await checkIsFollowing(authorId);
-						map[authorId] = isFollowing;
-					})
-				);
-				setFollowingMap(map);
-			}
+			// if (authorIds.length > 0) {
+			// 	const map = { ...followingMap };
+			// 	await Promise.all(
+			// 		authorIds.map(async (authorId) => {
+			// 			const isFollowing = await checkIsFollowing(authorId);
+			// 			map[authorId] = isFollowing;
+			// 		})
+			// 	);
+			// 	setFollowingMap(map);
+			// }
 		} catch (err) {
 			console.error("Failed to fetch posts:", err);
 		} finally {
 			setLoading(false);
 		}
-	}, [currentUserId, page, hasMore, followingMap]);
+	}, [currentUserId, page, hasMore]);
 
 	useEffect(() => {
 		if (userReady) {
@@ -141,7 +154,7 @@ const MyProfileLayout = () => {
 					toggleLike={toggleLike}
 					toggleBookmark={toggleBookmark}
 					toggleFollow={toggleFollow}
-					followingMap={followingMap}
+					deletePost={deletePost}
 					fetchMyFollowers={fetchMyFollowers}
 					posts={userPosts}
 				/>

@@ -8,6 +8,7 @@ const PostCard = ({
 	currentUserId,
 	toggleLike,
 	toggleBookmark,
+	deletePost,
 
 	fetchMyFollowers,
 }) => {
@@ -47,18 +48,39 @@ const PostCard = ({
 			console.error("Failed to toggle bookmark:", error);
 		}
 	};
+	const handleDeletePost = async (e, postId) => {
+		stopClick(e);
+		try {
+			await deletePost(postId);
+		} catch (error) {
+			console.error("Failed to delete post:", error);
+		}
+	};
 
 	const openComments = (e) => {
 		stopClick(e);
 		navigate(`/post/${post._id}/comments`);
 	};
+	console.log("current user ID:", currentUserId);
+	console.log("Post author ID:", post.authorDetails._id);
 
 	return (
 		<div
 			onClick={handleCardClick}
 			className="cursor-pointer hover:bg-gray-50 transition rounded-lg p-4 border border-gray-200 shadow-sm"
 		>
-			<div className="bg-white dark:bg-gray-900 rounded-2xl shadow-md overflow-hidden p-6 transition-shadow duration-300 hover:shadow-lg h-fit border border-blue-900 dark:border-blue-500 !border-opacity-100">
+			<div className="bg-white dark:bg-gray-900 rounded-2xl shadow-md overflow-hidden p-6 transition-shadow duration-300 hover:shadow-lg h-fit border border-blue-900 dark:border-blue-500 !border-opacity-100 relative">
+				{/* Delete button, only for post author */}
+				{currentUserId === post.authorDetails._id && (
+					<button
+						onClick={(e) => handleDeletePost(e, post._id)}
+						className="absolute top-4 right-4 bg-red-600 text-black px-3 py-1 rounded hover:bg-red-700 transition"
+						aria-label="Delete Post"
+					>
+						Delete
+					</button>
+				)}
+
 				{/* Author Info */}
 				<div className="flex items-center mb-4">
 					<img

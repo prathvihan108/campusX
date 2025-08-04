@@ -18,3 +18,14 @@ export const getPostsByUserId = async (userId, page = 1, limit = 5) => {
 		throw error;
 	}
 };
+
+export const deletePostById = async (postId) => {
+	try {
+		const response = await axiosInstance.delete(`/posts/${postId}`);
+		console.log(`Post with ID ${postId} deleted successfully.`);
+		return response.data;
+	} catch (error) {
+		console.error(`Error deleting post with ID ${postId}:`, error);
+		throw error;
+	}
+};

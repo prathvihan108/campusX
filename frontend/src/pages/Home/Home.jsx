@@ -4,15 +4,18 @@ import UniversalSearchBar from "../../components/Common/UniversalSearchBar/Unive
 import { toggleLike } from "../../services/likesServices.jsx";
 import { toggleBookmark } from "../../services/bookmarksServices.jsx";
 import { searchUsers } from "./../../services/userServices.jsx";
+import { deletePostById } from "../../services/postsServices.jsx";
 import { Outlet } from "react-router-dom";
 import { useCallback } from "react";
 import { fetchMyFollowers } from "../../services/followersServices.jsx";
 import PostCard from "../../components/Common/Posts/PostCard.jsx";
 import { useAuth } from "../../context/AuthContext.jsx";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 const Home = () => {
-	const { posts, loading, hasMore, fetchNextPage } = useContext(PostContext);
+	const { posts, setPosts, loading, hasMore, fetchNextPage } =
+		useContext(PostContext);
 	const { fetchUser, user } = useAuth();
 
 	const currentUserId = user?._id;
@@ -64,6 +67,17 @@ const Home = () => {
 		return () => window.removeEventListener("scroll", handleScroll);
 	}, [hasMore, loading, fetchNextPage]);
 
+	const deletePost = async (postId) => {
+		try {
+			await deletePostById(postId);
+			toast.success("Post deleted successfully");
+			setPosts((prev) => prev.filter((post) => post._id !== postId));
+		} catch (error) {
+			toast.error("Failed to delete post");
+			console.error("Failed to delete post:", error);
+		}
+	};
+
 	return (
 		<div className="max-w-7xl mx-auto mt-10 px-4 sm:px-6 lg:px-8">
 			{/* Search Bar */}
@@ -93,6 +107,7 @@ const Home = () => {
 										currentUserId={currentUserId}
 										toggleLike={toggleLike}
 										toggleBookmark={toggleBookmark}
+										deletePost={deletePost}
 										fetchMyFollowers={fetchMyFollowers}
 									/>
 								) : null
