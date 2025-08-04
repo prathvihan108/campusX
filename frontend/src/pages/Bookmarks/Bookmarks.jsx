@@ -87,6 +87,8 @@ function BookMarks() {
 					return (
 						<article
 							key={post._id}
+							onClick={() => handleAuthorClick(author)}
+							onKeyDown={(e) => handleAuthorKeyDown(e, author)}
 							className="relative bg-gray-800 rounded-xl shadow-md hover:shadow-xl transition-shadow duration-300 p-5"
 						>
 							{/* Delete Button */}
@@ -103,8 +105,8 @@ function BookMarks() {
 								className="flex items-center mb-4 cursor-pointer"
 								role="button"
 								tabIndex={0}
-								onClick={() => handleAuthorClick(author)}
-								onKeyDown={(e) => handleAuthorKeyDown(e, author)}
+								// onClick={() => handleAuthorClick(author)}
+								// onKeyDown={(e) => handleAuthorKeyDown(e, author)}
 								aria-label={`View profile of ${author.fullName}`}
 							>
 								<img

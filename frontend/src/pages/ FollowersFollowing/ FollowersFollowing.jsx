@@ -25,7 +25,7 @@ function UserCard({ user }) {
 	};
 	return (
 		<div
-			className="bg-gray-800/90 backdrop-blur-md border border-gray-700 rounded-xl p-4 shadow-md hover:shadow-lg transition flex items-center cursor-pointer"
+			className="bg-gray-900/90 backdrop-blur-md border border-gray-700 rounded-2xl p-5 shadow-lg hover:shadow-xl transition flex items-center gap-5 cursor-pointer"
 			role="listitem"
 			tabIndex={0}
 			aria-label={`User: ${user.fullName}`}
@@ -38,15 +38,26 @@ function UserCard({ user }) {
 				onError={(e) => {
 					e.currentTarget.src = "/avatar-placeholder.png";
 				}}
-				className="w-12 h-12 rounded-full mr-4 border-2 border-white object-cover"
+				className="w-16 h-16 rounded-full border-2 border-gray-600 object-cover shadow"
 				loading="lazy"
 			/>
-			<div>
-				<p className="font-semibold text-white">{user.fullName}</p>
-				<p className="text-sm text-gray-300">{user.email}</p>
-				<p className="text-sm text-gray-400">
-					{user.role}, {user.department} – {user.year}
-				</p>
+			<div className="flex flex-col justify-center w-full">
+				<div className="flex items-center gap-2">
+					<p className="font-semibold text-white text-lg">{user.fullName}</p>
+					<span className="ml-2 px-2 py-0.5 bg-gray-700 text-gray-300 rounded-full text-xs font-medium">
+						{user.role}
+					</span>
+					<span className="px-2 py-0.5 bg-blue-700/80 text-blue-100 rounded-full text-xs font-medium">
+						{user.year}
+					</span>
+				</div>
+				<p className="text-sm text-gray-400 mb-1">{user.email}</p>
+				<p className="text-xs text-gray-500 mb-2">{user.department}</p>
+				{user.bio && (
+					<div className="mt-2 bg-gray-800/80 border-l-4 border-blue-500 p-3 rounded-lg text-gray-300 leading-relaxed text-sm shadow-inner">
+						{user.bio}
+					</div>
+				)}
 			</div>
 		</div>
 	);
