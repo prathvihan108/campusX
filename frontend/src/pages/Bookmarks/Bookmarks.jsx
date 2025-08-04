@@ -7,9 +7,14 @@ import { toggleBookmark } from "../../services/bookmarksServices.jsx";
 function BookMarks() {
 	const [bookmarks, setBookmarks] = useState([]);
 
-	const { setShowLoading, fetchUser } = useAuth();
+	const { setShowLoading, fetchUser, user } = useAuth();
+	const [loading, setLoading] = useState(false);
+	const [hasMore, setHasMore] = useState(true);
+	const [page, setPage] = useState(1);
 	const navigate = useNavigate();
+	const currentUserId = user?._id;
 
+	const POSTS_PER_PAGE = 5;
 	useEffect(() => {
 		fetchUser();
 	}, []);
@@ -41,15 +46,49 @@ function BookMarks() {
 
 	useEffect(() => {
 		const getBookmarks = async () => {
+			if (!currentUserId || !hasMore) return;
+			setLoading(true);
 			try {
-				const bookmarkedPosts = await fetchBookmarks(setShowLoading);
-				setBookmarks(bookmarkedPosts || []);
+				// Pass page and POSTS_PER_PAGE to fetchBookmarks service function
+				const bookmarkedPosts = await fetchBookmarks(
+					page,
+					POSTS_PER_PAGE,
+					setShowLoading
+				);
+				if (page === 1) {
+					console.log("Fetched bookmarks page 1", bookmarkedPosts);
+					setBookmarks(bookmarkedPosts || []);
+				} else {
+					console.log("Fetched bookmarks", bookmarkedPosts);
+					setBookmarks((prev) => [...prev, ...(bookmarkedPosts || [])]);
+				}
+				if (!bookmarkedPosts || bookmarkedPosts.length < POSTS_PER_PAGE) {
+					setHasMore(false);
+				}
 			} catch (error) {
 				console.error("Failed to fetch bookmarks:", error);
 			}
+			setLoading(false);
 		};
 		getBookmarks();
-	}, []);
+	}, [page, hasMore, currentUserId]);
+
+	//Infinete scroll functionality
+
+	useEffect(() => {
+		const onScroll = () => {
+			if (
+				window.innerHeight + window.scrollY >=
+					document.body.offsetHeight - 500 &&
+				!loading &&
+				hasMore
+			) {
+				setPage((prev) => prev + 1);
+			}
+		};
+		window.addEventListener("scroll", onScroll);
+		return () => window.removeEventListener("scroll", onScroll);
+	}, [loading, hasMore]);
 
 	if (bookmarks.length === 0) {
 		return (
@@ -81,7 +120,7 @@ function BookMarks() {
 			<h1 className="text-3xl font-bold mb-6 text-center sm:text-left">
 				Bookmarked Posts
 			</h1>
-			<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+			<div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
 				{bookmarks.map((post) => {
 					const author = post.author;
 					return (
@@ -142,6 +181,17 @@ function BookMarks() {
 					);
 				})}
 			</div>
+			{loading && (
+				<div className="flex justify-center items-center py-4">
+					<p className="text-gray-500">Loading more posts...</p>
+				</div>
+			)}
+
+			{!hasMore && !loading && (
+				<p className="text-center text-gray-400 py-4">
+					No more bookmarks to load.
+				</p>
+			)}
 		</div>
 	);
 }

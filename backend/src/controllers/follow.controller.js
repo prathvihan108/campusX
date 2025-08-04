@@ -90,22 +90,32 @@ const isFollowing = async (req, res) => {
     res.status(500).json(new ApiResponse(500, null, error.message));
   }
 };
-
 const getFollowers = async (req, res) => {
   try {
     const userId = req.user._id;
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const skip = (page - 1) * limit;
 
-    const followers = await Subscription.find({ channel: userId }).populate(
-      "subscriber",
-      "fullName userName email avatar role year department bio"
-    );
+    const followers = await Subscription.find({ channel: userId })
+      .populate(
+        "subscriber",
+        "fullName userName email avatar role year department bio"
+      )
+      .skip(skip)
+      .limit(limit);
+
+    // (Optional) You can also return total count to calculate total pages on frontend
+    const totalFollowers = await Subscription.countDocuments({
+      channel: userId,
+    });
 
     res
       .status(STATUS_CODES.OK)
       .json(
         new ApiResponse(
           STATUS_CODES.OK,
-          followers,
+          { followers, totalFollowers },
           "Followers fetched successfully"
         )
       );
@@ -117,19 +127,35 @@ const getFollowers = async (req, res) => {
 const getFollowing = async (req, res) => {
   try {
     const userId = req.user._id;
-
-    // Find the records where the subscriber is the current user
-    const following = await Subscription.find({ subscriber: userId }).populate(
-      "channel",
-      "fullName userName email avatar role year department bio"
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const skip = (page - 1) * limit;
+    console.log(
+      "getting following for user:",
+      userId + " page:",
+      page,
+      " limit:",
+      limit
     );
+
+    const following = await Subscription.find({ subscriber: userId })
+      .populate(
+        "channel",
+        "fullName userName email avatar role year department bio"
+      )
+      .skip(skip)
+      .limit(limit);
+
+    const totalFollowing = await Subscription.countDocuments({
+      subscriber: userId,
+    });
 
     res
       .status(STATUS_CODES.OK)
       .json(
         new ApiResponse(
           STATUS_CODES.OK,
-          following,
+          { following, totalFollowing },
           "Following users fetched successfully"
         )
       );

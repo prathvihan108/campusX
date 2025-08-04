@@ -46,9 +46,11 @@ export const checkIsFollowing = async (userId) => {
 	}
 };
 
-export const fetchMyFollowers = async () => {
+export const fetchMyFollowers = async (page = 1, limit = 5) => {
 	try {
-		const response = await axiosInstance.get(`/followers/me`);
+		const response = await axiosInstance.get(
+			`/followers/me?page=${page}&limit=${limit}`
+		);
 		return response.data?.data;
 	} catch (error) {
 		console.error("Error fetching followers:", error);
@@ -56,9 +58,11 @@ export const fetchMyFollowers = async () => {
 	}
 };
 
-export const fetchMyFollowing = async () => {
+export const fetchMyFollowing = async (page = 1, limit = 5) => {
 	try {
-		const response = await axiosInstance.get(`/followers/meFollowing`);
+		const response = await axiosInstance.get(
+			`/followers/meFollowing?page=${page}&limit=${limit}`
+		);
 		return response.data?.data;
 	} catch (error) {
 		console.error("Error fetching following users:", error);

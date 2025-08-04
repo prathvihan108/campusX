@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext.jsx";
-import { fetchMyFollowers } from "../../services/followersServices.jsx";
-import { fetchMyFollowing } from "../../services/followersServices.jsx";
+import {
+	fetchMyFollowers,
+	fetchMyFollowing,
+} from "../../services/followersServices.jsx";
+import { useNavigate } from "react-router-dom";
+
 function UserCard({ user }) {
 	const navigate = useNavigate();
-
 	const { fetchUser } = useAuth();
 
 	useEffect(() => {
@@ -13,7 +15,6 @@ function UserCard({ user }) {
 	}, []);
 
 	const handleCardClick = () => {
-		console.log("selected userName:", user);
 		navigate(`/users/channel/${user.userName}?id=${user._id}`);
 	};
 
@@ -23,6 +24,7 @@ function UserCard({ user }) {
 			handleCardClick();
 		}
 	};
+
 	return (
 		<div
 			className="bg-gray-900/90 backdrop-blur-md border border-gray-700 rounded-2xl p-5 shadow-lg hover:shadow-xl transition flex items-center gap-5 cursor-pointer"
@@ -90,15 +92,54 @@ function FollowersFollowing() {
 	const [following, setFollowing] = useState([]);
 	const [loadingFollowers, setLoadingFollowers] = useState(false);
 	const [loadingFollowing, setLoadingFollowing] = useState(false);
-	const [activeTab, setActiveTab] = useState("followers"); // or "following"
+	const [followersPage, setFollowersPage] = useState(1);
+	const [followingPage, setFollowingPage] = useState(1);
+	const [hasMoreFollowers, setHasMoreFollowers] = useState(true);
+	const [hasMoreFollowing, setHasMoreFollowing] = useState(true);
+	const [activeTab, setActiveTab] = useState("followers");
+	const PAGE_LIMIT = 5;
 	const { setShowLoading } = useAuth();
 
 	useEffect(() => {
-		const getFollowersData = async () => {
+		const fetchInitialData = async () => {
 			try {
 				setLoadingFollowers(true);
-				const data = await fetchMyFollowers();
-				setFollowers(data || []);
+				setLoadingFollowing(true);
+
+				const followersData = await fetchMyFollowers(1, PAGE_LIMIT);
+				const followingData = await fetchMyFollowing(1, PAGE_LIMIT);
+
+				setFollowers(followersData.followers || []);
+				setHasMoreFollowers(
+					(followersData.followers?.length || 0) === PAGE_LIMIT
+				);
+
+				setFollowing(followingData.following || []);
+				setHasMoreFollowing(
+					(followingData.following?.length || 0) === PAGE_LIMIT
+				);
+			} catch (error) {
+				console.error("Failed to fetch initial followers/following:", error);
+			} finally {
+				setLoadingFollowers(false);
+				setLoadingFollowing(false);
+			}
+		};
+
+		fetchInitialData();
+	}, []);
+
+	useEffect(() => {
+		const getFollowersData = async (page) => {
+			try {
+				setLoadingFollowers(true);
+				const data = await fetchMyFollowers(page, PAGE_LIMIT);
+				setFollowers((prev) =>
+					page === 1
+						? data.followers || []
+						: [...prev, ...(data.followers || [])]
+				);
+				setHasMoreFollowers((data.followers?.length || 0) === PAGE_LIMIT);
 			} catch (error) {
 				console.error("Failed to fetch followers:", error);
 			} finally {
@@ -106,11 +147,16 @@ function FollowersFollowing() {
 			}
 		};
 
-		const getFollowingData = async () => {
+		const getFollowingData = async (page) => {
 			try {
 				setLoadingFollowing(true);
-				const data = await fetchMyFollowing();
-				setFollowing(data || []);
+				const data = await fetchMyFollowing(page, PAGE_LIMIT);
+				setFollowing((prev) =>
+					page === 1
+						? data.following || []
+						: [...prev, ...(data.following || [])]
+				);
+				setHasMoreFollowing((data.following?.length || 0) === PAGE_LIMIT);
 			} catch (error) {
 				console.error("Failed to fetch following:", error);
 			} finally {
@@ -118,16 +164,61 @@ function FollowersFollowing() {
 			}
 		};
 
-		getFollowersData();
-		getFollowingData();
-	}, []);
+		if (activeTab === "followers") {
+			getFollowersData(followersPage);
+		} else {
+			getFollowingData(followingPage);
+		}
+	}, [activeTab, followersPage, followingPage]);
+
+	useEffect(() => {
+		const handleScroll = () => {
+			const scrollTop =
+				window.pageYOffset || document.documentElement.scrollTop;
+			const windowHeight = window.innerHeight;
+			const fullHeight = document.documentElement.offsetHeight;
+
+			if (
+				scrollTop + windowHeight >= fullHeight - 200 &&
+				!loadingFollowers &&
+				!loadingFollowing
+			) {
+				if (activeTab === "followers" && hasMoreFollowers) {
+					setFollowersPage((p) => p + 1);
+				} else if (activeTab === "following" && hasMoreFollowing) {
+					setFollowingPage((p) => p + 1);
+				}
+			}
+		};
+
+		window.addEventListener("scroll", handleScroll);
+		return () => window.removeEventListener("scroll", handleScroll);
+	}, [
+		activeTab,
+		hasMoreFollowers,
+		hasMoreFollowing,
+		loadingFollowers,
+		loadingFollowing,
+	]);
+
+	// Reset page & data on tab change
+	useEffect(() => {
+		if (activeTab === "followers") {
+			setFollowersPage(1);
+			setFollowers([]);
+			setHasMoreFollowers(true);
+		} else {
+			setFollowingPage(1);
+			setFollowing([]);
+			setHasMoreFollowing(true);
+		}
+	}, [activeTab]);
 
 	return (
 		<div className="px-4 sm:px-6 py-6 max-w-5xl mx-auto">
 			<h1 className="text-3xl font-bold mb-8 text-center sm:text-left text-white">
 				Connections
 			</h1>
-
 			{/* Tabs */}
 			<div className="flex justify-center sm:justify-start mb-6 border-b border-gray-700">
 				<button
@@ -168,18 +259,30 @@ function FollowersFollowing() {
 					aria-labelledby="tab-followers"
 					tabIndex={0}
 				>
-					{loadingFollowers ? (
+					{loadingFollowers && followers.length === 0 ? (
 						<p className="text-gray-400 text-center py-10">
 							Loading followers...
 						</p>
 					) : followers.length === 0 ? (
 						<EmptyState message="No followers found" />
 					) : (
-						<div className="space-y-4">
-							{followers.map((item) => (
-								<UserCard key={item._id} user={item.subscriber} />
-							))}
-						</div>
+						<>
+							<div className="space-y-4">
+								{followers.map((item) => (
+									<UserCard key={item._id} user={item.subscriber} />
+								))}
+							</div>
+							{loadingFollowers && (
+								<p className="text-center text-gray-400 py-4">
+									Loading more followers...
+								</p>
+							)}
+							{!hasMoreFollowers && (
+								<p className="text-center text-gray-400 py-4">
+									No more followers to load.
+								</p>
+							)}
+						</>
 					)}
 				</section>
 			)}
@@ -192,18 +295,30 @@ function FollowersFollowing() {
 					tabIndex={0}
 					className="mt-6"
 				>
-					{loadingFollowing ? (
+					{loadingFollowing && following.length === 0 ? (
 						<p className="text-gray-400 text-center py-10">
 							Loading following...
 						</p>
 					) : following.length === 0 ? (
 						<EmptyState message="Not following anyone yet" />
 					) : (
-						<div className="space-y-4">
-							{following.map((item) => (
-								<UserCard key={item._id} user={item.channel} />
-							))}
-						</div>
+						<>
+							<div className="space-y-4">
+								{following.map((item) => (
+									<UserCard key={item._id} user={item.channel} />
+								))}
+							</div>
+							{loadingFollowing && (
+								<p className="text-center text-gray-400 py-4">
+									Loading more following...
+								</p>
+							)}
+							{!hasMoreFollowing && (
+								<p className="text-center text-gray-400 py-4">
+									No more following to load.
+								</p>
+							)}
+						</>
 					)}
 				</section>
 			)}
