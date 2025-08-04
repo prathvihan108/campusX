@@ -13,16 +13,20 @@ export const toggleBookmark = async (postId) => {
 };
 
 // Fetch all bookmarked posts of the logged-in user
-export const fetchBookmarks = async (setShowLoading) => {
+export const fetchBookmarks = async (page = 1, limit = 5, setShowLoading) => {
 	try {
 		if (setShowLoading) setShowLoading(true);
 
-		const response = await axiosInstance.get(`/bookmarks`);
-		console.log("status code: " + response?.data?.statusCode);
-		console.log("message: " + response?.data?.message);
-		console.log("posts: ", response?.data?.data);
+		// Append page and limit as query parameters
+		const response = await axiosInstance.get(`/bookmarks`, {
+			params: {
+				page,
+				limit,
+			},
+		});
+		console.log("bookmarks for page " + page + ":");
 
-		return response?.data?.data;
+		return response?.data?.data; // Array of bookmarks for the requested page
 	} catch (error) {
 		console.error("Error fetching bookmarks:", error);
 		throw error;
