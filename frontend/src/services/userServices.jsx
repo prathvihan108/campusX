@@ -40,6 +40,21 @@ export const updateBio = async (bio) => {
 	}
 };
 
+//update profile
+
+export const updateProfile = async (profileFields) => {
+	try {
+		const res = await axiosInstance.patch(
+			"/users/update-account",
+			profileFields
+		);
+		return res.data;
+	} catch (err) {
+		console.error("Error updating profile:", err);
+		throw err;
+	}
+};
+
 //Seach users by username or full name
 // userService.js
 export async function searchUsers(query) {

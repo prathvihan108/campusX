@@ -345,15 +345,26 @@ const getCurrentUser = AsyncHandler(async (req, res) => {
 });
 
 const updateAccountDetails = AsyncHandler(async (req, res) => {
-  const { fullName, email } = req.body;
-  if (!fullName || !email) {
-    throw new ApiError(STATUS_CODES.BAD_REQUEST, "All fields are required");
+  const { fullName, role, department, year } = req.body;
+
+  // Fetch current user data first
+  const existingUser = await User.findById(req.user?._id);
+  if (!existingUser) {
+    throw new ApiError(STATUS_CODES.NOT_FOUND, "User not found");
   }
+
+  // Prepare updated fields by using new value if present, otherwise keep old
+  const updatedFields = {
+    fullName: fullName || existingUser.fullName,
+    role: role || existingUser.role,
+    department: department || existingUser.department,
+    year: year || existingUser.year,
+  };
+
+  // Update user with merged values
   const user = await User.findByIdAndUpdate(
     req.user?._id,
-    {
-      $set: { fullName, email },
-    },
+    { $set: updatedFields },
     { new: true }
   ).select("-password");
 
