@@ -19,6 +19,70 @@ const AuthProvider = ({ children }) => {
 
 	console.log("signup model state initil", showSignup);
 
+	//send otp
+	const handleSendOtp = async (email) => {
+		setShowLoading(true);
+		try {
+			// Call backend API to send OTP
+			const response = await axiosInstance.post("/auth/send-otp", { email });
+
+			console.log("Send OTP Response:", response.data);
+
+			if (response?.data?.statusCode === 200 || response?.data?.success) {
+				toast.success(response.data.message || "OTP sent to your email!", {
+					autoClose: 3000,
+				});
+				return { success: true };
+			} else {
+				toast.error(response.data.message || "Failed to send OTP", {
+					autoClose: 3000,
+				});
+				return { success: false };
+			}
+		} catch (error) {
+			console.error("Send OTP Error:", error.response?.data);
+			toast.error(error.response?.data?.message || "Failed to send OTP", {
+				autoClose: 3000,
+			});
+			return { success: false };
+		} finally {
+			setShowLoading(false);
+		}
+	};
+
+	// -------------------- VERIFY OTP --------------------
+	const handleVerifyOtp = async (email, otp) => {
+		setShowLoading(true);
+		try {
+			const response = await axiosInstance.post("/auth/verify-otp", {
+				email,
+				otp,
+			});
+
+			console.log("Verify OTP Response:", response.data);
+
+			if (response?.data?.statusCode === 200 || response?.data?.success) {
+				toast.success(response.data.message || "OTP verified!", {
+					autoClose: 3000,
+				});
+				return { success: true };
+			} else {
+				toast.error(response.data.message || "Invalid OTP", {
+					autoClose: 3000,
+				});
+				return { success: false };
+			}
+		} catch (error) {
+			console.error("Verify OTP Error:", error.response?.data);
+			toast.error(error.response?.data?.message || "OTP verification failed", {
+				autoClose: 3000,
+			});
+			return { success: false };
+		} finally {
+			setShowLoading(false);
+		}
+	};
+
 	// Handle User Signup with Avatar Upload
 	const handleSignUp = async (formData) => {
 		setShowLoading(true);
@@ -56,6 +120,7 @@ const AuthProvider = ({ children }) => {
 					autoClose: 3000,
 				});
 			}
+			setShowLoading(false);
 		}
 	};
 
@@ -113,6 +178,7 @@ const AuthProvider = ({ children }) => {
 					autoClose: 3000,
 				});
 			}
+			setShowLoading(false);
 		}
 	};
 
@@ -225,6 +291,8 @@ const AuthProvider = ({ children }) => {
 				showCreatePost,
 				setShowCreatePost,
 				handleCreatePost,
+				handleSendOtp,
+				handleVerifyOtp,
 				fetchUser,
 				showLoading,
 				setShowLoading,

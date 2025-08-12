@@ -4,7 +4,13 @@ import { Eye, EyeOff } from "lucide-react";
 import { useAuth } from "../../../context/AuthContext.jsx";
 
 const Signup = () => {
-	const { handleSignUp, setShowSignup } = useAuth();
+	const {
+		handleSignUp,
+		handleSendOtp,
+		handleVerifyOtp,
+		setShowSignup,
+		setShowLogin,
+	} = useAuth();
 
 	const [formData, setFormData] = useState({
 		userName: "",
@@ -16,10 +22,16 @@ const Signup = () => {
 		bio: "",
 		password: "",
 		confirmPassword: "",
-		avatar: null, // Avatar file
+		avatar: null,
 	});
+
 	const [showPassword, setShowPassword] = useState(false);
 	const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
+	const [isOtpSent, setIsOtpSent] = useState(false);
+	const [otp, setOtp] = useState("");
+	const [emailError, setEmailError] = useState("");
+	const [otpError, setOtpError] = useState("");
 
 	const handleChange = (e) => {
 		if (e.target.name === "avatar") {
@@ -29,26 +41,47 @@ const Signup = () => {
 		}
 	};
 
-	const handleSubmit = (e) => {
+	const handleSubmit = async (e) => {
 		e.preventDefault();
-		if (formData.password !== formData.confirmPassword) {
-			alert("Passwords do not match!");
+
+		// STEP 1 — Send OTP
+		if (!isOtpSent) {
+			const cmritPattern = /^[a-zA-Z0-9._%+-]+@cmrit\.ac\.in$/;
+			if (!cmritPattern.test(formData.email)) {
+				setEmailError("Email must be a valid @cmrit.ac.in address");
+				return;
+			}
+			setEmailError("");
+
+			if (formData.password !== formData.confirmPassword) {
+				alert("Passwords do not match!");
+				return;
+			}
+
+			const result = await handleSendOtp(formData.email);
+			if (result.success) {
+				setIsOtpSent(true);
+			}
 			return;
 		}
 
-		// Create FormData object
-		const data = new FormData();
-		Object.entries(formData).forEach(([key, value]) => {
-			data.append(key, value);
-		});
+		// STEP 2 — Verify OTP
+		if (isOtpSent && otp) {
+			const verifyResult = await handleVerifyOtp(formData.email, otp);
+			if (!verifyResult.success) {
+				setOtpError("Invalid OTP. Please try again.");
+				return;
+			}
+			setOtpError("");
 
-		// Debugging: Check FormData contents
-		for (let pair of data.entries()) {
-			//console.log(pair[0], pair[1]);
+			// STEP 3 — Complete Signup
+			const data = new FormData();
+			Object.entries(formData).forEach(([key, value]) => {
+				data.append(key, value);
+			});
+
+			await handleSignUp(data);
 		}
-
-		// Call API function
-		handleSignUp(data);
 	};
 
 	return (
@@ -81,7 +114,12 @@ const Signup = () => {
 						required
 						onChange={handleChange}
 						className="input"
+						disabled={isOtpSent}
 					/>
+					{emailError && (
+						<p className="text-red-500 col-span-2">{emailError}</p>
+					)}
+
 					<input
 						type="text"
 						name="fullName"
@@ -89,6 +127,7 @@ const Signup = () => {
 						required
 						onChange={handleChange}
 						className="input"
+						disabled={isOtpSent}
 					/>
 
 					<select
@@ -96,6 +135,7 @@ const Signup = () => {
 						required
 						onChange={handleChange}
 						className="input"
+						disabled={isOtpSent}
 					>
 						<option value="">Select Role</option>
 						{["Student", "Faculty", "Cell"].map((role) => (
@@ -110,6 +150,7 @@ const Signup = () => {
 						required
 						onChange={handleChange}
 						className="input"
+						disabled={isOtpSent}
 					>
 						<option value="">Select Year</option>
 						{["First-Year", "Second-Year", "PreFinal-Year", "Final-Year"].map(
@@ -126,6 +167,7 @@ const Signup = () => {
 						required
 						onChange={handleChange}
 						className="input"
+						disabled={isOtpSent}
 					>
 						<option value="">Select Department</option>
 						{["CSE", "ISE", "ECE", "EEE", "MBA", "AIML", "AIDS", "CIVIL"].map(
@@ -143,15 +185,16 @@ const Signup = () => {
 						required
 						onChange={handleChange}
 						className="input col-span-2"
+						disabled={isOtpSent}
 					></textarea>
 
-					{/* Avatar Upload */}
 					<input
 						type="file"
 						name="avatar"
 						accept="image/*"
 						onChange={handleChange}
 						className="input col-span-2"
+						disabled={isOtpSent}
 					/>
 
 					<div className="relative">
@@ -162,6 +205,7 @@ const Signup = () => {
 							required
 							onChange={handleChange}
 							className="input"
+							disabled={isOtpSent}
 						/>
 						<button
 							type="button"
@@ -180,6 +224,7 @@ const Signup = () => {
 							required
 							onChange={handleChange}
 							className="input"
+							disabled={isOtpSent}
 						/>
 						<button
 							type="button"
@@ -190,11 +235,29 @@ const Signup = () => {
 						</button>
 					</div>
 
+					{/* OTP Input after OTP Sent */}
+					{isOtpSent && (
+						<div className="col-span-2">
+							<label className="block text-sm font-medium text-gray-600">
+								Enter OTP
+							</label>
+							<input
+								type="text"
+								value={otp}
+								onChange={(e) => setOtp(e.target.value)}
+								className="input"
+								placeholder="Enter the OTP sent to your email"
+								required
+							/>
+							{otpError && <p className="text-red-500">{otpError}</p>}
+						</div>
+					)}
+
 					<button
 						type="submit"
 						className="col-span-2 bg-blue-600 text-white font-semibold py-2 rounded-lg hover:bg-blue-700 transition-all duration-200"
 					>
-						Sign Up
+						{isOtpSent ? "Verify OTP & Sign Up" : "Send OTP"}
 					</button>
 				</form>
 

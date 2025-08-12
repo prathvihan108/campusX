@@ -14,7 +14,7 @@ export const sendOtp = async (email, otp) => {
     from: "campusX <prathvijnk@gmail.com>",
     to: email,
     subject: "CampusX OTP Verification",
-    text: `Your OTP is ${otp}. This OTP will expire in 10 minutes.`,
+    text: `Your OTP is ${otp}. This OTP will expire in 5 minutes.`,
   };
 
   console.log("Trying to send email to:", email);

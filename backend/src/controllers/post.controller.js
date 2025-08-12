@@ -341,4 +341,31 @@ const deletePost = AsyncHandler(async (req, res) => {
     .json(new ApiResponse(STATUS_CODES.OK, {}, "Post deleted successfully"));
 });
 
-export { createPost, getAllPosts, getUserPosts, getPostById, deletePost };
+//delete all posts
+
+// Controller to delete all posts
+const deleteAllPosts = async (req, res) => {
+  try {
+    const result = await Post.deleteMany({}); // deletes all documents in posts collection
+    res.status(200).json({
+      success: true,
+      message: `Deleted ${result.deletedCount} posts.`,
+    });
+  } catch (error) {
+    console.error("Error deleting all posts:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to delete posts.",
+      error: error.message,
+    });
+  }
+};
+
+export {
+  createPost,
+  getAllPosts,
+  getUserPosts,
+  getPostById,
+  deletePost,
+  deleteAllPosts,
+};

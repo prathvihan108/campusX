@@ -57,29 +57,9 @@ const MyProfileLayout = () => {
 
 		try {
 			const posts = await getPostsByUserId(currentUserId, page, POSTS_PER_PAGE);
-			setUserPosts((prev) => [...prev, ...posts]);
+			setUserPosts((prev) => (page === 1 ? posts : [...prev, ...posts]));
 
 			if (posts.length < POSTS_PER_PAGE) setHasMore(false);
-
-			// // Check follow status for new authors
-			// const authorIds = [
-			// 	...new Set(
-			// 		posts
-			// 			.map((post) => post.authorDetails._id)
-			// 			.filter((id) => id !== currentUserId && !followingMap[id])
-			// 	),
-			// ];
-
-			// if (authorIds.length > 0) {
-			// 	const map = { ...followingMap };
-			// 	await Promise.all(
-			// 		authorIds.map(async (authorId) => {
-			// 			const isFollowing = await checkIsFollowing(authorId);
-			// 			map[authorId] = isFollowing;
-			// 		})
-			// 	);
-			// 	setFollowingMap(map);
-			// }
 		} catch (err) {
 			console.error("Failed to fetch posts:", err);
 		} finally {
@@ -89,10 +69,6 @@ const MyProfileLayout = () => {
 
 	useEffect(() => {
 		if (userReady) {
-			if (page === 1) {
-				setUserPosts([]);
-				setHasMore(true);
-			}
 			loadPosts();
 		}
 	}, [userReady, currentUserId, page, loadPosts]);

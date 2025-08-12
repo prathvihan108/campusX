@@ -7,6 +7,7 @@ import {
   getUserPosts,
   getPostById,
   deletePost,
+  deleteAllPosts,
 } from "../controllers/post.controller.js";
 import {
   addComment,
@@ -22,6 +23,8 @@ router
   .get(getAllPosts); // Get All Posts
 
 router.route("/user/:userId").get(getUserPosts); // Get  Posts of user by User ID
+
+router.delete("/deleteAllPosts", deleteAllPosts);
 
 router
   .route("/:id")
