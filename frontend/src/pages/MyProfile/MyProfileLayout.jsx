@@ -25,11 +25,11 @@ const MyProfileLayout = () => {
 	const [hasMore, setHasMore] = useState(true);
 	// const [followingMap, setFollowingMap] = useState({});
 	const currentUserId = user?._id;
+	const [confirmDeleteId, setConfirmDeleteId] = useState(null);
 
 	const deletePost = async (postId) => {
 		try {
 			await deletePostById(postId);
-
 			toast.success("Post deleted successfully");
 			setUserPosts((prev) => prev.filter((post) => post._id !== postId));
 		} catch (error) {

@@ -18,6 +18,10 @@ const MyProfile = () => {
 	const [profile, setProfile] = useState(null);
 	const [loading, setLoading] = useState(true);
 
+	const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+	const [deleteConfirmText, setDeleteConfirmText] = useState("");
+	const confirmationPhrase = `delete my account with ${profile?.userName}`;
+
 	// Editable fields state and control
 	const [editableFields, setEditableFields] = useState({
 		fullName: "",
@@ -165,9 +169,6 @@ const MyProfile = () => {
 
 	// Delete account
 	const handleDeleteAccount = async () => {
-		if (!window.confirm("Are you sure you want to delete your account?"))
-			return;
-
 		try {
 			await deleteAccount();
 			alert("Account deleted");
@@ -467,13 +468,58 @@ const MyProfile = () => {
 			{/* Footer actions */}
 			<div className="mt-10 flex justify-end gap-4">
 				<button
-					onClick={handleDeleteAccount}
+					onClick={() => setShowDeleteConfirm(true)}
 					className="px-5 py-2 bg-red-600 text-white rounded-lg font-semibold hover:bg-red-700 transition"
 					title="Delete your account"
 				>
 					Delete Account
 				</button>
 			</div>
+
+			{/* Delete Confirmation Modal */}
+			{showDeleteConfirm && (
+				<div className="fixed inset-0 bg-black/20 flex items-center justify-center z-50">
+					<div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 max-w-md w-full">
+						<h2 className="text-xl font-semibold text-red-600 mb-4">
+							Confirm Account Deletion
+						</h2>
+						<p className="mb-4 text-gray-700 dark:text-gray-300">
+							This action <strong>cannot</strong> be undone. To confirm, please
+							type:
+						</p>
+						<p className="mb-4 font-mono bg-gray-100 dark:bg-gray-700 p-2 rounded">
+							{confirmationPhrase}
+						</p>
+
+						<input
+							value={deleteConfirmText}
+							onChange={(e) => setDeleteConfirmText(e.target.value)}
+							placeholder="Type the confirmation phrase here"
+							className="w-full p-2 border rounded mb-4 dark:bg-gray-700 dark:text-white"
+						/>
+
+						<div className="flex justify-end gap-3">
+							<button
+								onClick={() => setShowDeleteConfirm(false)}
+								className="px-4 py-2 bg-gray-300 dark:bg-gray-600 text-gray-800 dark:text-gray-200 rounded hover:bg-gray-400 dark:hover:bg-gray-500"
+							>
+								Cancel
+							</button>
+							<button
+								disabled={deleteConfirmText !== confirmationPhrase}
+								onClick={handleDeleteAccount}
+								className={`px-4 py-2 rounded text-white font-semibold transition ${
+									deleteConfirmText === confirmationPhrase
+										? "bg-red-600 hover:bg-red-700"
+										: "bg-gray-400 cursor-not-allowed"
+								}`}
+							>
+								Confirm Delete
+							</button>
+						</div>
+					</div>
+				</div>
+			)}
 		</div>
 	);
 };
