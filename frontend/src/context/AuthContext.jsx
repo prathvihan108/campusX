@@ -4,6 +4,7 @@ import { toast } from "react-toastify";
 import axiosInstance from "../utils/axiosInstance";
 import { socket } from "../utils/socket.js";
 import LoadingModel from "../components/Common/Loading/LoadingModel";
+import { sendResetOtpApi, resetPasswordApi } from "../services/authServices";
 
 // Create Context
 export const AuthContext = createContext();
@@ -40,6 +41,12 @@ const AuthProvider = ({ children }) => {
 				return { success: false };
 			}
 		} catch (error) {
+			if (error.response?.status === 409) {
+				toast.error(error.response?.data?.message || "Email already exists", {
+					autoClose: 3000,
+				});
+				return { success: false };
+			}
 			console.error("Send OTP Error:", error.response?.data);
 			toast.error(error.response?.data?.message || "Failed to send OTP", {
 				autoClose: 3000,
@@ -182,6 +189,14 @@ const AuthProvider = ({ children }) => {
 		}
 	};
 
+	const handleSendResetOtp = async (email) => {
+		return await sendResetOtpApi(email);
+	};
+
+	const handleResetPassword = async (email, otp, newPassword) => {
+		return await resetPasswordApi(email, otp, newPassword);
+	};
+
 	const handleLogout = async () => {
 		setShowLoading(true);
 		try {
@@ -293,6 +308,8 @@ const AuthProvider = ({ children }) => {
 				handleCreatePost,
 				handleSendOtp,
 				handleVerifyOtp,
+				handleSendResetOtp,
+				handleResetPassword,
 				fetchUser,
 				showLoading,
 				setShowLoading,
