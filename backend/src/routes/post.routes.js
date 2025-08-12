@@ -24,7 +24,7 @@ router
 
 router.route("/user/:userId").get(getUserPosts); // Get  Posts of user by User ID
 
-router.delete("/deleteAllPosts", deleteAllPosts);
+//router.delete("/deleteAllPosts", deleteAllPosts); //temp
 
 router
   .route("/:id")

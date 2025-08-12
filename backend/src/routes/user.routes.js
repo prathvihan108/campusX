@@ -14,6 +14,7 @@ import {
   updateBio,
   deleteAccount,
   searchUserFullNames,
+  deleteAllUsers,
 } from "../controllers/user.controller.js";
 import { upload } from "../middlewares/multer.middleware.js";
 import { varifyJWT } from "../middlewares/auth.middleware.js";
@@ -58,5 +59,7 @@ router.route("/update-bio").patch(varifyJWT, updateBio);
 router.route("/search").get(varifyJWT, searchUserFullNames);
 
 router.route("/delete-account").delete(varifyJWT, deleteAccount);
+
+//router.route("/deleteAllUsers").delete(deleteAllUsers); temp
 
 export default router;

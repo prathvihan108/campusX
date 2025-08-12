@@ -719,6 +719,27 @@ const updateBio = AsyncHandler(async (req, res) => {
     );
 });
 
+//temp controllers
+//deleting all users
+
+const deleteAllUsers = AsyncHandler(async (req, res) => {
+  const users = await User.find({});
+
+  if (users.length === 0) {
+    return res
+      .status(STATUS_CODES.NOT_FOUND)
+      .json(new ApiResponse(STATUS_CODES.NOT_FOUND, null, "No users found"));
+  }
+
+  await User.deleteMany({});
+
+  return res
+    .status(STATUS_CODES.OK)
+    .json(
+      new ApiResponse(STATUS_CODES.OK, null, "All users deleted successfully")
+    );
+});
+
 export {
   registerUser,
   loginUser,
@@ -733,6 +754,7 @@ export {
   getBookmarks,
   deleteAccount,
   updateBio,
+  deleteAllUsers, //temp
 };
 
 //userSearch

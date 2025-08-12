@@ -6,41 +6,41 @@ import { User } from "../models/user.models.js";
 const otpStore = new Map();
 
 export const sendOtpController = async (req, res) => {
-  console.log("sendOtpController called");
-  const { email } = req.body;
-  console.log("Email:", email);
+  // console.log("sendOtpController called");
+  // const { email } = req.body;
+  // console.log("Email:", email);
 
-  const existingEmail = await User.findOne({ email: email });
-  console.log("Existing email:", existingEmail);
+  // const existingEmail = await User.findOne({ email: email });
+  // console.log("Existing email:", existingEmail);
 
-  if (existingEmail) {
-    return res
-      .status(STATUS_CODES.CONFLICT)
-      .json(
-        new ApiResponse(STATUS_CODES.CONFLICT, null, "Email already Taken")
-      );
-  }
+  // if (existingEmail) {
+  //   return res
+  //     .status(STATUS_CODES.CONFLICT)
+  //     .json(
+  //       new ApiResponse(STATUS_CODES.CONFLICT, null, "Email already Taken")
+  //     );
+  // }
 
-  // Validate email domain before generating OTP
-  const cmritPattern = /^[a-zA-Z0-9._%+-]+@cmrit\.ac\.in$/;
-  if (!cmritPattern.test(email)) {
-    return res
-      .status(STATUS_CODES.BAD_REQUEST)
-      .json(
-        new ApiResponse(STATUS_CODES.BAD_REQUEST, null, "Invalid CMRIT email")
-      );
-  }
+  // // Validate email domain before generating OTP
+  // const cmritPattern = /^[a-zA-Z0-9._%+-]+@cmrit\.ac\.in$/;
+  // if (!cmritPattern.test(email)) {
+  //   return res
+  //     .status(STATUS_CODES.BAD_REQUEST)
+  //     .json(
+  //       new ApiResponse(STATUS_CODES.BAD_REQUEST, null, "Invalid CMRIT email")
+  //     );
+  // }
 
-  // Generate 6-digit OTP
-  const otp = Math.floor(100000 + Math.random() * 900000).toString();
+  // // Generate 6-digit OTP
+  // const otp = Math.floor(100000 + Math.random() * 900000).toString();
 
-  // Store OTP with expiry (e.g., 5 minutes)
-  const expiresAt = Date.now() + 5 * 60 * 1000; // 5 minutes from now
-  otpStore.set(email, { otp, expiresAt });
+  // // Store OTP with expiry (e.g., 5 minutes)
+  // const expiresAt = Date.now() + 5 * 60 * 1000; // 5 minutes from now
+  // otpStore.set(email, { otp, expiresAt });
 
-  // Send OTP via your email service
-  await sendOtp(email, otp);
-  console.log("OTP sent successfully");
+  // // Send OTP via your email service
+  // await sendOtp(email, otp);
+  // console.log("OTP sent successfully");
 
   res
     .status(STATUS_CODES.OK)
@@ -48,44 +48,49 @@ export const sendOtpController = async (req, res) => {
 };
 
 export const verifyOtpController = (req, res) => {
-  console.log("verifyOtpController called");
-  console.log("Request body:", req.body);
-  const { email, otp } = req.body;
+  // console.log("verifyOtpController called");
+  // console.log("Request body:", req.body);
+  // const { email, otp } = req.body;
 
-  const record = otpStore.get(email);
-  if (!record) {
-    return res
-      .status(STATUS_CODES.BAD_REQUEST)
-      .json(
-        new ApiResponse(
-          STATUS_CODES.BAD_REQUEST,
-          null,
-          "OTP expired or not found"
-        )
-      );
-  }
+  // const record = otpStore.get(email);
+  // if (!record) {
+  //   return res
+  //     .status(STATUS_CODES.BAD_REQUEST)
+  //     .json(
+  //       new ApiResponse(
+  //         STATUS_CODES.BAD_REQUEST,
+  //         null,
+  //         "OTP expired or not found"
+  //       )
+  //     );
+  // }
 
-  // Check if OTP expired
-  if (Date.now() > record.expiresAt) {
-    otpStore.delete(email);
-    return res
-      .status(STATUS_CODES.BAD_REQUEST)
-      .json(new ApiResponse(STATUS_CODES.BAD_REQUEST, null, "OTP expired"));
-  }
-  console.log("record.opt", record.otp, +",otp", otp);
+  // // Check if OTP expired
+  // if (Date.now() > record.expiresAt) {
+  //   otpStore.delete(email);
+  //   return res
+  //     .status(STATUS_CODES.BAD_REQUEST)
+  //     .json(new ApiResponse(STATUS_CODES.BAD_REQUEST, null, "OTP expired"));
+  // }
+  // console.log("record.opt", record.otp, +",otp", otp);
 
-  if (record.otp === otp) {
-    otpStore.delete(email);
-    return res
-      .status(STATUS_CODES.OK)
-      .json(
-        new ApiResponse(STATUS_CODES.OK, null, "OTP verified successfully")
-      );
-  } else {
-    return res
-      .status(STATUS_CODES.BAD_REQUEST)
-      .json(new ApiResponse(STATUS_CODES.BAD_REQUEST, null, "Invalid OTP"));
-  }
+  // if (record.otp === otp) {
+  //   otpStore.delete(email);
+  //   return res
+  //     .status(STATUS_CODES.OK)
+  //     .json(
+  //       new ApiResponse(STATUS_CODES.OK, null, "OTP verified successfully")
+  //     );
+  // } else {
+  //   return res
+  //     .status(STATUS_CODES.BAD_REQUEST)
+  //     .json(new ApiResponse(STATUS_CODES.BAD_REQUEST, null, "Invalid OTP"));
+  // }
+
+  // For now, just return success without actual OTP verification
+  return res
+    .status(STATUS_CODES.OK)
+    .json(new ApiResponse(STATUS_CODES.OK, null, "OTP verified successfully"));
 };
 
 //Reset-password otp.
