@@ -27,9 +27,13 @@ const PostCard = ({
 	const [showDeleteModal, setShowDeleteModal] = useState(false);
 
 	const handleCardClick = () => {
-		navigate(
-			`/users/channel/${post.authorDetails.userName}?id=${post.authorDetails._id}`
-		);
+		if (currentUserId === post.authorDetails._id) {
+			navigate(`/my/channel/${post.authorDetails.userName}`);
+		} else {
+			navigate(
+				`/users/channel/${post.authorDetails.userName}?id=${post.authorDetails._id}`
+			);
+		}
 	};
 
 	const stopClick = (e) => e.stopPropagation();
@@ -50,6 +54,7 @@ const PostCard = ({
 			console.error("Failed to toggle bookmark:", error);
 		}
 	};
+
 	const handleDeletePost = async (e, postId) => {
 		stopClick(e);
 		try {
@@ -57,26 +62,6 @@ const PostCard = ({
 		} catch (error) {
 			console.error("Failed to delete post:", error);
 		}
-	};
-
-	const handleDeleteClick = (e) => {
-		e.stopPropagation();
-		setShowConfirm(true);
-	};
-
-	const handleConfirmDelete = async (e) => {
-		e.stopPropagation();
-		try {
-			await deletePost(post._id);
-		} catch (err) {
-			console.error("Failed to delete post:", err);
-		}
-		setShowConfirm(false);
-	};
-
-	const handleCancelDelete = (e) => {
-		e.stopPropagation();
-		setShowConfirm(false);
 	};
 
 	const openComments = (e) => {
@@ -118,7 +103,16 @@ const PostCard = ({
 							<h3
 								onClick={(e) => {
 									stopClick(e);
-									navigate(`/users/channel/${post.authorDetails.userName}`);
+
+									if (currentUserId === post.authorDetails._id) {
+										// Go to your own channel
+										navigate(`/my/channel/${post.authorDetails.userName}`);
+									} else {
+										// Go to another user's channel
+										navigate(
+											`/users/channel/${post.authorDetails.userName}?id=${post.authorDetails._id}`
+										);
+									}
 								}}
 								className="text-xl font-semibold text-gray-900 dark:text-gray-100 hover:underline"
 							>

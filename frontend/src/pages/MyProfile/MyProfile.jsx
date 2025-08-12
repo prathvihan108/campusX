@@ -478,7 +478,7 @@ const MyProfile = () => {
 
 			{/* Delete Confirmation Modal */}
 			{showDeleteConfirm && (
-				<div className="fixed inset-0 bg-black/20 flex items-center justify-center z-50">
+				<div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50">
 					<div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 max-w-md w-full">
 						<h2 className="text-xl font-semibold text-red-600 mb-4">
 							Confirm Account Deletion
