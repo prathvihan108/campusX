@@ -9,8 +9,11 @@ frontend/node_modules/
 
 frontend/.env
 backend/.env
+ml/.env
+
 frontend/key.pem
 frontend/cert.pem
+
 backend/key.pem
 backend/cert.pem
 

@@ -76,3 +76,8 @@ export async function searchUsers(query) {
 		return [];
 	}
 }
+
+export async function fetchTotalUsersCount() {
+	const response = await axiosInstance.get("/users/count");
+	return response.data.data.totalUsersCount;
+}

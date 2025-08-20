@@ -14,6 +14,7 @@ import {
   updateBio,
   deleteAccount,
   searchUserFullNames,
+  getTotalUsersCount,
   deleteAllUsers,
 } from "../controllers/user.controller.js";
 import { upload } from "../middlewares/multer.middleware.js";
@@ -57,6 +58,7 @@ router.route("/get-bookmarks").get(varifyJWT, getBookmarks);
 router.route("/update-bio").patch(varifyJWT, updateBio);
 
 router.route("/search").get(varifyJWT, searchUserFullNames);
+router.route("/count").get(getTotalUsersCount);
 
 router.route("/delete-account").delete(varifyJWT, deleteAccount);
 

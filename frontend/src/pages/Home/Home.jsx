@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import PostContext from "../../context/PostContext";
 import UniversalSearchBar from "../../components/Common/UniversalSearchBar/UniversalSearchBar.jsx";
+import ActiveUsers from "../../components/Common/ActiveUsers/ActiveUsers.jsx";
 import { toggleLike } from "../../services/likesServices.jsx";
 import { toggleBookmark } from "../../services/bookmarksServices.jsx";
 import { searchUsers } from "./../../services/userServices.jsx";
@@ -89,6 +90,8 @@ const Home = () => {
 				suggestions={suggestions}
 				onSuggestionSelect={handleSuggestionSelect}
 			/>
+
+			<ActiveUsers />
 
 			<div className="mt-8 flex flex-col lg:flex-row gap-6">
 				{/* Posts Feed */}

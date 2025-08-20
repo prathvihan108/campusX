@@ -344,6 +344,21 @@ const getCurrentUser = AsyncHandler(async (req, res) => {
     );
 });
 
+//get getTotalUsersCount
+
+const getTotalUsersCount = AsyncHandler(async (req, res) => {
+  const count = await User.countDocuments();
+  return res
+    .status(STATUS_CODES.OK)
+    .json(
+      new ApiResponse(
+        STATUS_CODES.OK,
+        { totalUsersCount: count },
+        "Total users count fetched successfully"
+      )
+    );
+});
+
 const updateAccountDetails = AsyncHandler(async (req, res) => {
   const { fullName, role, department, year } = req.body;
 
@@ -754,7 +769,8 @@ export {
   getBookmarks,
   deleteAccount,
   updateBio,
-  deleteAllUsers, //temp
+  getTotalUsersCount,
+  deleteAllUsers,
 };
 
 //userSearch
