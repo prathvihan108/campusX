@@ -73,10 +73,7 @@ const PostCard = ({
 
 	return (
 		<>
-			<div
-				onClick={handleCardClick}
-				className="cursor-pointer hover:bg-gray-50 transition rounded-lg p-4 border border-gray-200 shadow-sm"
-			>
+			<div onClick={handleCardClick}>
 				<div className="bg-white dark:bg-gray-900 rounded-2xl shadow-md overflow-hidden p-6 transition-shadow duration-300 hover:shadow-lg h-fit border border-blue-900 dark:border-blue-500 !border-opacity-100 relative">
 					{/* Delete button, only for post author */}
 					{currentUserId === post.authorDetails._id && (
