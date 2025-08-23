@@ -1,4 +1,5 @@
 import dotenv from "dotenv";
+dotenv.config({ path: "../.env" });
 import https from "https"; //production testing
 import http from "http"; //local testing
 
@@ -8,7 +9,12 @@ import connectDB from "./db/db.js";
 import connectWebSocket from "./webSocket/webSocket.js";
 import { connectRedis } from "./config/redis.js";
 
-dotenv.config({ path: "../.env" });
+console.log(
+  "Starting backend. REDIS_HOST:",
+  process.env.REDIS_HOST,
+  "REDIS_PORT:",
+  process.env.REDIS_PORT
+);
 
 const options = {
   key: fs.readFileSync("key.pem"),
@@ -20,6 +26,7 @@ const host_url = process.env.HOST_URL || "https://localhost";
 
 let server;
 
+console.log("Connecting to MongoDB...");
 connectDB()
   .then(async () => {
     //https:
@@ -37,13 +44,19 @@ connectDB()
     // });
 
     //http
-    const server = http.createServer(app);
+    server = http.createServer(app);
 
     // Start the server
-    server.listen(port, async () => {
+    server.listen(port, "0.0.0.0", async () => {
       console.log(`🚀 Server running on ${host_url}:${port}`);
 
       try {
+        console.log(
+          "Attempting Redis connection at",
+          process.env.REDIS_HOST,
+          process.env.REDIS_PORT
+        );
+
         await connectRedis();
         connectWebSocket(server);
       } catch (err) {

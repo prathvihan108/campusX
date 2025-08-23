@@ -1,0 +1,33 @@
+version: "3"
+services:
+  redis:
+    image: redis:latest
+    container_name: redis-server
+    ports:
+      - "6379:6379"
+
+  backend:
+    build:
+      context: ./backend
+    container_name: mybackend
+    ports:
+      - "8005:3000"
+    depends_on:
+      - redis
+    environment:
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+
+  frontend:
+    build:
+      context: ./frontend
+    container_name: myfrontend
+    ports:
+      - "5173:80"
+
+  ml:
+    build:
+      context: ./ml
+    container_name: ml
+    ports:
+      - "5000:5000"
