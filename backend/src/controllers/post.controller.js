@@ -42,6 +42,7 @@ const createPost = AsyncHandler(async (req, res) => {
 
 // Get All Posts with Aggregation
 const getAllPosts = AsyncHandler(async (req, res) => {
+  //sconsole.log("Request Headers:", req.headers);
   let posts;
   const userId = req.query.userId;
   const page = parseInt(req.query.page) || 1;
@@ -122,7 +123,7 @@ const getAllPosts = AsyncHandler(async (req, res) => {
     }
   } else {
     console.log("No userId provided, fetching trending posts");
-    const { data } = await axios.get("http://localhost:8000/trending");
+    const { data } = await axios.get(`${mlHost}/trending`);
     try {
       const recommendedIds = data.recommendations || [];
 

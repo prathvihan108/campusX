@@ -177,9 +177,7 @@ const loginUser = AsyncHandler(async (req, res) => {
     );
   }
 
-  const user = await User.findOne({
-    $or: [{ email }],
-  });
+  const user = await User.findOne({ email });
 
   console.log("user:", user);
   if (!user) {
@@ -189,8 +187,21 @@ const loginUser = AsyncHandler(async (req, res) => {
         new ApiResponse(STATUS_CODES.NOT_FOUND, null, "user does not exits")
       );
   }
-  const isPasswordValid = await user.isPasswordCorrect(password);
-  console.log("isPasswordValid", isPasswordValid);
+  console.log("User instanceof Model:", user instanceof User);
+  console.log("user.isPasswordCorrect:", user.isPasswordCorrect);
+
+  let isPasswordValid;
+
+  try {
+    isPasswordValid = await user.isPasswordCorrect(password);
+    console.log("isPasswordValid", isPasswordValid);
+  } catch (err) {
+    console.error("Error while checking password:", err);
+    throw new ApiError(
+      STATUS_CODES.INTERNAL_SERVER_ERROR,
+      "Password check failed"
+    );
+  }
 
   if (!isPasswordValid) {
     throw new ApiError(STATUS_CODES.UNAUTHORIZED, "password not valid");
@@ -205,11 +216,20 @@ const loginUser = AsyncHandler(async (req, res) => {
     "-password -refreshToken"
   );
   // syntax:res.cookie(name, value, options);
+  // const isProd = process.env.NODE_ENV === "production";
+  // const options = {
+  //   httpOnly: true,
+  //   secure: isProd && process.env.FRONTEND_HTTPS === "true", // only true if HTTPS is running
+  //   sameSite: isProd ? "None" : "Lax",
+  // };
+
+  const isProd = process.env.NODE_ENV === "production";
   const options = {
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",
+    secure: isProd,
+    sameSite: isProd ? "None" : "Lax",
   };
+
   return res
     .status(STATUS_CODES.OK)
     .cookie("accessToken", accessToken, options)

@@ -18,6 +18,7 @@ const app = express();
 const allowedOrigins = [
   "http://localhost:5173", // Vite dev server
   "http://localhost:3000", // React dev server (if used)
+  "http://localhost",
   "https://yourfrontend.com", // Production frontend
 ];
 
