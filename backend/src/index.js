@@ -21,8 +21,8 @@ const options = {
   cert: fs.readFileSync("cert.pem"),
 };
 
-const port = process.env.PORT || 5000;
-const host_url = process.env.HOST_URL || "https://localhost";
+const port = process.env.PORT || 3000;
+// const host_url = process.env.HOST_URL || "https://localhost";
 
 let server;
 
@@ -48,7 +48,8 @@ connectDB()
 
     // Start the server
     server.listen(port, "0.0.0.0", async () => {
-      console.log(`🚀 Server running on ${host_url}:${port}`);
+      // console.log(`🚀 Server running on ${host_url}:${port}`);
+      console.log(`🚀 Server1 running on http://0.0.0.0:${port}`);
 
       try {
         console.log(

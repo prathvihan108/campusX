@@ -8,6 +8,8 @@ import { uploadOnCloudnary } from "../utils/cloudnary.js";
 import client from "../utils/redisClient.js";
 import mongoose from "mongoose";
 
+const mlHost = process.env.ML_HOST || "http://ml:5000";
+
 //  Create a Post
 const createPost = AsyncHandler(async (req, res) => {
   console.log(req.file);
@@ -53,7 +55,7 @@ const getAllPosts = AsyncHandler(async (req, res) => {
 
   if (userId) {
     try {
-      const { data } = await axios.post("http://localhost:8000/recommend", {
+      const { data } = await axios.post(`${mlHost}/recommend`, {
         user_id: userId,
       });
 

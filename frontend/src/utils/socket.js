@@ -3,7 +3,10 @@ import { io } from "socket.io-client";
 //const SOCKET_URL = "https://10.101.7.74:8005"; // backend URL
 const SOCKET_URL = import.meta.env.VITE_SOCKET_URL;
 
+console.log(SOCKET_URL);
+
 const socket = io(SOCKET_URL, {
+	path: "/socket.io", // explicitly set correct path
 	transports: ["websocket"],
 	withCredentials: true,
 });

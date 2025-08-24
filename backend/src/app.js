@@ -14,7 +14,31 @@ import errorMiddleware from "./middlewares/error.middleware.js";
 const app = express();
 
 //  middlewares
-app.use(cors({ origin: process.env.CORS_ORIGIN, credentials: true }));
+
+const allowedOrigins = [
+  "http://localhost:5173", // Vite dev server
+  "http://localhost:3000", // React dev server (if used)
+  "https://yourfrontend.com", // Production frontend
+];
+
+app.use(
+  cors({
+    origin: function (origin, callback) {
+      // Allow requests with no origin (like mobile apps, curl)
+      if (!origin) return callback(null, true);
+      if (allowedOrigins.includes(origin)) {
+        return callback(null, true);
+      } else {
+        return callback(new Error("Not allowed by CORS"));
+      }
+    },
+    credentials: true, // allow cookies/authorization headers
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  })
+);
+
+//app.use(cors({ origin: process.env.CORS_ORIGIN, credentials: true }));
 // app.use(cors({ origin: "http://127.0.0.1:5173", credentials: true }));
 app.use(express.json({ limit: "16kb" }));
 app.use(express.urlencoded({ extended: true, limit: "16kb" }));
