@@ -3,7 +3,7 @@ name: Deploy to EC2
 on:
   push:
     branches:
-      - production   # runs only when you push to "production" branch
+      - production # runs only when you push to "production" branch
 
 jobs:
   deploy:
@@ -21,6 +21,7 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
             cd ~/campusX
-            git pull origin production
+            git fetch --all
+            git reset --hard origin/production
             docker compose down
             docker compose up -d --build
