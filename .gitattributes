@@ -1,0 +1,3 @@
+# .gitattributes
+docker-compose.yml merge=ours
+nginx.conf merge=ours
