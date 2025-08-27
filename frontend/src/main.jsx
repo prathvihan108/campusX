@@ -23,6 +23,19 @@ import {
 } from "react-router-dom";
 // import FollowersFollowing from "./pages/ FollowersFollowing/ FollowersFollowing.jsx";
 
+import { registerSW } from "virtual:pwa-register";
+
+// Register the service worker
+registerSW({
+	immediate: true,
+	onNeedRefresh() {
+		console.log("New version available, reload to update.");
+	},
+	onOfflineReady() {
+		console.log("App ready to work offline!");
+	},
+});
+
 console.log("Hello from main.jsx");
 
 const router = createBrowserRouter(
