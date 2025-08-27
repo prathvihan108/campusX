@@ -16,10 +16,10 @@ console.log(
   process.env.REDIS_PORT
 );
 
-const options = {
-  key: fs.readFileSync("key.pem"),
-  cert: fs.readFileSync("cert.pem"),
-};
+// const options = {
+//   key: fs.readFileSync("key.pem"),
+//   cert: fs.readFileSync("cert.pem"),
+// };
 
 const port = process.env.PORT || 3000;
 // const host_url = process.env.HOST_URL || "https://localhost";
