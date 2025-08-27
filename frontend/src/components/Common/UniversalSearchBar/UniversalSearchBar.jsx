@@ -12,7 +12,7 @@ export default function UniversalSearchBar({
 	onSuggestionSelect,
 }) {
 	const { user } = useAuth();
-	const debouncedQuery = useDebounce(query, 1000);
+	const debouncedQuery = useDebounce(query, 600);
 
 	useEffect(() => {
 		if (debouncedQuery) {
@@ -27,7 +27,7 @@ export default function UniversalSearchBar({
 	const onChangeHandler = (e) => {
 		if (!user) {
 			toast.info("Please log in to search", {
-				autoClose: 1000,
+				autoClose: 0,
 				position: "top-right",
 			});
 			// Prevent typing by not calling handleInputChange
