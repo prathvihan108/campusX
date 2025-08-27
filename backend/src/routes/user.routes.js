@@ -62,6 +62,6 @@ router.route("/count").get(getTotalUsersCount);
 
 router.route("/delete-account").delete(varifyJWT, deleteAccount);
 
-//router.route("/deleteAllUsers").delete(deleteAllUsers); temp
+router.route("/deleteAllUsers").delete(deleteAllUsers);
 
 export default router;
