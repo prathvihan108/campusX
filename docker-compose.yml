@@ -28,11 +28,15 @@ services:
   nginx:
     image: nginx:latest
     container_name: campusx-nginx
-    volumes:
-      - ./frontend/dist:/usr/share/nginx/html # Serve frontend build
-      - ./nginx.conf:/etc/nginx/conf.d/default.conf # Custom nginx config
     ports:
       - "80:80"
+      - "443:443"
+    volumes:
+      - ./frontend/dist:/usr/share/nginx/html:ro # Frontend build
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro # Custom Nginx config
+      - /etc/letsencrypt/live/thecampusx.co.in:/etc/letsencrypt/live/thecampusx.co.in:ro
+      - /etc/letsencrypt/archive/thecampusx.co.in:/etc/letsencrypt/archive/thecampusx.co.in:ro
+      - /etc/letsencrypt/renewal:/etc/letsencrypt/renewal:ro
     depends_on:
       - backend
       - ml
