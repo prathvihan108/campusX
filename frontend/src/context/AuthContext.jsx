@@ -276,11 +276,13 @@ const AuthProvider = ({ children }) => {
 	const handleCreatePost = async (postData) => {
 		setShowLoading(true);
 		try {
+			console.log("Creating post with data:", postData);
 			const res = await axiosInstance.post("/posts/", postData);
+			console.log("Create Post Response:", res.data);
 			setShowCreatePost(false);
 			setShowLoading(false);
 
-			console.log("Post created", res.data?.data);
+			// console.log("Post created", res.data?.data);
 			toast.success("Post created successfully");
 		} catch (err) {
 			if (err.response?.status === 401) {

@@ -12,6 +12,7 @@ const mlHost = process.env.ML_HOST || "http://ml:5000";
 
 //  Create a Post
 const createPost = AsyncHandler(async (req, res) => {
+  console.log("Create Post Request Body:", req.body);
   console.log(req.file);
   const imageLocalPath = req.file?.path;
   console.log("image local path", imageLocalPath);
