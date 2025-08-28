@@ -22,7 +22,7 @@ def recommend(request: RequestBody):
     user_interactions = interactions_df[interactions_df['user_id'] == user_id]
 
     if user_interactions.empty:
-        fallback_posts = get_trending_posts(post_vectors, top_k=20)
+        fallback_posts = get_trending_posts(post_vectors, top_k=60)
         return {"recommendations": fallback_posts, "note": "cold start fallback"}
 
     recommended_posts = get_recommendations(
