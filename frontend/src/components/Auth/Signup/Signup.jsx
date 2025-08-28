@@ -261,12 +261,12 @@ const Signup = () => {
 					</button>
 				</form>
 
-				<p className="text-center text-sm text-gray-600 mt-4">
+				{/* <p className="text-center text-sm text-gray-600 mt-4">
 					Already have an account?{" "}
 					<Link to="/login" className="text-blue-500 hover:underline">
 						Log in
 					</Link>
-				</p>
+				</p> */}
 			</div>
 		</div>
 	);
