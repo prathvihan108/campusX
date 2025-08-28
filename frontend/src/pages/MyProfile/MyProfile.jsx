@@ -9,6 +9,7 @@ import {
 	updateProfilePhoto,
 	deleteAccount,
 } from "../../services/userServices";
+import imageCompression from "browser-image-compression";
 
 const MyProfile = () => {
 	const { userName } = useParams();
@@ -153,32 +154,28 @@ const MyProfile = () => {
 		const file = e.target.files[0];
 		if (!file) return;
 
-		const formData = new FormData();
-		formData.append("avatar", file);
-
 		try {
+			// ✅ Compression options
+			const options = {
+				maxSizeMB: 1, // limit to 1MB
+				maxWidthOrHeight: 400, // avatar size
+				useWebWorker: true,
+			};
+
+			// compress before upload
+			const compressedFile = await imageCompression(file, options);
+
+			const formData = new FormData();
+			formData.append("avatar", compressedFile);
+
 			const updated = await updateProfilePhoto(formData);
+
 			setProfile((prev) => ({
 				...prev,
-				avatar: updated.avatar + "?t=" + Date.now(), // cache buster
+				avatar: updated.avatar + "?t=" + Date.now(),
 			}));
 		} catch (err) {
 			toast.error("Failed to update avatar. Please try again.");
-
-			console.error(err);
-		}
-	};
-
-	// Delete account
-	const handleDeleteAccount = async () => {
-		try {
-			await deleteAccount();
-			toast.success("Account deleted successfully.");
-
-			navigate("/");
-		} catch (err) {
-			toast.error("Failed to delete account. Please try again.");
-
 			console.error(err);
 		}
 	};

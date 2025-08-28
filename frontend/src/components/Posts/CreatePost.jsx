@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useAuth } from "../../context/AuthContext.jsx";
 import EmojiPicker from "emoji-picker-react";
+import imageCompression from "browser-image-compression";
 
 const categories = [
 	"general",
@@ -21,12 +22,55 @@ const CreatePostForm = () => {
 	const [showPicker, setShowPicker] = useState(false);
 	const pickerRef = useRef(null);
 
-	const handleChange = (e) => {
-		const { name, value, files } = e.target;
-		setFormData((prev) => ({
-			...prev,
-			[name]: files ? files[0] : value,
-		}));
+	// const handleChange = (e) => {
+	// 	const { name, value, files } = e.target;
+	// 	setFormData((prev) => ({
+	// 		...prev,
+	// 		[name]: files ? files[0] : value,
+	// 	}));
+	// };
+
+	const handleChange = async (e) => {
+		const { name, files, value } = e.target;
+
+		if (files && files[0]) {
+			const file = files[0];
+
+			console.log(
+				"Original file size:",
+				(file.size / 1024 / 1024).toFixed(2),
+				"MB"
+			);
+
+			// Compression options
+			const options = {
+				maxSizeMB: 2, // target size ≤ 2MB
+				maxWidthOrHeight: 1920, // scale down dimensions
+				useWebWorker: true,
+			};
+
+			try {
+				const compressedFile = await imageCompression(file, options);
+
+				console.log(
+					"Compressed file size:",
+					(compressedFile.size / 1024 / 1024).toFixed(2),
+					"MB"
+				);
+
+				setFormData((prev) => ({
+					...prev,
+					[name]: compressedFile, // save compressed file
+				}));
+			} catch (err) {
+				console.error("Image compression error:", err);
+			}
+		} else {
+			setFormData((prev) => ({
+				...prev,
+				[name]: value,
+			}));
+		}
 	};
 
 	const addEmoji = (emoji) => {
