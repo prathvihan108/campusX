@@ -108,7 +108,7 @@ const Login = () => {
 								<input
 									type="email"
 									name="email"
-									placeholder="Email"
+									placeholder="Email(CMRIT Mail Id)"
 									required
 									onChange={handleChange}
 									className="input"

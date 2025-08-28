@@ -7,7 +7,7 @@ import SignupButton from "../Button/SignupButton.jsx";
 import LoginButton from "../Button/LoginButton.jsx";
 import LogoutButton from "../Button/LogoutButton.jsx";
 import CreatePostButton from "../Button/CreatePostButton.jsx";
-import ThemeToggler from "../Button/ThemeToggler.jsx";
+import DevInfo from "../Button/DevInfo.jsx";
 
 const Header = () => {
 	const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -61,7 +61,7 @@ const Header = () => {
 
 			{
 				<div className="flex items-center gap-4">
-					<ThemeToggler />
+					<DevInfo />
 
 					{user ? (
 						// If user is logged in, show Logout button

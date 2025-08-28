@@ -57,11 +57,11 @@ router
 router.route("/get-bookmarks").get(varifyJWT, getBookmarks);
 router.route("/update-bio").patch(varifyJWT, updateBio);
 
-router.route("/search").get(varifyJWT, searchUserFullNames);
+router.route("/search").get(searchUserFullNames);
 router.route("/count").get(getTotalUsersCount);
 
 router.route("/delete-account").delete(varifyJWT, deleteAccount);
 
-router.route("/deleteAllUsers").delete(deleteAllUsers);
+// router.route("/deleteAllUsers").delete(deleteAllUsers);
 
 export default router;

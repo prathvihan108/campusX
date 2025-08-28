@@ -25,14 +25,14 @@ export default function UniversalSearchBar({
 	};
 
 	const onChangeHandler = (e) => {
-		if (!user) {
-			toast.info("Please log in to search", {
-				autoClose: 0,
-				position: "top-right",
-			});
-			// Prevent typing by not calling handleInputChange
-			return;
-		}
+		// if (!user) {
+		// 	toast.info("Please log in to search", {
+		// 		autoClose: 0,
+		// 		position: "top-right",
+		// 	});
+		// 	// Prevent typing by not calling handleInputChange
+		// 	return;
+		// }
 		handleInputChange(e);
 	};
 

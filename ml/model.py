@@ -5,7 +5,7 @@ from collections import defaultdict
 
 
 def get_recommendations(
-    user_id, posts_df, users_df, interactions_df, subscriptions_df=None, alpha=0.7, top_k=40, max_per_author=1
+    user_id, posts_df, users_df, interactions_df, subscriptions_df=None, alpha=0.7, top_k=60, max_per_author=1
 ):
     user_id = str(user_id)
     print(f"Getting recommendations for user_id: {user_id}")
@@ -99,7 +99,7 @@ def get_recommendations(
     return diversified_post_ids
 
 
-def get_trending_posts(post_vectors, top_k=40):
+def get_trending_posts(post_vectors, top_k=60):
     trending = post_vectors.head(top_k)
     print("Trending posts:", trending)
     if 'post_id' in trending.columns:
