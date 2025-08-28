@@ -5,6 +5,7 @@ import axiosInstance from "../utils/axiosInstance";
 import { socket } from "../utils/socket.js";
 import LoadingModel from "../components/Common/Loading/LoadingModel";
 import { sendResetOtpApi, resetPasswordApi } from "../services/authServices";
+import { useNavigate } from "react-router-dom";
 
 // Create Context
 export const AuthContext = createContext();
@@ -17,6 +18,7 @@ const AuthProvider = ({ children }) => {
 	const [showLogout, setShowLogout] = useState(false);
 	const [showLoading, setShowLoading] = useState(false);
 	const [showCreatePost, setShowCreatePost] = useState(false);
+	const navigate = useNavigate();
 
 	console.log("signup model state initil", showSignup);
 
@@ -220,6 +222,7 @@ const AuthProvider = ({ children }) => {
 				toast.success("Logged out successfully!", { autoClose: 2000 });
 
 				console.log("User logged out.");
+				navigate("/");
 				// Refresh Page
 				setTimeout(() => {
 					window.location.reload();

@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import EmojiPicker from "emoji-picker-react";
+import { toast } from "react-toastify";
 import {
 	getUserChannelProfile,
 	updateProfile,
@@ -110,9 +111,9 @@ const MyProfile = () => {
 			setProfile((prev) => ({ ...prev, ...editableFields }));
 			setIsEditingFields(false);
 			setFieldsChanged(false);
-			alert("Profile updated successfully!");
+			toast.success("Profile updated successfully!");
 		} catch (err) {
-			alert("Failed to update profile. Please try again.");
+			toast.error("Failed to update profile. Please try again");
 			console.error(err);
 		}
 		setLoading(false);
@@ -132,9 +133,9 @@ const MyProfile = () => {
 			setProfile((prev) => ({ ...prev, bio }));
 			setBioChanged(false);
 			setIsEditingBio(false);
-			alert("Bio updated successfully!");
+			toast.success("Bio updated successfully!");
 		} catch {
-			alert("Failed to update bio. Please try again.");
+			toast.error("Failed to update bio. Please try again.");
 		}
 		setLoading(false);
 	};
@@ -162,7 +163,8 @@ const MyProfile = () => {
 				avatar: updated.avatar + "?t=" + Date.now(), // cache buster
 			}));
 		} catch (err) {
-			alert("Failed to update avatar. Please try again.");
+			toast.error("Failed to update avatar. Please try again.");
+
 			console.error(err);
 		}
 	};
@@ -171,10 +173,12 @@ const MyProfile = () => {
 	const handleDeleteAccount = async () => {
 		try {
 			await deleteAccount();
-			alert("Account deleted");
+			toast.success("Account deleted successfully.");
+
 			navigate("/");
 		} catch (err) {
-			alert("Error deleting account.");
+			toast.error("Failed to delete account. Please try again.");
+
 			console.error(err);
 		}
 	};
