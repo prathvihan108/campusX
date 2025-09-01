@@ -193,6 +193,7 @@ const Signup = () => {
 						name="avatar"
 						accept="image/*"
 						onChange={handleChange}
+						required
 						className="input col-span-2"
 						disabled={isOtpSent}
 					/>
