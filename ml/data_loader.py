@@ -6,6 +6,7 @@ from dotenv import load_dotenv
 load_dotenv()
 MONGO_URI = os.getenv("MONGO_URI")
 
+
 try:
     client = MongoClient(MONGO_URI, serverSelectionTimeoutMS=5000)
     client.server_info()
@@ -14,7 +15,10 @@ except errors.ServerSelectionTimeoutError as err:
     print("[❌] Failed to connect to MongoDB:", err)
     raise SystemExit("MongoDB connection failed. Check your MONGO_URI.")
 
-db = client['DummyLearn']
+# db = client['DummyLearn']
+DB_NAME= os.getenv("DB_NAME")
+db = client[DB_NAME] 
+
 
 def load_users():
     users = list(db.users.find({}, {
