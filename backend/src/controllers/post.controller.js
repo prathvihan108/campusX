@@ -62,6 +62,7 @@ const getAllPosts = AsyncHandler(async (req, res) => {
       });
 
       const recommendedIds = data.recommendations || [];
+      console.log("Recommended IDs from ML service:", recommendedIds);
 
       const pagedRecommendedIds = recommendedIds.slice(skip, skip + limit);
 
@@ -127,6 +128,7 @@ const getAllPosts = AsyncHandler(async (req, res) => {
     const { data } = await axios.get(`${mlHost}/trending`);
     try {
       const recommendedIds = data.recommendations || [];
+      console.log("Trending IDs from ML service:", recommendedIds);
 
       const pagedRecommendedIds = recommendedIds.slice(skip, skip + limit);
 
