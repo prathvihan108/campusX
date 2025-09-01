@@ -99,10 +99,23 @@ def get_recommendations(
     return diversified_post_ids
 
 
-def get_trending_posts(post_vectors, top_k=60):
-    trending = post_vectors.head(top_k)
-    print("Trending posts:", trending)
-    if 'post_id' in trending.columns:
-        return trending['post_id'].tolist()
-    else:
-        return trending.index.tolist()
+def get_trending_posts(post_vectors, top_k=60, max_per_author=1):
+    # Get the top_k trending posts
+    trending = post_vectors.head(top_k * 3)  # take more to allow diversification
+    
+    diversified_post_ids = []
+    author_counts = defaultdict(int)
+
+    for _, row in trending.iterrows():
+        author = row['author']
+        post_id = row['post_id'] if 'post_id' in trending.columns else row.name
+
+        if author_counts[author] < max_per_author:
+            diversified_post_ids.append(post_id)
+            author_counts[author] += 1
+
+        if len(diversified_post_ids) >= top_k:
+            break
+
+    return diversified_post_ids
+

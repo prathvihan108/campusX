@@ -10,23 +10,23 @@ def preprocess_users(users_df):
     feature_names = enc.get_feature_names_out(["role", "year", "department"])
     user_features = pd.DataFrame(encoded, columns=feature_names, index=users_df["_id"].astype(str))
     return user_features
-
 def preprocess_posts(posts_df, users_df):
     merged = posts_df.merge(users_df, left_on="author", right_on="_id", suffixes=('', '_author'))
     enc = OneHotEncoder(sparse_output=False)
 
     encoded = enc.fit_transform(merged[["category", "role", "year", "department"]])
     feature_names = enc.get_feature_names_out(["category", "role", "year", "department"])
-    post_features = pd.DataFrame(encoded, columns=feature_names, index=posts_df["post_id"].astype(str))
 
-   
-    if "length" in posts_df.columns:
-        post_features["length"] = posts_df["length"].fillna(0).astype(float).values
+    # Use merged["post_id"] instead of posts_df["post_id"]
+    post_features = pd.DataFrame(encoded, columns=feature_names, index=merged["post_id"].astype(str))
+
+    if "length" in merged.columns:
+        post_features["length"] = merged["length"].fillna(0).astype(float).values
     else:
         post_features["length"] = 0.0
- 
-    post_features["post_id"] = posts_df["post_id"].values
-    post_features["author"] = posts_df["author"].values
+
+    post_features["post_id"] = merged["post_id"].values
+    post_features["author"] = merged["author"].values
     return post_features
 
 def build_interactions_df(likes_df, bookmarks_df):
