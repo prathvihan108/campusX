@@ -1,1 +1,1 @@
-export const DB_NAME = "DummyLearn";
+export const DB_NAME = "campusxDB";

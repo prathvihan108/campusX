@@ -1,3 +1,4 @@
 # .gitattributes
 docker-compose.yml merge=ours
 nginx.conf merge=ours
+backend/src/constants.js merge=ours
