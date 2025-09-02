@@ -44,9 +44,10 @@ const CreatePostForm = () => {
 
 			// Compression options
 			const options = {
-				maxSizeMB: 2, // target size ≤ 2MB
-				maxWidthOrHeight: 1920, // scale down dimensions
+				maxSizeMB: 1, // even stricter, ≤ 1MB
+				maxWidthOrHeight: 1080, // good for web/mobile
 				useWebWorker: true,
+				fileType: "image/jpeg", // force jpeg
 			};
 
 			try {
@@ -83,6 +84,7 @@ const CreatePostForm = () => {
 
 	const handleSubmit = (e) => {
 		e.preventDefault();
+
 		if (!formData.content || !formData.category) {
 			alert("Content and category are required!");
 			return;
@@ -90,7 +92,11 @@ const CreatePostForm = () => {
 
 		const data = new FormData();
 		Object.entries(formData).forEach(([key, value]) => {
-			data.append(key, value);
+			if (key === "image" && value) {
+				data.append(key, value, "upload.jpg"); // force filename
+			} else {
+				data.append(key, value);
+			}
 		});
 
 		handleCreatePost(data);

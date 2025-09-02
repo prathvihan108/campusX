@@ -1,160 +1,155 @@
 import { v2 as cloudinary } from "cloudinary";
-import { response } from "express";
-import fs from "fs"; //by default in node js//file system
+import fs from "fs";
 
-// Configuration
-
+// 🔹 Cloudinary Config
 cloudinary.config({
   cloud_name: process.env.CLOUDNARY_CLOUD_NAME,
   api_key: process.env.CLOUDNARY_APIKEY,
   api_secret: process.env.CLOUDNARY_SECRET,
 });
 
-const uploadOnCloudnary = async (localfilepath) => {
+// 🔹 Helper to safely delete local files
+const deleteLocalFile = (filePath) => {
+  if (!filePath) return;
+  fs.unlink(filePath, (err) => {
+    if (err) console.error("❌ Error deleting local file:", err);
+  });
+};
+
+// 🔹 Upload any file to Cloudinary
+const uploadOnCloudnary = async (localFilePath) => {
   try {
-    if (!localfilepath) {
-      return null;
-    }
-    //upload to the cloudnary
-    const response = await cloudinary.uploader.upload(localfilepath, {
+    if (!localFilePath) return null;
+
+    const response = await cloudinary.uploader.upload(localFilePath, {
       resource_type: "auto",
       folder: "home/learnDummy",
     });
 
-    //file uploads successfully
-    console.info("File uploaded :", response.url);
+    console.info("✅ File uploaded:", response.url);
+    deleteLocalFile(localFilePath); // cleanup after success
     return response;
   } catch (error) {
-    console.log("error while uplading on cloudnary");
-    fs.unlinkSync(localfilepath);
+    console.error("❌ Error uploading to Cloudinary:", error);
+    deleteLocalFile(localFilePath); // cleanup after failure
+    return null;
   }
 };
 
+// 🔹 Update avatar (delete old → upload new)
 const updateAvatar = async (oldCloudinaryUrl, localFilePath) => {
   try {
-    if (!localFilePath) {
-      return null;
-    }
+    if (!localFilePath) return null;
 
-    // Extract public_id from the old Cloudinary URL
+    // Extract public_id from old URL
     const publicId = oldCloudinaryUrl
       ? oldCloudinaryUrl.split("/").pop().split(".")[0]
       : null;
 
-    // Delete the old avatar
     if (publicId) {
       await cloudinary.uploader.destroy(`home/learnDummy/${publicId}`);
-      console.info("Old avatar deleted:", publicId);
+      console.info("🗑️ Old avatar deleted:", publicId);
     }
 
-    // Upload the new avatar
     const response = await cloudinary.uploader.upload(localFilePath, {
       resource_type: "auto",
       folder: "home/learnDummy",
     });
 
-    console.info("New avatar uploaded:", response.url);
+    console.info("✅ New avatar uploaded:", response.url);
+    deleteLocalFile(localFilePath);
     return response;
   } catch (error) {
-    console.error("Error updating avatar:", error);
-    fs.unlinkSync(localFilePath);
+    console.error("❌ Error updating avatar:", error);
+    deleteLocalFile(localFilePath);
     return null;
   }
 };
 
+// 🔹 Update cover image
 const updateCoverImage = async (oldCloudinaryUrl, localFilePath) => {
   try {
-    if (!localFilePath) {
-      return null;
-    }
+    if (!localFilePath) return null;
 
-    // Extract public_id from the old Cloudinary URL
     const publicId =
       oldCloudinaryUrl?.split("/")?.pop()?.split(".")?.[0] || null;
 
-    // Delete the old avatar
     if (publicId) {
       await cloudinary.uploader.destroy(`home/learnDummy/${publicId}`);
-      console.info("Old coverImage deleted:", publicId);
+      console.info("🗑️ Old cover image deleted:", publicId);
     }
 
-    // Upload the new avatar
     const response = await cloudinary.uploader.upload(localFilePath, {
       resource_type: "auto",
       folder: "home/learnDummy",
     });
 
-    console.log("New coverImage uploaded:", response.url);
+    console.log("✅ New cover image uploaded:", response.url);
+    deleteLocalFile(localFilePath);
     return response;
   } catch (error) {
-    console.error("Error updating coverImage:", error);
-    fs.unlinkSync(localFilePath);
+    console.error("❌ Error updating cover image:", error);
+    deleteLocalFile(localFilePath);
     return null;
   }
 };
 
+// 🔹 Delete avatar
 const deleteAvatar = async (oldCloudinaryUrl) => {
   try {
-    if (!oldCloudinaryUrl) {
-      return null;
-    }
+    if (!oldCloudinaryUrl) return null;
 
-    // Extract public_id
     const publicId =
       oldCloudinaryUrl?.split("/")?.pop()?.split(".")?.[0] || null;
 
     if (publicId) {
       await cloudinary.uploader.destroy(`home/learnDummy/${publicId}`);
-      console.info("Avatar deleted:", publicId);
+      console.info("🗑️ Avatar deleted:", publicId);
     }
 
     return true;
   } catch (error) {
-    console.error("Error deleting avatar:", error);
+    console.error("❌ Error deleting avatar:", error);
     return null;
   }
 };
 
+// 🔹 Delete cover image
 const deleteCoverImage = async (oldCloudinaryUrl) => {
   try {
-    if (!oldCloudinaryUrl) {
-      return null;
-    }
+    if (!oldCloudinaryUrl) return null;
 
-    // Extract public_id
     const publicId =
       oldCloudinaryUrl?.split("/")?.pop()?.split(".")?.[0] || null;
 
     if (publicId) {
       await cloudinary.uploader.destroy(`home/learnDummy/${publicId}`);
-      console.info("Cover Image deleted:", publicId);
+      console.info("🗑️ Cover image deleted:", publicId);
     }
 
     return true;
   } catch (error) {
-    console.error("Error deleting cover image:", error);
+    console.error("❌ Error deleting cover image:", error);
     return null;
   }
 };
 
+// 🔹 Delete any image
 const deleteImage = async (oldCloudinaryUrl) => {
   try {
-    if (!oldCloudinaryUrl) {
-      return null;
-    }
+    if (!oldCloudinaryUrl) return null;
 
-    // Extract public_id
     const publicId =
       oldCloudinaryUrl?.split("/")?.pop()?.split(".")?.[0] || null;
 
     if (publicId) {
       await cloudinary.uploader.destroy(`home/learnDummy/${publicId}`);
-      console.info("Image deleted:", publicId);
+      console.info("🗑️ Image deleted:", publicId);
     }
 
     return true;
   } catch (error) {
-    console.error("Error deleting image:", error);
+    console.error("❌ Error deleting image:", error);
     return null;
   }
 };
@@ -165,5 +160,5 @@ export {
   updateCoverImage,
   deleteCoverImage,
   deleteAvatar,
-  deleteImage, //post image
+  deleteImage,
 };
