@@ -20,7 +20,7 @@ const allowedOrigins = [
   "http://localhost:3000", // React dev server (if used)
   "http://localhost",
   "http://20.101.4.237", //local wifi for testing
-  "https://thecampusx.co.in", // Production frontend
+  "https://campusx.me", // Production frontend
 ];
 
 app.use(
