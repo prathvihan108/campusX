@@ -32,10 +32,12 @@ const Signup = () => {
 	const [otp, setOtp] = useState("");
 	const [emailError, setEmailError] = useState("");
 	const [otpError, setOtpError] = useState("");
+	const [selectedFile, setSelectedFile] = useState(null);
 
 	const handleChange = (e) => {
 		if (e.target.name === "avatar") {
 			setFormData({ ...formData, avatar: e.target.files[0] });
+			setSelectedFile(e.target.files[0]);
 		} else {
 			setFormData({ ...formData, [e.target.name]: e.target.value });
 		}
@@ -105,16 +107,17 @@ const Signup = () => {
 						placeholder="Username"
 						required
 						onChange={handleChange}
-						className="input"
+						className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
 					/>
+
 					<input
 						type="email"
 						name="email"
 						placeholder="Email(CMRIT Mail Id)"
 						required
 						onChange={handleChange}
-						className="input"
 						disabled={isOtpSent}
+						className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
 					/>
 					{emailError && (
 						<p className="text-red-500 col-span-2">{emailError}</p>
@@ -126,16 +129,16 @@ const Signup = () => {
 						placeholder="Full Name"
 						required
 						onChange={handleChange}
-						className="input"
 						disabled={isOtpSent}
+						className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
 					/>
 
 					<select
 						name="role"
 						required
 						onChange={handleChange}
-						className="input"
 						disabled={isOtpSent}
+						className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
 					>
 						<option value="">Select Role</option>
 						{["Student", "Faculty", "Cell"].map((role) => (
@@ -149,8 +152,8 @@ const Signup = () => {
 						name="year"
 						required
 						onChange={handleChange}
-						className="input"
 						disabled={isOtpSent}
+						className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
 					>
 						<option value="">Select Year</option>
 						{["First-Year", "Second-Year", "PreFinal-Year", "Final-Year"].map(
@@ -166,8 +169,8 @@ const Signup = () => {
 						name="department"
 						required
 						onChange={handleChange}
-						className="input"
 						disabled={isOtpSent}
+						className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
 					>
 						<option value="">Select Department</option>
 						{["CSE", "ISE", "ECE", "EEE", "MBA", "AIML", "AIDS", "CIVIL"].map(
@@ -178,58 +181,60 @@ const Signup = () => {
 							)
 						)}
 					</select>
-
 					<textarea
 						name="bio"
 						placeholder="Bio"
 						required
 						onChange={handleChange}
-						className="input col-span-2"
 						disabled={isOtpSent}
-					></textarea>
-
-					<input
-						type="file"
-						name="avatar"
-						accept="image/*"
-						onChange={handleChange}
-						required
-						className="input col-span-2"
-						disabled={isOtpSent}
+						className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 col-span-2 resize-none"
 					/>
 
-					<div className="relative">
+					<label className="block w-full col-span-2 p-2 border rounded cursor-pointer text-gray-500">
+						{selectedFile ? selectedFile.name : "Choose Profile Picture"}
+						<input
+							type="file"
+							name="avatar"
+							accept="image/*"
+							onChange={handleChange}
+							required
+							className="hidden"
+							disabled={isOtpSent}
+						/>
+					</label>
+
+					<div className="relative w-full">
 						<input
 							type={showPassword ? "text" : "password"}
 							name="password"
 							placeholder="Password"
 							required
 							onChange={handleChange}
-							className="input"
 							disabled={isOtpSent}
+							className="w-full p-2 pr-10 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
 						/>
 						<button
 							type="button"
-							className="absolute right-3 top-3"
+							className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500"
 							onClick={() => setShowPassword(!showPassword)}
 						>
 							{showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
 						</button>
 					</div>
 
-					<div className="relative">
+					<div className="relative w-full">
 						<input
 							type={showConfirmPassword ? "text" : "password"}
 							name="confirmPassword"
 							placeholder="Confirm Password"
 							required
 							onChange={handleChange}
-							className="input"
 							disabled={isOtpSent}
+							className="w-full p-2 pr-10 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
 						/>
 						<button
 							type="button"
-							className="absolute right-3 top-3"
+							className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500"
 							onClick={() => setShowConfirmPassword(!showConfirmPassword)}
 						>
 							{showConfirmPassword ? <EyeOff size={20} /> : <Eye size={20} />}

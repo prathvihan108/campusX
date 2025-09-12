@@ -155,7 +155,7 @@ const MyProfile = () => {
 		if (!file) return;
 
 		try {
-			// ✅ Compression options
+			// Compression options
 			const options = {
 				maxSizeMB: 1, // limit to 1MB
 				maxWidthOrHeight: 400, // avatar size
@@ -194,16 +194,18 @@ const MyProfile = () => {
 		<div className="max-w-4xl mx-auto p-6 bg-white dark:bg-gray-900 rounded-2xl shadow-lg transition-colors duration-300">
 			{/* Avatar and Name Section */}
 			<div className="flex flex-col md:flex-row items-center md:items-start gap-8">
-				<div className="relative group">
+				<div
+					className="relative group cursor-pointer"
+					onClick={handleAvatarClick}
+				>
 					<img
 						src={profile.avatar || "/default-avatar.png"}
 						alt={`${profile.fullName} avatar`}
 						className="w-32 h-32 md:w-36 md:h-36 rounded-full object-cover border-2 border-gray-300 dark:border-gray-600 transition-shadow duration-300"
 					/>
 					<button
-						onClick={handleAvatarClick}
 						aria-label="Change profile photo"
-						className="absolute bottom-1 right-1 bg-blue-600 text-white p-2 rounded-full opacity-0 group-hover:opacity-100 focus:opacity-100 transition-opacity duration-300 shadow-md hover:bg-blue-700"
+						className="absolute bottom-1 right-1 bg-blue-600 text-white p-2 rounded-full opacity-0 group-hover:opacity-100 focus:opacity-100 transition-opacity duration-300 shadow-md hover:bg-blue-700 pointer-events-none"
 					>
 						<svg
 							xmlns="http://www.w3.org/2000/svg"

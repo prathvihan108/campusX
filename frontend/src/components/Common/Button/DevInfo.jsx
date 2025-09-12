@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { User, Mail, Phone, Linkedin, Github, Globe, X } from "lucide-react";
+import { Code, Mail, Phone, Linkedin, Github, Globe, X } from "lucide-react";
 
 function DevInfo() {
 	const [open, setOpen] = useState(false);
@@ -23,11 +23,9 @@ function DevInfo() {
 				className="flex items-center gap-2 px-3 py-1 bg-gray-800 text-white rounded-lg hover:bg-gray-700 transition flex-nowrap"
 				title="Developer Info"
 			>
-				{/* Larger icon */}
-				<User className="flex-shrink-0 h-8 w-8" />
-				<span className="hidden sm:inline truncate max-w-[8rem]">
-					Developer Info
-				</span>
+				<div className="inline-flex items-center justify-center p-2 bg-orange-500 rounded-full shadow-md">
+					<Code className="h-6 w-6 text-white" />
+				</div>
 			</button>
 
 			{/* Popup */}
