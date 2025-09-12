@@ -19,8 +19,8 @@ const allowedOrigins = [
   "http://localhost:5173", // Vite dev server
   "http://localhost:3000", // React dev server (if used)
   "http://localhost",
-  "http://20.101.4.237", //local wifi for testing
-  "https://thecampusx.co.in", // Production frontend
+  "http://10.201.9.156", //local wifi for testing
+  "https://campusx.me", // Production frontend
 ];
 
 app.use(

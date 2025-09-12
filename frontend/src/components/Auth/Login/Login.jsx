@@ -98,7 +98,7 @@ const Login = () => {
 									placeholder="Username"
 									required
 									onChange={handleChange}
-									className="input"
+									className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 transition duration-200"
 								/>
 							</div>
 							<div>
@@ -108,10 +108,10 @@ const Login = () => {
 								<input
 									type="email"
 									name="email"
-									placeholder="Email(CMRIT Mail Id)"
+									placeholder="Email (CMRIT Mail Id)"
 									required
 									onChange={handleChange}
-									className="input"
+									className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 transition duration-200"
 								/>
 							</div>
 							<div>
@@ -123,10 +123,11 @@ const Login = () => {
 										type={showPassword ? "text" : "password"}
 										name="password"
 										onChange={handleChange}
-										className="w-full mt-1 p-2 border rounded-lg focus:ring-2 focus:ring-blue-400 outline-none"
 										placeholder="Enter your password"
 										required
+										className="w-full mt-1 p-2 pr-10 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 transition duration-200"
 									/>
+
 									<button
 										type="button"
 										className="absolute right-3 top-3"
@@ -197,9 +198,10 @@ const Login = () => {
 									value={resetOtp}
 									onChange={(e) => setResetOtp(e.target.value)}
 									placeholder="Enter OTP"
-									className="input"
 									required
+									className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
 								/>
+
 								<label className="block text-sm font-medium text-gray-600">
 									New Password
 								</label>
@@ -208,9 +210,10 @@ const Login = () => {
 									value={newPassword}
 									onChange={(e) => setNewPassword(e.target.value)}
 									placeholder="Enter new password"
-									className="input"
 									required
+									className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
 								/>
+
 								<button
 									onClick={resetPasswordClick}
 									disabled={loading}
@@ -218,6 +221,7 @@ const Login = () => {
 								>
 									{loading ? "Resetting..." : "Change Password"}
 								</button>
+
 								<button
 									className="w-full mt-2 text-gray-500 text-sm hover:underline"
 									onClick={() => {
